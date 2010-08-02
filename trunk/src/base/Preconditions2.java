@@ -16,7 +16,7 @@ final public class Preconditions2 {
 	 * not {@code null}.
 	 * <p>
 	 * This method differs from {@link Preconditions#checkNotNull(Object)
-	 * Preconditions.checkNotNull(T)} because it throws an {@code
+	 * Preconditions.checkNotNull(T)} in that it throws an {@code
 	 * IllegalArgumentException} instead of a {@code NullPointerException} if
 	 * the {@code arg} parameter is {@code null}.
 	 * 
@@ -26,7 +26,7 @@ final public class Preconditions2 {
 	 * @throws IllegalArgumentException
 	 *             if the argument is {@code null}
 	 */
-	public static <T> T checkArgumentNotNull(final T arg) {
+	public static <T> T checkElementNotNull(final T arg) {
 		if (arg == null)
 			throw new IllegalArgumentException();
 		return arg;
@@ -38,7 +38,7 @@ final public class Preconditions2 {
 	 * <p>
 	 * This method differs from
 	 * {@link Preconditions#checkNotNull(Object, Object)
-	 * Preconditions.checkNotNull(T, Object)} because it throws an {@code
+	 * Preconditions.checkNotNull(T, Object)} in that it throws an {@code
 	 * IllegalArgumentException} instead of a {@code NullPointerException} if
 	 * the {@code arg} parameter is {@code null}.
 	 * 
@@ -51,7 +51,7 @@ final public class Preconditions2 {
 	 * @throws IllegalArgumentException
 	 *             if the argument is {@code null}
 	 */
-	public static <T> T checkArgumentNotNull(final T arg, final Object message) {
+	public static <T> T checkElementNotNull(final T arg, final Object message) {
 		if (arg == null)
 			throw new IllegalArgumentException(String.valueOf(message));
 		return arg;
@@ -63,7 +63,7 @@ final public class Preconditions2 {
 	 * <p>
 	 * This method differs from
 	 * {@link Preconditions#checkNotNull(Object, String, Object...)
-	 * Preconditions.checkNotNull(T, String, Object...)} because it throws an
+	 * Preconditions.checkNotNull(T, String, Object...)} in that it throws an
 	 * {@code IllegalArgumentException} instead of a {@code
 	 * NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
@@ -85,11 +85,47 @@ final public class Preconditions2 {
 	 * @throws IllegalArgumentException
 	 *             if the argument is {@code null}
 	 */
-	public static <T> T checkArgumentNotNull(final T arg,
-			final String template, final Object... messages) {
+	public static <T> T checkElementNotNull(final T arg, final String template,
+			final Object... messages) {
 		if (arg == null)
 			throw new IllegalArgumentException(format(template, messages));
 		return arg;
+	}
+
+	/**
+	 * Ensures that {@code start} and {@code end} specify a valid
+	 * <i>positions</i> in an array, list or string of size {@code size}, and
+	 * are in order. A position index may range from zero, inclusive, to {@code
+	 * size}, <b>exclusive</b>. This method differs from {@code
+	 * Preconditions.checkPositionIndexes(int, int, int)} because the {@code
+	 * size} argument is exclusive not inclusive.
+	 * 
+	 * @param start
+	 *            a user-supplied index identifying a starting position in an
+	 *            array, list or string
+	 * @param end
+	 *            a user-supplied index identifying a ending position in an
+	 *            array, list or string
+	 * @param size
+	 *            the size of that array, list or string
+	 * @throws IndexOutOfBoundsException
+	 *             if either index is negative or is not less than {@code size},
+	 *             or if {@code end} is less than {@code start}
+	 * @throws IllegalArgumentException
+	 *             if {@code size} is negative
+	 */
+	public static void checkElementIndexes(int start, int end, int size) {
+		if (size < 0)
+			throw new IllegalArgumentException("negative size: " + size);
+		if (start < 0)
+			throw new IndexOutOfBoundsException("start index (" + start
+					+ ") must not be negative");
+		if (end < start)
+			throw new IndexOutOfBoundsException("end index (" + end
+					+ ") must not be less than start index (" + start + ")");
+		if (end > size)
+			throw new IndexOutOfBoundsException("end index (" + end
+					+ ") must not be greater than size (" + size + ")");
 	}
 
 	/**
