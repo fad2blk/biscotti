@@ -516,6 +516,13 @@ final public class Collections3 {
 				return bq.remainingCapacity();
 			}
 		}
+
+		@Override
+		public boolean offerAll(Collection<? extends E> c) {
+			synchronized (mutex) {
+				return bq.offerAll(c);
+			}
+		}
 	}
 
 }
