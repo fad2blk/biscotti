@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
