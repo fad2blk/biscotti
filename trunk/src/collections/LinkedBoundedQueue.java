@@ -15,7 +15,8 @@ import com.google.common.collect.Lists;
  * the <i>eldest</i> element to be the least recently inserted element. To
  * prevent this queue from exceeding its capacity restrictions the eldest
  * element is removed as needed when calling {@code add(E)}, {@code offer(E)},
- * and {@code addAll(Collection)} methods. Elements may be {@code null}.
+ * {@code addAll(Collection)} and {@code offerAll(Collection)} methods. Elements
+ * may be {@code null}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
@@ -84,11 +85,8 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * exceeding its capacity.
 	 */
 	public boolean add(E e) {
-		if (offer(e))
-			return true;
-		else
-			throw new IllegalStateException("Queue full"); // should not happen
-		// in this queue
+		Preconditions.checkState(offer(e), "Queue full");
+		return true;
 	}
 
 	/**
@@ -116,6 +114,16 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		boolean returnValue = false;
 		for (E element : c)
 			if (add(element))
+				returnValue = true;
+		return returnValue;
+	}
+
+	@Override
+	public boolean offerAll(Collection<? extends E> c) {
+		Preconditions.checkNotNull(c);
+		boolean returnValue = false;
+		for (E element : c)
+			if (offer(element))
 				returnValue = true;
 		return returnValue;
 	}

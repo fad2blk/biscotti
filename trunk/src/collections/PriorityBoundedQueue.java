@@ -2,7 +2,6 @@ package collections;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Queue;
 import java.util.SortedSet;
 
 import com.google.common.base.Preconditions;
@@ -14,10 +13,7 @@ import com.google.common.collect.Collections2;
  * The elements of this queue are ordered according to their <i>natural
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
  * Inserting {@code null} elements is prohibited. Attempting to insert
- * non-comparable elements will result in a {@code ClassCastException}. An
- * additional {@link offerAll(Collection)} method is provided. The difference
- * between {@code offerAll(Collection)} and {@code addAll(Collection)} is
- * analogous to the difference between {@code offer(E)} and {@code add(E)}.
+ * non-comparable elements will result in a {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with
@@ -157,15 +153,7 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	}
 
 	/**
-	 * Adds all of the elements in the specified collection to this queue, if
-	 * it's possible to do so without violating capacity restrictions. (optional
-	 * operation). If no more space in the queue is available elements are
-	 * rejected quietly <i>without</i> throwing an {@code IllegalStateException}
-	 * . The difference between this operation and
-	 * {@link Collection#addAll(Collection) addAll(Collection)} is analogous to
-	 * the difference between {@link Queue#offer(Object) offer(E)} and
-	 * {@link Queue#add(Object) add(E)}. This method is generally preferable to
-	 * {@code addAll(Collection)}, which can fail only by throwing an exception.
+	 * {@inheritDoc}
 	 * <p>
 	 * Attempts to {@code offerAll} of a collection which contains {@code null}
 	 * elements will fail cleanly and safely leaving this queue unmodified. If
@@ -175,27 +163,6 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	 * from {@link Predicates#notNull()}. Other runtime exception encountered
 	 * while trying to add an element may result in only some of the elements
 	 * having been successfully added when the associated exception is thrown.
-	 * <p>
-	 * 
-	 * @param c
-	 *            collection containing elements to be added to this collection
-	 * @return {@code true} if at least one element was added to this queue,
-	 *         else returns {@code false}
-	 * @throws UnsupportedOperationException
-	 *             if the {@code offerAll(Collection)} operation is not
-	 *             supported
-	 * @throws ClassCastException
-	 *             if the class of an element of the specified collection
-	 *             prevents it from being added to this queue
-	 * @throws NullPointerException
-	 *             if the specified collection contains a {@code null} element
-	 *             and this queue does not permit {@code null} elements, or if
-	 *             the specified collection is {@code null}
-	 * @throws IllegalArgumentException
-	 *             if some property of an element of the specified collection
-	 *             prevents it from being added to this queue
-	 * @see Queue#offer(Object) offer(E)
-	 * @see Queue#add(Object) add(E)
 	 */
 	public boolean offerAll(Collection<? extends E> c) {
 		Preconditions.checkNotNull(c);
