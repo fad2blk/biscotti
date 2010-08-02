@@ -1,0 +1,93 @@
+package biscotti.collections;
+
+import static com.google.common.base.Preconditions.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
+
+/**
+ * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
+ * stale mappings in <i>access/least-recently-used</i> (LRU) order.
+ * <p>
+ * This implementation is not <i>thread-safe</i>. If multiple threads modify
+ * this map concurrently it must be synchronized externally, consider "wrapping"
+ * the map using the {@code Maps2.synchronizedBoundedMap(BoundedMap)} method.
+ * 
+ * @author Zhenya Leonov
+ * @param <K>
+ *            the type of keys maintained by this map
+ * @param <V>
+ *            the type of mapped values
+ * @see FIFOMap
+ */
+public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
+		BoundedMap<K, V> {
+
+	private static final long serialVersionUID = -6016656436244059841L;
+	private final int maxSize;
+
+	private LRUMap(final int maxSize, final int initialCapacity,
+			final float loadFactor) {
+		super(initialCapacity, loadFactor, true);
+		this.maxSize = maxSize;
+	}
+
+	/**
+	 * Creates a new {@code LRUMap} having the specified maximum size.
+	 * 
+	 * @param maxSize
+	 *            the maximum size of this map
+	 * @return a new {@code LRUMap} having the specified maximum size
+	 * @throws IllegalArgumentException
+	 *             if {@code maxSize} is less than 1
+	 */
+	public static <K, V> LRUMap<K, V> create(final int maxSize) {
+		Preconditions.checkArgument(maxSize > 0);
+		return new LRUMap<K, V>(maxSize, 16, .75F);
+	}
+
+	/**
+	 * Creates a new {@code LRUMap} with the same mappings, iteration order, and
+	 * having the maximum size equal to the size specified map.
+	 * 
+	 * @param m
+	 *            the map whose mappings are to be placed in this map
+	 * @return a new {@code LRUMap} with the same mappings, iteration order, and
+	 *         having the maximum size equal to the size specified map
+	 */
+	public static <K, V> LRUMap<K, V> create(
+			final Map<? extends K, ? extends V> m) {
+		checkNotNull(m);
+		LRUMap<K, V> map = new LRUMap<K, V>(m.size(), m.size(), .75F);
+		map.putAll(m);
+		return map;
+	}
+
+	@Override
+	public V put(K key, V value) {
+		return super.put(key, value);
+	}
+
+	@Override
+	public void putAll(Map<? extends K, ? extends V> m) {
+		super.putAll(m);
+	}
+
+	@Override
+	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+		return this.size() > maxSize;
+	}
+
+	@Override
+	public int maxSize() {
+		return maxSize;
+	}
+
+	@Override
+	public int remainingCapacity() {
+		return maxSize - size();
+	}
+
+}
