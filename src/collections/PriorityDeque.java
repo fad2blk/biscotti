@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
  
 import java.util.Collection;
 import java.util.Comparator;

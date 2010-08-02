@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
 
 import com.google.common.collect.PeekingIterator;
 

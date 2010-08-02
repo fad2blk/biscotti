@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

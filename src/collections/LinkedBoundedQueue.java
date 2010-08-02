@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
 
 import java.io.Serializable;
 import java.util.Collection;

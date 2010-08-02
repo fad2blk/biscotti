@@ -1,4 +1,4 @@
-package biscotti.collections;
+package collections;
 
 import java.util.NavigableMap;
 import java.util.NavigableSet;
