@@ -94,7 +94,7 @@ import com.google.common.collect.Ordering;
 public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		Serializable {
 
-	private static final long serialVersionUID = 2146920143005159122L;
+	private static final long serialVersionUID = 1L;
 	private int size = 0;
 	private Node max = null;
 	private Node min = null;

@@ -12,7 +12,8 @@ import java.util.Map;
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
- * the map using the {@code Maps2.synchronizedBoundedMap(BoundedMap)} method.
+ * the map using the {@code Collections3.synchronizedBoundedMap(BoundedMap)}
+ * method.
  * 
  * @author Zhenya Leonov
  * @param <K>
@@ -24,7 +25,7 @@ import java.util.Map;
 public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 		BoundedMap<K, V> {
 
-	private static final long serialVersionUID = -3822008757337993587L;
+	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
 	private FIFOMap(final int maxSize, final int initialCapacity,

@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		BoundedQueue<E>, Serializable {
 
-	private static final long serialVersionUID = 2133151171984481985L;
+	private static final long serialVersionUID = 1L;
 	private final Queue<E> queue;
 	private final int maxSize;
 

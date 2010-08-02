@@ -13,7 +13,8 @@ import com.google.common.base.Preconditions;
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
- * the map using the {@code Maps2.synchronizedBoundedMap(BoundedMap)} method.
+ * the map using the {@code Collections3.synchronizedBoundedMap(BoundedMap)}
+ * method.
  * 
  * @author Zhenya Leonov
  * @param <K>
@@ -25,7 +26,7 @@ import com.google.common.base.Preconditions;
 public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 		BoundedMap<K, V> {
 
-	private static final long serialVersionUID = -6016656436244059841L;
+	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
 	private LRUMap(final int maxSize, final int initialCapacity,

@@ -39,7 +39,7 @@ import com.google.common.collect.Collections2;
 public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 		BoundedQueue<E> {
 
-	private static final long serialVersionUID = -4139767385422869092L;
+	private static final long serialVersionUID = 1L;
 
 	private int maxSize;
 
