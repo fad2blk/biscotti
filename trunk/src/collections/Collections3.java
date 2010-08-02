@@ -26,7 +26,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}s.
+ * Static methods which operate on or return {@link Collection}s and {@link Map}
+ * s.
  * 
  * @author Zhenya Leonov
  */
@@ -131,7 +132,7 @@ final public class Collections3 {
 	 * when iterating over it:
 	 * 
 	 * <pre>
-	 *  Queue queue = Collections.synchronizedQueue(unsynchronizedQueue);
+	 *  Queue queue = Collections3.synchronizedQueue(unsynchronizedQueue);
 	 *      ...
 	 *  synchronized(queue) {
 	 *     for(Object o: queue)  // Must be in synchronized block
@@ -162,7 +163,7 @@ final public class Collections3 {
 	 * bounded queue when iterating over it:
 	 * 
 	 * <pre>
-	 *  BoundedQueue boundedQueue = Collections.synchronizedBoundedQueue(unsynchronizedBoundedQueue);
+	 *  BoundedQueue boundedQueue = Collections3.synchronizedBoundedQueue(unsynchronizedBoundedQueue);
 	 *      ...
 	 *  synchronized(boundedQueue) {
 	 *     for(Object o: boundedQueue)  // Must be in synchronized block
@@ -194,7 +195,7 @@ final public class Collections3 {
 	 * when iterating over it:
 	 * 
 	 * <pre>
-	 *  Deque deque = Collections.synchronizedDeque(unsynchronizedDeque);
+	 *  Deque deque = Collections3.synchronizedDeque(unsynchronizedDeque);
 	 *      ...
 	 *  synchronized(deque) {
 	 *     for(Object o: deque)  // Must be in synchronized block
@@ -248,6 +249,27 @@ final public class Collections3 {
 	 * Clients must manually synchronize on the returned set when iterating over
 	 * it or any of its {@code subSet}, {@code headSet}, {@code tailSet}, or
 	 * {@code descendingSet} views.
+	 * 
+	 * <pre>
+	 *  NavigableSet navigableSet = Collections3.synchronizedNavigableSet(unsynchronizedNavigableSet);
+	 *      ...
+	 *  synchronized(navigableSet) {
+	 *     for(Object o: navigableSet)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  NavigableSet navigableSet = Collections3.synchronizedNavigableSet(unsynchronizedNavigableSet);
+	 *  SortedSet sortedSet = navigableSet.headSet(element);
+	 *      ...
+	 *  synchronized(navigableSet) { // Note: navigableSet, not sortedSet
+	 *     for(Object o: sortedSet)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
 	 * <p>
 	 * The returned set will be serializable if the specified set is
 	 * serializable.
@@ -347,6 +369,31 @@ final public class Collections3 {
 	 * Clients must manually synchronize on the returned navigable map when
 	 * iterating over any of its collection views, or the collections views of
 	 * any of its {@code subMap}, {@code headMap} or {@code tailMap} views.
+	 * 
+	 * <pre>
+	 *  NavigableMap navigableMap = Collections3.synchronizedNavigableMap(unsynchronizedNavigableMap);
+	 *      ...
+	 *  Set set = navigableMap.keySet(); // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(navigableMap) { // Note navigableMap not set
+	 *     for(Object o: set)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  NavigableMap navigableMap = Collections3.synchronizedNavigableMap(unsynchronizedNavigableMap);
+	 *  SortedMap sortedMap = navigableMap.subMap(element, element2);
+	 *      ...
+	 *  Set set = sortedMap.keySet(); // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(navigableMap) { // Note: navigableMap, not sortedMap, and not set
+	 *     for(Object o: set)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
 	 * <p>
 	 * The returned map will be serializable if the specified navigable map is
 	 * serializable.
@@ -368,6 +415,17 @@ final public class Collections3 {
 	 * <p>
 	 * Clients must manually synchronize on the returned map when iterating over
 	 * any of its collection views.
+	 * 
+	 * <pre>
+	 *  BoundedMap boundedMap = Collections3.synchronizedBoundedMap(unsynchronizedBoundedMap);
+	 *      ...
+	 *  Set set = boundedMap.keySet(); // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(boundedMap) { // Note: boundedMap, not set
+	 *     for(Object o: set)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
 	 * <p>
 	 * The returned bounded map will be serializable if the specified bounded
 	 * map is serializable.

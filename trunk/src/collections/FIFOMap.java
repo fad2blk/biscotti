@@ -65,11 +65,24 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 		return map;
 	}
 
+	/**
+	 * Associates the specified value with the specified key in this map,
+	 * removing the least recently inserted entry as necessary to prevent this
+	 * map from exceeding its capacity. If the map previously contained a
+	 * mapping for the key, the old value is replaced by the specified value.
+	 */
 	@Override
 	public V put(K key, V value) {
 		return super.put(key, value);
 	}
 
+	/**
+	 * Copies all of the mappings from the specified map to this map, removing
+	 * stale entries (according to their insertion order) as necessary to
+	 * prevent the map from exceeding its capacity. The effect of this call is
+	 * equivalent to that of calling {@code put(K, V)} on this map once for each
+	 * mapping in the specified map.
+	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
 		super.putAll(m);
