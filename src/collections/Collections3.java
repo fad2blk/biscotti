@@ -26,7 +26,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s.
+ * Static methods which operate on or return {@link Collection}s and {@code Map}
+ * s.
  * 
  * @author Zhenya Leonov
  */
@@ -742,22 +743,22 @@ final public class Collections3 {
 
 		public SortedSet<E> subSet(E fromElement, E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet.subSet(fromElement,
-						toElement), mutex);
+				return new SynchronizedSortedSet<E>(sortedSet.subSet(
+						fromElement, toElement), mutex);
 			}
 		}
 
 		public SortedSet<E> headSet(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet.headSet(toElement),
-						mutex);
+				return new SynchronizedSortedSet<E>(sortedSet
+						.headSet(toElement), mutex);
 			}
 		}
 
 		public SortedSet<E> tailSet(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet.tailSet(fromElement),
-						mutex);
+				return new SynchronizedSortedSet<E>(sortedSet
+						.tailSet(fromElement), mutex);
 			}
 		}
 
@@ -802,7 +803,8 @@ final public class Collections3 {
 
 		@Override
 		public NavigableSet<E> descendingSet() {
-			return new SynchronizedNavigableSet<E>(navigableSet.descendingSet(), mutex);
+			return new SynchronizedNavigableSet<E>(
+					navigableSet.descendingSet(), mutex);
 		}
 
 		@Override
@@ -812,8 +814,8 @@ final public class Collections3 {
 
 		@Override
 		public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.headSet(toElement,
-					inclusive), mutex);
+			return new SynchronizedNavigableSet<E>(navigableSet.headSet(
+					toElement, inclusive), mutex);
 		}
 
 		@Override
@@ -839,14 +841,14 @@ final public class Collections3 {
 		@Override
 		public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
 				E toElement, boolean toInclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.subSet(fromElement,
-					fromInclusive, toElement, toInclusive), mutex);
+			return new SynchronizedNavigableSet<E>(navigableSet.subSet(
+					fromElement, fromInclusive, toElement, toInclusive), mutex);
 		}
 
 		@Override
 		public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.tailSet(fromElement,
-					inclusive), mutex);
+			return new SynchronizedNavigableSet<E>(navigableSet.tailSet(
+					fromElement, inclusive), mutex);
 		}
 	}
 
@@ -998,21 +1000,22 @@ final public class Collections3 {
 
 		public SortedMap<K, V> subMap(K fromKey, K toKey) {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(sortedMap
-						.subMap(fromKey, toKey), mutex);
+				return new SynchronizedSortedMap<K, V>(sortedMap.subMap(
+						fromKey, toKey), mutex);
 			}
 		}
 
 		public SortedMap<K, V> headMap(K toKey) {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(sortedMap.headMap(toKey), mutex);
+				return new SynchronizedSortedMap<K, V>(
+						sortedMap.headMap(toKey), mutex);
 			}
 		}
 
 		public SortedMap<K, V> tailMap(K fromKey) {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(sortedMap.tailMap(fromKey),
-						mutex);
+				return new SynchronizedSortedMap<K, V>(sortedMap
+						.tailMap(fromKey), mutex);
 			}
 		}
 
@@ -1058,22 +1061,26 @@ final public class Collections3 {
 
 		@Override
 		public NavigableSet<K> descendingKeySet() {
-			return new SynchronizedNavigableSet<K>(navigableMap.descendingKeySet());
+			return new SynchronizedNavigableSet<K>(navigableMap
+					.descendingKeySet());
 		}
 
 		@Override
 		public NavigableMap<K, V> descendingMap() {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.descendingMap());
+			return new SynchronizedNavigableMap<K, V>(navigableMap
+					.descendingMap());
 		}
 
 		@Override
 		public java.util.Map.Entry<K, V> firstEntry() {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap.firstEntry());
+			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
+					.firstEntry());
 		}
 
 		@Override
 		public java.util.Map.Entry<K, V> floorEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap.floorEntry(key));
+			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
+					.floorEntry(key));
 		}
 
 		@Override
@@ -1083,8 +1090,8 @@ final public class Collections3 {
 
 		@Override
 		public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.headMap(toKey,
-					inclusive));
+			return new SynchronizedNavigableMap<K, V>(navigableMap.headMap(
+					toKey, inclusive));
 		}
 
 		@Override
@@ -1100,12 +1107,14 @@ final public class Collections3 {
 
 		@Override
 		public java.util.Map.Entry<K, V> lastEntry() {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap.lastEntry());
+			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
+					.lastEntry());
 		}
 
 		@Override
 		public java.util.Map.Entry<K, V> lowerEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap.lowerEntry(key));
+			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
+					.lowerEntry(key));
 		}
 
 		@Override
@@ -1115,7 +1124,8 @@ final public class Collections3 {
 
 		@Override
 		public NavigableSet<K> navigableKeySet() {
-			return new SynchronizedNavigableSet<K>(navigableMap.navigableKeySet(), mutex);
+			return new SynchronizedNavigableSet<K>(navigableMap
+					.navigableKeySet(), mutex);
 		}
 
 		@Override
@@ -1131,14 +1141,14 @@ final public class Collections3 {
 		@Override
 		public NavigableMap<K, V> subMap(K fromKey, boolean fromInclusive,
 				K toKey, boolean toInclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.subMap(fromKey,
-					fromInclusive, toKey, toInclusive), mutex);
+			return new SynchronizedNavigableMap<K, V>(navigableMap.subMap(
+					fromKey, fromInclusive, toKey, toInclusive), mutex);
 		}
 
 		@Override
 		public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.tailMap(fromKey,
-					inclusive), mutex);
+			return new SynchronizedNavigableMap<K, V>(navigableMap.tailMap(
+					fromKey, inclusive), mutex);
 		}
 	}
 

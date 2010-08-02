@@ -12,6 +12,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
+import base.Preconditions2;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -302,8 +304,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 	@Override
 	public E get(int index) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException(String.valueOf(index));
+		Preconditions.checkElementIndex(index, size);
 		Iterator<E> itor = iterator();
 		for (int i = 0; i < index; i++)
 			itor.next();
@@ -364,8 +365,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
-		if (index < 0 || index > size)
-			throw new IndexOutOfBoundsException(String.valueOf(index));
+		Preconditions.checkPositionIndex(index, size);
 		ListIterator<E> li = listIterator();
 		for (int i = 0; i < index; i++)
 			li.next();
@@ -389,8 +389,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 	@Override
 	public E remove(int index) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException(String.valueOf(index));
+		Preconditions.checkElementIndex(index, size);
 		ListIterator<E> li = listIterator(index);
 		E e = li.next();
 		li.remove();
@@ -430,7 +429,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	 */
 	@Override
 	public ImmutableList<E> subList(int fromIndex, int toIndex) {
-		Preconditions.checkPositionIndexes(fromIndex, toIndex, size);
+		Preconditions2.checkElementIndexes(fromIndex, toIndex, size);
 		ImmutableList.Builder<E> builder = ImmutableList.builder();
 		return builder.addAll(this).build().subList(fromIndex, toIndex);
 	}
@@ -942,8 +941,8 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	//
 	// }
 	//	
-	private static class SubList<E>  extends SortedList<E>{
-		
+	private static class SubList<E> extends SortedList<E> {
+
 		private final int offset;
 		private final SortedList<E> sl;
 		private int count;
@@ -1121,7 +1120,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		@Override
 		public void clear() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
