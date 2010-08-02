@@ -98,6 +98,11 @@ import com.google.common.base.Preconditions;
  *    <td align="center"><i>O(1)</i></td>
  *  </tr>
  * </table>
+ * <p>
+ * Note: This deque uses the same ordering rules as
+ * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
+ * provides identical functionality, faster overall running time and ordered
+ * traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -106,7 +111,7 @@ import com.google.common.base.Preconditions;
 final public class PriorityDeque<E> extends PriorityQueue<E> implements
 		Deque<E> {
 
-	private static final long serialVersionUID = 1889652812385028596L;
+	private static final long serialVersionUID = 1L;
 
 	private PriorityDeque(final Comparator<? super E> comparator) {
 		super(comparator);

@@ -53,50 +53,44 @@ import com.google.common.collect.Ordering;
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *  <tr>
- *    <th align="center">Method</th>
- *    <th align="center">Running Time</th>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #addAll(Collection)}<br>
- *      {@link #containsAll(Collection) containsAll(Collection)}</br>
- *      {@link #retainAll(Collection) retainAll(Collection)}</br>
- *      {@link #removeAll(Collection) removeAll(Collection)}
- *    </td>
- *    <td align="center"><i>O(m log n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #clear() clear()}<br>
- *    </td>
- *    <td align="center"><i>O(n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #add(Object) add(E)}</br>
- *      {@link #contains(Object)}</br>
- *      {@link #offer(Object) offer(E)}</br>
- *      {@link #remove(Object)}</br>
- *    </td>
- *    <td align="center"><i>O(log n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #element() element()}</br>
- *      {@link #isEmpty() isEmpty()}</br>
- *      {@link #peek()}</br>
- *      {@link #poll()}</br>
- *      {@link #remove() remove()}</br>
- *      {@link #size()}<br>
- *    </td>
- *    <td align="center"><i>O(1)</i></td>
- *  </tr>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection)}<br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}</td>
+ *     <td align="center"><i>O(m log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}<br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ *       {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
+ *     <td align="center"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
+ *       {@link #size()}<br>
+ *     </td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * <p>
- * Note: This queue can be substituted for {@link java.util.PriorityQueue
- * java.util.PriorityQueue}. In comparison it provides identical functionality,
- * faster overall running time and ordered traversals via its iterators.
+ * Note: This queue uses the same ordering rules as
+ * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
+ * provides identical functionality, faster overall running time and ordered
+ * traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -112,7 +106,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
 	transient protected Comparator<? super E> comparator;
-	private static final long serialVersionUID = -2563263556607778563L;
+	private static final long serialVersionUID = 1L;
 
 	protected PriorityQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)

@@ -38,7 +38,8 @@ final class UnmodifiableNavigableMap<K, V> extends ForwardingNavigableMap<K, V>
 
 	@Override
 	public NavigableSet<K> descendingKeySet() {
-		return Sets2.unmodifiableNavigableSet(delegate().descendingKeySet());
+		return Collections3.unmodifiableNavigableSet(delegate()
+				.descendingKeySet());
 	}
 
 	@Override
@@ -89,7 +90,8 @@ final class UnmodifiableNavigableMap<K, V> extends ForwardingNavigableMap<K, V>
 
 	@Override
 	public NavigableSet<K> navigableKeySet() {
-		return Sets2.unmodifiableNavigableSet(delegate().navigableKeySet());
+		return Collections3.unmodifiableNavigableSet(delegate()
+				.navigableKeySet());
 	}
 
 	@Override

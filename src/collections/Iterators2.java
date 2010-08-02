@@ -2,10 +2,12 @@ package collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 
 import com.google.common.base.Function;
@@ -362,8 +364,32 @@ public final class Iterators2 {
 	}
 
 	/**
+	 * Returns an {@code Iterator} over the specified {@code Collection} in
+	 * reverse sequential order. If the specified collection is an instance of
+	 * {@code Deque} or {@code NavigableSet} the iterator is obtained by
+	 * invoking the {@code descendingIterator()} method, else an unmodifiable
+	 * iterator is returned by calling the {@code reverseOrder(Iterator)}
+	 * method.
+	 * 
+	 * @param c
+	 *            the specified collection
+	 * @return an iterator over the specified collection in reverse sequential
+	 *         order
+	 */
+	public static <E> Iterator<E> reverseOrder(final Collection<? extends E> c) {
+		checkNotNull(c);
+		if (c instanceof Deque<?>)
+			return ((Deque) c).descendingIterator();
+		if (c instanceof NavigableSet<?>)
+			return ((NavigableSet) c).descendingIterator();
+		else
+			return reverseOrder(c.iterator());
+
+	}
+
+	/**
 	 * Returns an {@code UnmodifiableIterator} which reverses the iteration
-	 * order of the underlying {@code Iterator}. The underlying iterator must be
+	 * order of the specified {@code Iterator}. The underlying iterator must be
 	 * non-blocking and finite, because it is necessary to iterate through all
 	 * its elements on startup.
 	 * 
