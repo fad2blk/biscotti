@@ -111,6 +111,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		Preconditions.checkNotNull(c);
+		Preconditions.checkState(c != this);
 		boolean returnValue = false;
 		for (E element : c)
 			if (add(element))
@@ -121,6 +122,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	@Override
 	public boolean offerAll(Collection<? extends E> c) {
 		Preconditions.checkNotNull(c);
+		Preconditions.checkState(c != this);
 		boolean returnValue = false;
 		for (E element : c)
 			if (offer(element))

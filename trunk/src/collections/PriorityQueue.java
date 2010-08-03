@@ -190,7 +190,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	 * @return the comparator used to order this queue
 	 */
 	public Comparator<? super E> comparator() {
-		return comparator == Ordering.natural() ? null : comparator;
+		return comparator;
 	}
 
 	@Override
