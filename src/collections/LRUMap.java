@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
- * stale mappings in <i>access/least-recently-used</i> (LRU) order.
+ * stale mappings in <i>access/least-recently-used</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
@@ -68,9 +68,9 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 
 	/**
 	 * Associates the specified value with the specified key in this map,
-	 * removing the least recently used entry as necessary to prevent this map
-	 * from exceeding its capacity. If the map previously contained a mapping
-	 * for the key, the old value is replaced by the specified value.
+	 * removing the <i>least-recently-used</i> entry as necessary to prevent
+	 * this map from exceeding its capacity. If the map previously contained a
+	 * mapping for the key, the old value is replaced by the specified value.
 	 */
 	@Override
 	public V put(K key, V value) {

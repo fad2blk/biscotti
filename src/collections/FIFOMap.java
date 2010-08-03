@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
- * stale mappings in <i>insertion/first-in-first-out</i> (FIFO) order.
+ * stale mappings in <i>insertion/first-in-first-out</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
@@ -67,8 +67,8 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 
 	/**
 	 * Associates the specified value with the specified key in this map,
-	 * removing the least recently inserted entry as necessary to prevent this
-	 * map from exceeding its capacity. If the map previously contained a
+	 * removing the <i>least-recently-inserted</i> entry as necessary to prevent
+	 * this map from exceeding its capacity. If the map previously contained a
 	 * mapping for the key, the old value is replaced by the specified value.
 	 */
 	@Override

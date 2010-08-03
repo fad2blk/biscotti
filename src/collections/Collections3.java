@@ -284,15 +284,14 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> (LRU) {@code
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
 	 * LinkedHashMap}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
 	 * @param <V>
 	 *            the type of mapped values
-	 * @return a new <i>access-order/least-recently-used</i> (LRU) {@code
-	 *         LinkedHashMap}
+	 * @return a new (LRU) {@code LinkedHashMap}
 	 * @see LinkedHashMap
 	 */
 	public static <K, V> Map<K, V> newAccessOrderMap() {
@@ -300,7 +299,7 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> (LRU) {@code
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
 	 * LinkedHashMap} with the same mappings as the provided {@code Map}.
 	 * 
 	 * @param <K>
@@ -309,8 +308,8 @@ final public class Collections3 {
 	 *            the type of mapped values
 	 * @param m
 	 *            the given {@code Map}
-	 * @return a new <i>access-order/least-recently-used</i> (LRU) {@code
-	 *         LinkedHashMap} with the same mappings as the provided {@code Map}
+	 * @return a new (LRU) {@code LinkedHashMap} with the same mappings as the
+	 *         provided {@code Map}
 	 * @see LinkedHashMap
 	 */
 	public static <K, V> Map<K, V> newAccessOrderMap(
@@ -323,7 +322,7 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> (LRU) {@code
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
 	 * LinkedHashMap} with the specified initial capacity.
 	 * 
 	 * @param <K>
@@ -332,8 +331,7 @@ final public class Collections3 {
 	 *            the type of mapped values
 	 * @param initialCapacity
 	 *            the initial capacity
-	 * @return a new <i>access-order/least-recently-used</i> (LRU) {@code
-	 *         LinkedHashMap} with the specified initial capacity
+	 * @return a (LRU) {@code LinkedHashMap} with the specified initial capacity
 	 * @see LinkedHashMap
 	 */
 	public static <K, V> Map<K, V> newAccessOrderMapWithInitialCapacity(
