@@ -93,12 +93,11 @@ final public class Preconditions2 {
 	}
 
 	/**
-	 * Ensures that {@code start} and {@code end} specify a valid
-	 * <i>positions</i> in an array, list or string of size {@code size}, and
-	 * are in order. A position index may range from zero, inclusive, to {@code
-	 * size}, <b>exclusive</b>. This method differs from {@code
-	 * Preconditions.checkPositionIndexes(int, int, int)} because the {@code
-	 * size} argument is exclusive not inclusive.
+	 * Ensures that {@code start} and {@code end} specify a valid <i>range</i>
+	 * in an array or list of size {@code size}. An index may range from zero,
+	 * inclusive, to {@code size}, <b>exclusive</b>. This method differs from
+	 * {@code Preconditions.checkPositionIndexes(int, int, int)} because the
+	 * {@code size} argument is exclusive not inclusive.
 	 * 
 	 * @param start
 	 *            a user-supplied index identifying a starting position in an
@@ -113,6 +112,7 @@ final public class Preconditions2 {
 	 *             or if {@code end} is less than {@code start}
 	 * @throws IllegalArgumentException
 	 *             if {@code size} is negative
+	 * @see Preconditions#checkPositionIndexes(int, int, int)
 	 */
 	public static void checkElementIndexes(int start, int end, int size) {
 		if (size < 0)
