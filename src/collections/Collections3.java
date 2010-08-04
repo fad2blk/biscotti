@@ -23,8 +23,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}
- * s.
+ * Static methods which operate on or return {@link Collection}s and {@link Map}s.
  * 
  * @author Zhenya Leonov
  */
