@@ -795,8 +795,7 @@ final public class Collections3 {
 		public Collection<V> values() {
 			synchronized (mutex) {
 				if (values == null)
-					values = new Collections3.SynchronizedCollection<V>(m
-							.values(), mutex);
+					values = new SynchronizedCollection<V>(m.values(), mutex);
 				return values;
 			}
 		}
@@ -884,24 +883,24 @@ final public class Collections3 {
 	static class SynchronizedBoundedMap<K, V> extends SynchronizedMap<K, V>
 			implements BoundedMap<K, V> {
 		private static final long serialVersionUID = 1L;
-		private final BoundedMap<K, V> map;
+		private final BoundedMap<K, V> boundedMap;
 
-		SynchronizedBoundedMap(BoundedMap<K, V> map) {
-			super(map);
-			this.map = map;
+		SynchronizedBoundedMap(BoundedMap<K, V> boundedMap) {
+			super(boundedMap);
+			this.boundedMap = boundedMap;
 		}
 
 		@Override
 		public int maxSize() {
 			synchronized (mutex) {
-				return map.maxSize();
+				return boundedMap.maxSize();
 			}
 		}
 
 		@Override
 		public int remainingCapacity() {
 			synchronized (mutex) {
-				return map.remainingCapacity();
+				return boundedMap.remainingCapacity();
 			}
 		}
 	}
