@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,8 +14,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
@@ -223,67 +220,6 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Returns an unmodifiable view of the specified {@code NavigableSet}.
-	 * Attempts to modify the returned set directly, via its iterator, or via
-	 * its {@code subSet}, {@code headSet}, {@code tailSet}, or {@code
-	 * descendingSet} views, result in {@code UnsupportedOperationException}s.
-	 * <p>
-	 * The returned set will be serializable if the specified navigable set is
-	 * serializable.
-	 * 
-	 * @param navigableSet
-	 *            the specified navigable set
-	 * @return an unmodifiable view of the given navigable set
-	 */
-	public static <E> NavigableSet<E> unmodifiableNavigableSet(
-			final NavigableSet<? extends E> navigableSet) {
-		return new UnmodifiableNavigableSet<E>(navigableSet);
-	}
-
-	/**
-	 * Returns a synchronized (thread-safe) {@code NavigableSet} backed by the
-	 * specified navigable set. In order to guarantee serial access, it is
-	 * critical that <b>all</b> access to the backing set is accomplished
-	 * through the returned navigable set (or its views).
-	 * <p>
-	 * Clients must manually synchronize on the returned set when iterating over
-	 * it or any of its {@code subSet}, {@code headSet}, {@code tailSet}, or
-	 * {@code descendingSet} views.
-	 * 
-	 * <pre>
-	 *  NavigableSet navigableSet = Collections3.synchronizedNavigableSet(unsynchronizedNavigableSet);
-	 *      ...
-	 *  synchronized(navigableSet) {
-	 *     for(Object o: navigableSet)  // Must be in synchronized block
-	 *        foo(o);
-	 *  }
-	 * </pre>
-	 * 
-	 * or:
-	 * 
-	 * <pre>
-	 *  NavigableSet navigableSet = Collections3.synchronizedNavigableSet(unsynchronizedNavigableSet);
-	 *  SortedSet sortedSet = navigableSet.headSet(element);
-	 *      ...
-	 *  synchronized(navigableSet) { // Note: navigableSet, not sortedSet
-	 *     for(Object o: sortedSet)  // Must be in synchronized block
-	 *        foo(o);
-	 *  }
-	 * </pre>
-	 * <p>
-	 * The returned set will be serializable if the specified set is
-	 * serializable.
-	 * 
-	 * @param navigableSet
-	 *            the specified navigable set to be synchronized
-	 * @return a synchronized view of the specified navigable set
-	 */
-	public static <E> NavigableSet<E> synchronizedNavigableSet(
-			final NavigableSet<E> navigableSet) {
-		return new SynchronizedNavigableSet<E>(navigableSet);
-	}
-
-	/**
 	 * Creates a new <i>access-order/least-recently-used</i> {@code
 	 * LinkedHashMap}.
 	 * 
@@ -338,71 +274,6 @@ final public class Collections3 {
 			final int initialCapacity) {
 		checkArgument(initialCapacity >= 0);
 		return new LinkedHashMap<K, V>(initialCapacity, .75F, true);
-	}
-
-	/**
-	 * Returns an unmodifiable view of the specified {@code NavigableMap}.
-	 * Attempts to modify the returned map directly, via its collection views,
-	 * or via its {@code subSet}, {@code headSet}, or {@code tailSet} views,
-	 * will result in {@code UnsupportedOperationException}s.
-	 * <p>
-	 * The returned map will be serializable if the specified navigable map is
-	 * serializable.
-	 * 
-	 * @param navigableMap
-	 *            the given navigable map
-	 * @return an unmodifiable view of the given navigable map
-	 */
-	public static <K, V> NavigableMap<K, V> unmodifiableNavigableMap(
-			final NavigableMap<? extends K, ? extends V> navigableMap) {
-		return new UnmodifiableNavigableMap<K, V>(navigableMap);
-	}
-
-	/**
-	 * Returns a synchronized (thread-safe) {@code NavigableMap} backed by the
-	 * specified navigable map. In order to guarantee serial access, it is
-	 * critical that <b>all</b> access to the backing map is accomplished
-	 * through the returned map (or its views).
-	 * <p>
-	 * Clients must manually synchronize on the returned navigable map when
-	 * iterating over any of its collection views, or the collections views of
-	 * any of its {@code subMap}, {@code headMap} or {@code tailMap} views.
-	 * 
-	 * <pre>
-	 *  NavigableMap navigableMap = Collections3.synchronizedNavigableMap(unsynchronizedNavigableMap);
-	 *      ...
-	 *  Set set = navigableMap.keySet(); // Needn't be in synchronized block
-	 *      ...
-	 *  synchronized(navigableMap) { // Note navigableMap not set
-	 *     for(Object o: set)  // Must be in synchronized block
-	 *        foo(o);
-	 *  }
-	 * </pre>
-	 * 
-	 * or:
-	 * 
-	 * <pre>
-	 *  NavigableMap navigableMap = Collections3.synchronizedNavigableMap(unsynchronizedNavigableMap);
-	 *  SortedMap sortedMap = navigableMap.subMap(element, element2);
-	 *      ...
-	 *  Set set = sortedMap.keySet(); // Needn't be in synchronized block
-	 *      ...
-	 *  synchronized(navigableMap) { // Note: navigableMap, not sortedMap, and not set
-	 *     for(Object o: set)  // Must be in synchronized block
-	 *        foo(o);
-	 *  }
-	 * </pre>
-	 * <p>
-	 * The returned map will be serializable if the specified navigable map is
-	 * serializable.
-	 * 
-	 * @param navigableMap
-	 *            the specified map to synchronize
-	 * @return a synchronized view of the specified {@code NavigableMap}
-	 */
-	public static <K, V> NavigableMap<K, V> synchronizedNavigableMap(
-			final NavigableMap<K, V> navigableMap) {
-		return new SynchronizedNavigableMap<K, V>(navigableMap);
 	}
 
 	/**
@@ -750,8 +621,8 @@ final public class Collections3 {
 		}
 	}
 
-	static class SynchronizedSet<E> extends
-			Collections3.SynchronizedCollection<E> implements Set<E> {
+	static class SynchronizedSet<E> extends SynchronizedCollection<E> implements
+			Set<E> {
 		private static final long serialVersionUID = 487447009682186044L;
 
 		SynchronizedSet(Set<E> set) {
@@ -827,83 +698,6 @@ final public class Collections3 {
 			synchronized (mutex) {
 				return sortedSet.last();
 			}
-		}
-	}
-
-	final static class SynchronizedNavigableSet<E> extends
-			SynchronizedSortedSet<E> implements NavigableSet<E> {
-		private static final long serialVersionUID = 1L;
-		private final NavigableSet<E> navigableSet;
-
-		SynchronizedNavigableSet(final NavigableSet<E> navigableSet) {
-			super(Preconditions.checkNotNull(navigableSet));
-			this.navigableSet = navigableSet;
-		}
-
-		SynchronizedNavigableSet(final NavigableSet<E> ns, final Object mutex) {
-			super(Preconditions.checkNotNull(ns), Preconditions
-					.checkNotNull(mutex));
-			this.navigableSet = ns;
-		}
-
-		@Override
-		public E ceiling(E e) {
-			return navigableSet.ceiling(e);
-		}
-
-		@Override
-		public Iterator<E> descendingIterator() {
-			return navigableSet.descendingIterator();
-		}
-
-		@Override
-		public NavigableSet<E> descendingSet() {
-			return new SynchronizedNavigableSet<E>(
-					navigableSet.descendingSet(), mutex);
-		}
-
-		@Override
-		public E floor(E e) {
-			return navigableSet.floor(e);
-		}
-
-		@Override
-		public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.headSet(
-					toElement, inclusive), mutex);
-		}
-
-		@Override
-		public E higher(E e) {
-			return navigableSet.higher(e);
-		}
-
-		@Override
-		public E lower(E e) {
-			return navigableSet.lower(e);
-		}
-
-		@Override
-		public E pollFirst() {
-			return navigableSet.pollFirst();
-		}
-
-		@Override
-		public E pollLast() {
-			return navigableSet.pollLast();
-		}
-
-		@Override
-		public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
-				E toElement, boolean toInclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.subSet(
-					fromElement, fromInclusive, toElement, toInclusive), mutex);
-		}
-
-		@Override
-		public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-			return new SynchronizedNavigableSet<E>(navigableSet.tailSet(
-					fromElement, inclusive), mutex);
 		}
 	}
 
@@ -1087,147 +881,27 @@ final public class Collections3 {
 		}
 	}
 
-	static final class SynchronizedNavigableMap<K, V> extends
-			SynchronizedSortedMap<K, V> implements NavigableMap<K, V> {
-		private static final long serialVersionUID = 1L;
-		private final NavigableMap<K, V> navigableMap;
-
-		SynchronizedNavigableMap(NavigableMap<K, V> navigableMap) {
-			super(Preconditions.checkNotNull(navigableMap));
-			this.navigableMap = navigableMap;
-		}
-
-		SynchronizedNavigableMap(NavigableMap<K, V> m, Object mutex) {
-			super(Preconditions.checkNotNull(m), Preconditions
-					.checkNotNull(mutex));
-			this.navigableMap = m;
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> ceilingEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.ceilingEntry(key));
-		}
-
-		@Override
-		public K ceilingKey(K key) {
-			return navigableMap.ceilingKey(key);
-		}
-
-		@Override
-		public NavigableSet<K> descendingKeySet() {
-			return new SynchronizedNavigableSet<K>(navigableMap
-					.descendingKeySet());
-		}
-
-		@Override
-		public NavigableMap<K, V> descendingMap() {
-			return new SynchronizedNavigableMap<K, V>(navigableMap
-					.descendingMap());
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> firstEntry() {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.firstEntry());
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> floorEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.floorEntry(key));
-		}
-
-		@Override
-		public K floorKey(K key) {
-			return navigableMap.floorKey(key);
-		}
-
-		@Override
-		public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.headMap(
-					toKey, inclusive));
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> higherEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.higherEntry(key));
-		}
-
-		@Override
-		public K higherKey(K key) {
-			return navigableMap.higherKey(key);
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> lastEntry() {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.lastEntry());
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> lowerEntry(K key) {
-			return new AbstractMap.SimpleImmutableEntry<K, V>(navigableMap
-					.lowerEntry(key));
-		}
-
-		@Override
-		public K lowerKey(K key) {
-			return navigableMap.lowerKey(key);
-		}
-
-		@Override
-		public NavigableSet<K> navigableKeySet() {
-			return new SynchronizedNavigableSet<K>(navigableMap
-					.navigableKeySet(), mutex);
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> pollFirstEntry() {
-			return navigableMap.pollFirstEntry();
-		}
-
-		@Override
-		public java.util.Map.Entry<K, V> pollLastEntry() {
-			return navigableMap.pollLastEntry();
-		}
-
-		@Override
-		public NavigableMap<K, V> subMap(K fromKey, boolean fromInclusive,
-				K toKey, boolean toInclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.subMap(
-					fromKey, fromInclusive, toKey, toInclusive), mutex);
-		}
-
-		@Override
-		public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
-			return new SynchronizedNavigableMap<K, V>(navigableMap.tailMap(
-					fromKey, inclusive), mutex);
-		}
-	}
-
 	static class SynchronizedBoundedMap<K, V> extends SynchronizedMap<K, V>
 			implements BoundedMap<K, V> {
 		private static final long serialVersionUID = 1L;
-		private final BoundedMap<K, V> boundedMap;
+		private final BoundedMap<K, V> map;
 
-		SynchronizedBoundedMap(BoundedMap<K, V> boundedMap) {
-			super(boundedMap);
-			this.boundedMap = boundedMap;
+		SynchronizedBoundedMap(BoundedMap<K, V> map) {
+			super(map);
+			this.map = map;
 		}
 
 		@Override
 		public int maxSize() {
 			synchronized (mutex) {
-				return boundedMap.maxSize();
+				return map.maxSize();
 			}
 		}
 
 		@Override
 		public int remainingCapacity() {
 			synchronized (mutex) {
-				return boundedMap.remainingCapacity();
+				return map.remainingCapacity();
 			}
 		}
 	}
