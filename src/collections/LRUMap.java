@@ -69,8 +69,8 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	/**
 	 * Associates the specified value with the specified key in this map,
 	 * removing the <i>least-recently-used</i> entry as necessary to prevent
-	 * this map from exceeding its capacity. If the map previously contained a
-	 * mapping for the key, the old value is replaced by the specified value.
+	 * this map from overflowing. If the map previously contained a mapping for
+	 * the key, the old value is replaced by the specified value.
 	 */
 	@Override
 	public V put(K key, V value) {
@@ -80,9 +80,9 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	/**
 	 * Copies all of the mappings from the specified map to this map, removing
 	 * stale entries (according to their access order) as necessary to prevent
-	 * the map from exceeding its capacity. The effect of this call is
-	 * equivalent to that of calling {@code put(K, V)} on this map once for each
-	 * mapping in the specified map.
+	 * the map from overflowing. The effect of this call is equivalent to that
+	 * of calling {@code put(K, V)} on this map once for each mapping in the
+	 * specified map.
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {

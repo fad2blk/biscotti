@@ -80,7 +80,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	/**
 	 * Inserts the specified element into this queue, removing the
 	 * <i>least-recently-inserted</i> element as necessary to prevent the queue
-	 * from exceeding its capacity.
+	 * from overflowing.
 	 */
 	public boolean add(E e) {
 		return offer(e); // will always return true
@@ -89,7 +89,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	/**
 	 * Inserts the specified element into this queue, removing the least
 	 * recently inserted element as necessary to prevent the queue from
-	 * exceeding its capacity.
+	 * overflowing.
 	 */
 	@Override
 	public boolean offer(E e) {
@@ -101,7 +101,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	/**
 	 * Adds all of the elements in the specified collection to this queue,
 	 * removing stale elements (according to their insertion order) as necessary
-	 * to prevent the queue from exceeding its capacity.
+	 * to prevent the queue from overflowing.
 	 * 
 	 * @see Collection#add(Object) add(E)
 	 */

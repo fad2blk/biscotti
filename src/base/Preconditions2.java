@@ -101,11 +101,11 @@ final public class Preconditions2 {
 	 * {@code size} argument is exclusive; not inclusive.
 	 * 
 	 * @param start
-	 *            a user-supplied index identifying a starting position in an
-	 *            array, list or string
+	 *            a user-supplied index identifying an element in an array or
+	 *            list
 	 * @param end
-	 *            a user-supplied index identifying a ending position in an
-	 *            array, list or string
+	 *            a user-supplied index identifying an element in an array or
+	 *            list
 	 * @param size
 	 *            the size of that array, list or string
 	 * @throws IndexOutOfBoundsException
@@ -113,7 +113,6 @@ final public class Preconditions2 {
 	 *             or if {@code end} is less than {@code start}
 	 * @throws IllegalArgumentException
 	 *             if {@code size} is negative
-	 * @see Preconditions#checkPositionIndexes(int, int, int)
 	 */
 	public static void checkElementIndexes(int start, int end, int size) {
 		if (size < 0)
