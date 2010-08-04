@@ -1,6 +1,5 @@
 package collections;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -29,9 +28,8 @@ import com.google.common.collect.Lists;
  * @see LinkedList
  */
 public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
-		BoundedQueue<E>, Serializable {
+		BoundedQueue<E> {
 
-	private static final long serialVersionUID = 1L;
 	private final Queue<E> queue;
 	private final int maxSize;
 
@@ -80,13 +78,12 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * Inserts the specified element into this queue, removing the least
-	 * recently inserted element as necessary to prevent the queue from
-	 * exceeding its capacity.
+	 * Inserts the specified element into this queue, removing the
+	 * <i>least-recently-inserted</i> element as necessary to prevent the queue
+	 * from exceeding its capacity.
 	 */
 	public boolean add(E e) {
-		Preconditions.checkState(offer(e), "Queue full");
-		return true;
+		return offer(e); // will always return true
 	}
 
 	/**
