@@ -93,11 +93,12 @@ final public class Preconditions2 {
 	}
 
 	/**
-	 * Ensures that {@code start} and {@code end} specify a valid <i>range</i>
-	 * in an array or list of size {@code size}. An index may range from zero,
-	 * inclusive, to {@code size}, <b>exclusive</b>. This method differs from
-	 * {@code Preconditions.checkPositionIndexes(int, int, int)} because the
-	 * {@code size} argument is exclusive not inclusive.
+	 * Ensures that {@code start} and {@code end} specify valid <i>elements</i>
+	 * in an array or list of size {@code size}, and are in order. An element
+	 * index may range from zero, inclusive, to {@code size}, <b>exclusive</b>.
+	 * This method differs from
+	 * {@link Preconditions#checkPositionIndexes(int, int, int)} because the
+	 * {@code size} argument is exclusive; not inclusive.
 	 * 
 	 * @param start
 	 *            a user-supplied index identifying a starting position in an
