@@ -416,7 +416,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 		}
 	}
 
-	private Node successor(Node node) {
+	private Node successor(final Node node) {
 		if (node == null)
 			return null;
 		else if (node.right != null) {
@@ -435,7 +435,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 		}
 	}
 
-	protected Node predecessor(Node node) {
+	protected Node predecessor(final Node node) {
 		if (node == null)
 			return null;
 		else if (node.left != null) {
