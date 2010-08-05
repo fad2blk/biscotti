@@ -19,6 +19,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * A <i>sorted</i> {@link List} based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
@@ -95,17 +97,17 @@ import com.google.common.collect.Ordering;
 public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		Serializable {
 
-	private static final long serialVersionUID = 1L;
 	private int size = 0;
 	private Node max = null;
 	private Node min = null;
 	private Node root = null;
-	private int count = 0;
+	transient protected int modCount = 0;
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
-	private Comparator<? super E> comparator;
+	transient private Comparator<? super E> comparator;
+	private static final long serialVersionUID = 1L;
 
-	protected SortedList() {
+	private SortedList() {
 	};
 
 	private SortedList(final Comparator<? super E> comparator) {
@@ -226,7 +228,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 				min = newNode;
 		}
 		size++;
-		count++;
+		modCount++;
 		return true;
 	}
 
@@ -353,7 +355,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
-		return new ListItor(0);
+		return new ListItor();
 	}
 
 	/**
@@ -413,11 +415,9 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	}
 
 	/**
-	 * Returns an unmodifiable view of the portion of this list between the
+	 * Returns an unmodifiable copy of the portion of this list between the
 	 * specified {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.
-	 * (If fromIndex and toIndex are equal, the returned list is empty.) The
-	 * returned list is not backed by this list, changes in to this list are not
-	 * reflected in the returned list.
+	 * (If fromIndex and toIndex are equal, the returned list is empty.)
 	 * 
 	 * @param fromIndex
 	 *            {@inheritDoc}
@@ -427,10 +427,9 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	 *             {@inheritDoc}
 	 */
 	@Override
-	public ImmutableList<E> subList(int fromIndex, int toIndex) {
+	public List<E> subList(int fromIndex, int toIndex) {
 		Preconditions2.checkElementIndexes(fromIndex, toIndex, size);
-		ImmutableList.Builder<E> builder = ImmutableList.builder();
-		return builder.addAll(this).build().subList(fromIndex, toIndex);
+		return new SubList(this, fromIndex, toIndex);
 	}
 
 	// serializable object
@@ -454,17 +453,21 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	}
 
 	private class ListItor implements ListIterator<E> {
-		int start;
 		int index = 0;
+		int size = size();
 		Node next = min;
 		Node prev = null;
 		Node last = null;
-		int count = SortedList.this.count;
+		int expectedModCount = modCount;
+		
+		ListItor(){};
 
-		ListItor(int start) {
-			this.start = start;
+		ListItor(int fromIndex, int size){
+			for(int i = 0; i < fromIndex; i++)
+				next = successor(next);
+			this.size = size-1;
 		}
-
+		
 		@Override
 		public void add(E e) {
 			throw new UnsupportedOperationException();
@@ -477,7 +480,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 		@Override
 		public boolean hasPrevious() {
-			return index > start;
+			return index > 0;
 		}
 
 		@Override
@@ -499,7 +502,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 		@Override
 		public E previous() {
-			if (index == start)
+			if (index == 0)
 				throw new NoSuchElementException();
 			checkForConcurrentModification();
 			Node node = next = prev;
@@ -516,14 +519,13 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 		@Override
 		public void remove() {
-			if (last == null)
-				throw new IllegalStateException();
+			checkState(last != null);
 			checkForConcurrentModification();
 			if (last.left != null && last.right != null)
 				next = last;
 			delete(last);
 			index--;
-			count = SortedList.this.count;
+			expectedModCount = modCount;
 			last = null;
 		}
 
@@ -533,7 +535,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		}
 
 		private void checkForConcurrentModification() {
-			if (count != SortedList.this.count)
+			if (expectedModCount != modCount)
 				throw new ConcurrentModificationException();
 		}
 	}
@@ -569,7 +571,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 
 	protected void delete(Node node) {
 		size--;
-		count++;
+		modCount++;
 		if (max == node)
 			max = predecessor(node);
 		if (min == node)
@@ -606,7 +608,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		}
 	}
 
-	private Node successor(Node node) {
+	private Node successor(final Node node) {
 		if (node == null)
 			return null;
 		else if (node.right != null) {
@@ -625,7 +627,7 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 		}
 	}
 
-	protected Node predecessor(Node node) {
+	protected Node predecessor(final Node node) {
 		if (node == null)
 			return null;
 		else if (node.left != null) {
@@ -797,5 +799,178 @@ public class SortedList<E> extends AbstractCollection<E> implements List<E>,
 	private Node rightOf(final Node p) {
 		return (p == null) ? null : p.right;
 	}
-	
+
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @author Administrator
+	 * 
+	 * @param <E>
+	 */
+	private class SubList extends SortedList<E> {
+
+		private final SortedList<E> sortedList;
+		private int offset;
+		private int size;
+		protected int modCount;
+
+		SubList(SortedList<E> list, int start, int end) {
+			sortedList = list;
+			modCount = sortedList.modCount;
+			offset = start;
+			size = end - start;
+		}
+
+		private void checkForConcurrentModification() {
+			if (modCount != sortedList.modCount)
+				throw new ConcurrentModificationException();
+		}
+
+		@Override
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(int index, E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E get(int index) {
+			checkForConcurrentModification();
+			checkElementIndex(index, size);
+			return sortedList.get(index + offset);
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			return listIterator(0);
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			checkForConcurrentModification();
+			checkElementIndex(index, size);
+			return new ListItor(offset, size);
+		}
+
+		@Override
+		public E remove(int index) {
+			checkForConcurrentModification();
+			checkElementIndex(index, size);
+			E e = sortedList.remove(index + offset);
+			modCount = sortedList.modCount;
+			size--;
+			return e;
+		}
+
+		@Override
+		public E set(int index, E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int size() {
+			checkForConcurrentModification();
+			return size;
+		}
+
+		@Override
+		public boolean contains(Object o) {
+			if (o != null) {
+				for (E e : this)
+					if (e.equals(o))
+						return true;
+			}
+			return false;
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			return super.indexOf(o);
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			return super.lastIndexOf(o);
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return listIterator(0);
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			checkNotNull(o);
+			if(contains(o)){ 
+				sortedList.remove(o);
+				size--;
+				modCount = sortedList.modCount;
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public List<E> subList(int fromIndex, int toIndex) {
+			Preconditions2.checkElementIndexes(fromIndex, toIndex, size);
+			return new SubList(this, fromIndex, toIndex);
+		}
+
+	}
+
 }
