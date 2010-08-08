@@ -3,13 +3,12 @@ package collections;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.google.common.base.Preconditions;
 
-public class TreeCollection<E> extends AbstractCollection<E>{
+public class AbstractTreeCollection<E> extends AbstractCollection<E>{
 
 	private int size = 0;
 	protected Node max = null;

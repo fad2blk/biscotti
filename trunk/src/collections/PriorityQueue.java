@@ -105,7 +105,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	transient protected int count = 0;
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
-	transient protected Comparator<? super E> comparator;
+	transient private Comparator<? super E> comparator;
 	private static final long serialVersionUID = 1L;
 
 	protected PriorityQueue(final Comparator<? super E> comparator) {
