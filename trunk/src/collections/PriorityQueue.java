@@ -493,37 +493,37 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	private void fixAfterInsertion(Node node) {
 		node.color = RED;
 		while (node != null && node != root && node.parent.color == RED) {
-			if (parentOf(node) == leftOf(parentOf(parentOf(node)))) {
-				Node y = rightOf(parentOf(parentOf(node)));
-				if (colorOf(y) == RED) {
-					setColor(parentOf(node), BLACK);
+			if (getParent(node) == getLeftChild(getParent(getParent(node)))) {
+				Node y = getRightChild(getParent(getParent(node)));
+				if (getColor(y) == RED) {
+					setColor(getParent(node), BLACK);
 					setColor(y, BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					node = parentOf(parentOf(node));
+					setColor(getParent(getParent(node)), RED);
+					node = getParent(getParent(node));
 				} else {
-					if (node == rightOf(parentOf(node))) {
-						node = parentOf(node);
+					if (node == getRightChild(getParent(node))) {
+						node = getParent(node);
 						rotateLeft(node);
 					}
-					setColor(parentOf(node), BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					rotateRight(parentOf(parentOf(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getParent(getParent(node)), RED);
+					rotateRight(getParent(getParent(node)));
 				}
 			} else {
-				Node y = leftOf(parentOf(parentOf(node)));
-				if (colorOf(y) == RED) {
-					setColor(parentOf(node), BLACK);
+				Node y = getLeftChild(getParent(getParent(node)));
+				if (getColor(y) == RED) {
+					setColor(getParent(node), BLACK);
 					setColor(y, BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					node = parentOf(parentOf(node));
+					setColor(getParent(getParent(node)), RED);
+					node = getParent(getParent(node));
 				} else {
-					if (node == leftOf(parentOf(node))) {
-						node = parentOf(node);
+					if (node == getLeftChild(getParent(node))) {
+						node = getParent(node);
 						rotateRight(node);
 					}
-					setColor(parentOf(node), BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					rotateLeft(parentOf(parentOf(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getParent(getParent(node)), RED);
+					rotateLeft(getParent(getParent(node)));
 				}
 			}
 		}
@@ -531,55 +531,55 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	}
 
 	private void fixAfterDeletion(Node node) {
-		while (node != root && colorOf(node) == BLACK) {
-			if (node == leftOf(parentOf(node))) {
-				Node sib = rightOf(parentOf(node));
-				if (colorOf(sib) == RED) {
+		while (node != root && getColor(node) == BLACK) {
+			if (node == getLeftChild(getParent(node))) {
+				Node sib = getRightChild(getParent(node));
+				if (getColor(sib) == RED) {
 					setColor(sib, BLACK);
-					setColor(parentOf(node), RED);
-					rotateLeft(parentOf(node));
-					sib = rightOf(parentOf(node));
+					setColor(getParent(node), RED);
+					rotateLeft(getParent(node));
+					sib = getRightChild(getParent(node));
 				}
-				if (colorOf(leftOf(sib)) == BLACK
-						&& colorOf(rightOf(sib)) == BLACK) {
+				if (getColor(getLeftChild(sib)) == BLACK
+						&& getColor(getRightChild(sib)) == BLACK) {
 					setColor(sib, RED);
-					node = parentOf(node);
+					node = getParent(node);
 				} else {
-					if (colorOf(rightOf(sib)) == BLACK) {
-						setColor(leftOf(sib), BLACK);
+					if (getColor(getRightChild(sib)) == BLACK) {
+						setColor(getLeftChild(sib), BLACK);
 						setColor(sib, RED);
 						rotateRight(sib);
-						sib = rightOf(parentOf(node));
+						sib = getRightChild(getParent(node));
 					}
-					setColor(sib, colorOf(parentOf(node)));
-					setColor(parentOf(node), BLACK);
-					setColor(rightOf(sib), BLACK);
-					rotateLeft(parentOf(node));
+					setColor(sib, getColor(getParent(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getRightChild(sib), BLACK);
+					rotateLeft(getParent(node));
 					node = root;
 				}
 			} else {
-				Node sib = leftOf(parentOf(node));
-				if (colorOf(sib) == RED) {
+				Node sib = getLeftChild(getParent(node));
+				if (getColor(sib) == RED) {
 					setColor(sib, BLACK);
-					setColor(parentOf(node), RED);
-					rotateRight(parentOf(node));
-					sib = leftOf(parentOf(node));
+					setColor(getParent(node), RED);
+					rotateRight(getParent(node));
+					sib = getLeftChild(getParent(node));
 				}
-				if (colorOf(rightOf(sib)) == BLACK
-						&& colorOf(leftOf(sib)) == BLACK) {
+				if (getColor(getRightChild(sib)) == BLACK
+						&& getColor(getLeftChild(sib)) == BLACK) {
 					setColor(sib, RED);
-					node = parentOf(node);
+					node = getParent(node);
 				} else {
-					if (colorOf(leftOf(sib)) == BLACK) {
-						setColor(rightOf(sib), BLACK);
+					if (getColor(getLeftChild(sib)) == BLACK) {
+						setColor(getRightChild(sib), BLACK);
 						setColor(sib, RED);
 						rotateLeft(sib);
-						sib = leftOf(parentOf(node));
+						sib = getLeftChild(getParent(node));
 					}
-					setColor(sib, colorOf(parentOf(node)));
-					setColor(parentOf(node), BLACK);
-					setColor(leftOf(sib), BLACK);
-					rotateRight(parentOf(node));
+					setColor(sib, getColor(getParent(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getLeftChild(sib), BLACK);
+					rotateRight(getParent(node));
 					node = root;
 				}
 			}
@@ -587,11 +587,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 		setColor(node, BLACK);
 	}
 
-	private boolean colorOf(final Node p) {
+	private boolean getColor(final Node p) {
 		return (p == null ? BLACK : p.color);
 	}
 
-	private Node parentOf(final Node p) {
+	private Node getParent(final Node p) {
 		return (p == null ? null : p.parent);
 	}
 
@@ -600,11 +600,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 			p.color = c;
 	}
 
-	private Node leftOf(final Node p) {
+	private Node getLeftChild(final Node p) {
 		return (p == null) ? null : p.left;
 	}
 
-	private Node rightOf(final Node p) {
+	private Node getRightChild(final Node p) {
 		return (p == null) ? null : p.right;
 	}
 

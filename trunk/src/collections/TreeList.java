@@ -1,7 +1,11 @@
 package collections;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkElementIndex;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkState;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -15,16 +19,15 @@ import java.util.SortedSet;
 import com.google.common.collect.Ordering;
 
 /**
- * A {@link List} that maintains its elements in sorted order, based on a
- * modified <a href="http://en.wikipedia.org/wiki/Red-black_tree">red-black
- * tree</a>. Elements are ordered from <i>least</i> to <i>greatest</i> according
- * to their <i>natural ordering</i>, or by an explicit {@link Comparator}
- * provided at creation. Attempting to remove or insert {@code null} elements
- * will fail cleanly and safely leaving this queue unmodified. Querying for
- * {@code null} elements is allowed. Inserting non-comparable elements will
- * result in a {@code ClassCastException}. The {@code add(int, E)} , {@code
- * addAll(int, Collection)}, and {@code set(int, E)} operations are not
- * supported.
+ * A {@link SortedList} implementation, based on a modified <a
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
+ * Elements are ordered from <i>least</i> to <i>greatest</i> according to their
+ * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
+ * creation. Attempting to remove or insert {@code null} elements will fail
+ * cleanly and safely leaving this list unmodified. Querying for {@code null}
+ * elements is allowed. Inserting non-comparable elements will result in a
+ * {@code ClassCastException}. The {@code add(int, E)}, {@code addAll(int,
+ * Collection)}, and {@code set(int, E)} operations are not supported.
  * <p>
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
@@ -44,7 +47,7 @@ import com.google.common.collect.Ordering;
  * correctly.
  * <p>
  * The underlying red-black tree provides the following worst case running time
- * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
+ * (where <i>n</i> is the size of this list, and <i>m</i> is the size of the
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
@@ -83,12 +86,19 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
+ * A list obtained from the {@link #headList(Object) headList(E)},
+ * {@link #subList(int, int) subList(int, int)},
+ * {@link #subList(Object, Object) subList(E, E)}, and {@link #tailList(Object)
+ * tailSet(E)} methods provides identical running time to that of a standard
+ * linked list. The {@code add}, {@code addAll}, and {@code set} operations are
+ * not supported. The {@code remove} operations are supported.
  * 
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
  */
-public class TreeList<E> extends AbstractList<E> {
+public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
+		Serializable {
 
 	private int size = 0;
 	private Node max = null;
@@ -96,7 +106,8 @@ public class TreeList<E> extends AbstractList<E> {
 	private Node root = null;
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
-	private Comparator<? super E> comparator;
+	transient private Comparator<? super E> comparator;
+	private static final long serialVersionUID = 1L;
 
 	private TreeList(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -106,8 +117,8 @@ public class TreeList<E> extends AbstractList<E> {
 	}
 
 	private TreeList(final Iterable<? extends E> elements) {
-		if (elements instanceof TreeList<?>)
-			comparator = ((TreeList) elements).comparator();
+		if (elements instanceof SortedList<?>)
+			comparator = ((SortedList) elements).comparator();
 		else if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
@@ -150,17 +161,17 @@ public class TreeList<E> extends AbstractList<E> {
 	 * {@code Iterable}. If the specified iterable is an instance of a {@code
 	 * SortedSet}, {@code java.util.PriorityQueue java.util.PriorityQueue},
 	 * {@code PriorityQueue}, or this {@code TreeList}, this list will be
-	 * ordered according to the same ordering. Otherwise, this priority queue
-	 * will be ordered according to the {@link Comparable natural ordering} of
-	 * its elements.
+	 * ordered according to the same ordering. Otherwise, this list will be
+	 * ordered according to the {@link Comparable natural ordering} of its
+	 * elements.
 	 * 
 	 * @param elements
-	 *            the iterable whose elements are to be placed into the queue
+	 *            the iterable whose elements are to be placed into the list
 	 * @return a new {@code TreeList} containing the elements of the specified
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
-	 *             one another according to the priority queue's ordering
+	 *             one another according to this list's ordering
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
@@ -172,12 +183,10 @@ public class TreeList<E> extends AbstractList<E> {
 	}
 
 	/**
-	 * Returns the comparator used to order the elements in this list. If one
-	 * was not explicitly provided a <i>natural order</i> comparator is
-	 * returned.
-	 * 
-	 * @return the comparator used to order this list
+	 * {@inheritDoc} If one was not explicitly provided a <i>natural order</i>
+	 * comparator is returned.
 	 */
+	@Override
 	public Comparator<? super E> comparator() {
 		return comparator;
 	}
@@ -271,12 +280,8 @@ public class TreeList<E> extends AbstractList<E> {
 
 	@Override
 	public int indexOf(Object o) {
-		if (o != null) {
-			Iterator<E> itor = iterator();
-			for (int i = 0; i < size; i++)
-				if (itor.next().equals(o))
-					return i;
-		}
+		if (o != null)
+			return super.indexOf(o);
 		return -1;
 	}
 
@@ -288,12 +293,12 @@ public class TreeList<E> extends AbstractList<E> {
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
-			Iterator<E> itor = iterator();
-			for (int i = 0; i < size; i++)
+			ListIterator<E> itor = listIterator();
+			while (itor.hasNext())
 				if (itor.next().equals(o)) {
 					while (itor.hasNext() && itor.next().equals(o))
-						i++;
-					return i;
+						;
+					return itor.previousIndex();
 				}
 		}
 		return -1;
@@ -439,9 +444,60 @@ public class TreeList<E> extends AbstractList<E> {
 	}
 
 	@Override
-	public List<E> subList(int fromIndex, int toIndex) {
-		checkPositionIndexes(fromIndex, toIndex, size);
-		return super.subList(fromIndex, toIndex);
+	public List<E> headList(E toElement) {
+		checkNotNull(toElement);
+		Iterator<E> itor = iterator();
+		int i = 0;
+		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
+			i++;
+		return subList(0, i);
+	}
+
+	@Override
+	public List<E> subList(E fromElement, E toElement) {
+		checkNotNull(fromElement);
+		checkNotNull(toElement);
+		checkState(comparator.compare(fromElement, toElement) <= 0);
+		Iterator<E> itor = iterator();
+		int fromIndex = 0;
+		while (itor.hasNext()
+				&& comparator.compare(itor.next(), fromElement) < 0)
+			fromIndex++;
+		int toIndex = fromIndex + 1;
+		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
+			toIndex++;
+		return subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public List<E> tailList(E fromElement) {
+		checkNotNull(fromElement);
+		Iterator<E> itor = iterator();
+		int i = 0;
+		while (itor.hasNext()
+				&& comparator.compare(itor.next(), fromElement) < 0)
+			i++;
+		return subList(i, size);
+	}
+
+	// serializable object
+	private void writeObject(java.io.ObjectOutputStream s)
+			throws java.io.IOException {
+		s.defaultWriteObject();
+		s.writeInt(size);
+		s.writeObject(comparator);
+		for (E e : this)
+			s.writeObject(e);
+	}
+
+	// deserializable object
+	private void readObject(java.io.ObjectInputStream s)
+			throws java.io.IOException, ClassNotFoundException {
+		s.defaultReadObject();
+		int size = s.readInt();
+		comparator = (Comparator<? super E>) s.readObject();
+		for (int i = 0; i < size; i++)
+			add((E) s.readObject());
 	}
 
 	// Red-Black-Tree methods
@@ -589,37 +645,37 @@ public class TreeList<E> extends AbstractList<E> {
 	private void fixAfterInsertion(Node node) {
 		node.color = RED;
 		while (node != null && node != root && node.parent.color == RED) {
-			if (parentOf(node) == leftOf(parentOf(parentOf(node)))) {
-				Node y = rightOf(parentOf(parentOf(node)));
-				if (colorOf(y) == RED) {
-					setColor(parentOf(node), BLACK);
+			if (getParent(node) == getLeftChild(getParent(getParent(node)))) {
+				Node y = getRightChild(getParent(getParent(node)));
+				if (getColor(y) == RED) {
+					setColor(getParent(node), BLACK);
 					setColor(y, BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					node = parentOf(parentOf(node));
+					setColor(getParent(getParent(node)), RED);
+					node = getParent(getParent(node));
 				} else {
-					if (node == rightOf(parentOf(node))) {
-						node = parentOf(node);
+					if (node == getRightChild(getParent(node))) {
+						node = getParent(node);
 						rotateLeft(node);
 					}
-					setColor(parentOf(node), BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					rotateRight(parentOf(parentOf(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getParent(getParent(node)), RED);
+					rotateRight(getParent(getParent(node)));
 				}
 			} else {
-				Node y = leftOf(parentOf(parentOf(node)));
-				if (colorOf(y) == RED) {
-					setColor(parentOf(node), BLACK);
+				Node y = getLeftChild(getParent(getParent(node)));
+				if (getColor(y) == RED) {
+					setColor(getParent(node), BLACK);
 					setColor(y, BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					node = parentOf(parentOf(node));
+					setColor(getParent(getParent(node)), RED);
+					node = getParent(getParent(node));
 				} else {
-					if (node == leftOf(parentOf(node))) {
-						node = parentOf(node);
+					if (node == getLeftChild(getParent(node))) {
+						node = getParent(node);
 						rotateRight(node);
 					}
-					setColor(parentOf(node), BLACK);
-					setColor(parentOf(parentOf(node)), RED);
-					rotateLeft(parentOf(parentOf(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getParent(getParent(node)), RED);
+					rotateLeft(getParent(getParent(node)));
 				}
 			}
 		}
@@ -627,55 +683,55 @@ public class TreeList<E> extends AbstractList<E> {
 	}
 
 	private void fixAfterDeletion(Node node) {
-		while (node != root && colorOf(node) == BLACK) {
-			if (node == leftOf(parentOf(node))) {
-				Node sib = rightOf(parentOf(node));
-				if (colorOf(sib) == RED) {
+		while (node != root && getColor(node) == BLACK) {
+			if (node == getLeftChild(getParent(node))) {
+				Node sib = getRightChild(getParent(node));
+				if (getColor(sib) == RED) {
 					setColor(sib, BLACK);
-					setColor(parentOf(node), RED);
-					rotateLeft(parentOf(node));
-					sib = rightOf(parentOf(node));
+					setColor(getParent(node), RED);
+					rotateLeft(getParent(node));
+					sib = getRightChild(getParent(node));
 				}
-				if (colorOf(leftOf(sib)) == BLACK
-						&& colorOf(rightOf(sib)) == BLACK) {
+				if (getColor(getLeftChild(sib)) == BLACK
+						&& getColor(getRightChild(sib)) == BLACK) {
 					setColor(sib, RED);
-					node = parentOf(node);
+					node = getParent(node);
 				} else {
-					if (colorOf(rightOf(sib)) == BLACK) {
-						setColor(leftOf(sib), BLACK);
+					if (getColor(getRightChild(sib)) == BLACK) {
+						setColor(getLeftChild(sib), BLACK);
 						setColor(sib, RED);
 						rotateRight(sib);
-						sib = rightOf(parentOf(node));
+						sib = getRightChild(getParent(node));
 					}
-					setColor(sib, colorOf(parentOf(node)));
-					setColor(parentOf(node), BLACK);
-					setColor(rightOf(sib), BLACK);
-					rotateLeft(parentOf(node));
+					setColor(sib, getColor(getParent(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getRightChild(sib), BLACK);
+					rotateLeft(getParent(node));
 					node = root;
 				}
 			} else {
-				Node sib = leftOf(parentOf(node));
-				if (colorOf(sib) == RED) {
+				Node sib = getLeftChild(getParent(node));
+				if (getColor(sib) == RED) {
 					setColor(sib, BLACK);
-					setColor(parentOf(node), RED);
-					rotateRight(parentOf(node));
-					sib = leftOf(parentOf(node));
+					setColor(getParent(node), RED);
+					rotateRight(getParent(node));
+					sib = getLeftChild(getParent(node));
 				}
-				if (colorOf(rightOf(sib)) == BLACK
-						&& colorOf(leftOf(sib)) == BLACK) {
+				if (getColor(getRightChild(sib)) == BLACK
+						&& getColor(getLeftChild(sib)) == BLACK) {
 					setColor(sib, RED);
-					node = parentOf(node);
+					node = getParent(node);
 				} else {
-					if (colorOf(leftOf(sib)) == BLACK) {
-						setColor(rightOf(sib), BLACK);
+					if (getColor(getLeftChild(sib)) == BLACK) {
+						setColor(getRightChild(sib), BLACK);
 						setColor(sib, RED);
 						rotateLeft(sib);
-						sib = leftOf(parentOf(node));
+						sib = getLeftChild(getParent(node));
 					}
-					setColor(sib, colorOf(parentOf(node)));
-					setColor(parentOf(node), BLACK);
-					setColor(leftOf(sib), BLACK);
-					rotateRight(parentOf(node));
+					setColor(sib, getColor(getParent(node)));
+					setColor(getParent(node), BLACK);
+					setColor(getLeftChild(sib), BLACK);
+					rotateRight(getParent(node));
 					node = root;
 				}
 			}
@@ -683,11 +739,11 @@ public class TreeList<E> extends AbstractList<E> {
 		setColor(node, BLACK);
 	}
 
-	private boolean colorOf(final Node p) {
+	private boolean getColor(final Node p) {
 		return (p == null ? BLACK : p.color);
 	}
 
-	private Node parentOf(final Node p) {
+	private Node getParent(final Node p) {
 		return (p == null ? null : p.parent);
 	}
 
@@ -696,11 +752,11 @@ public class TreeList<E> extends AbstractList<E> {
 			p.color = c;
 	}
 
-	private Node leftOf(final Node p) {
+	private Node getLeftChild(final Node p) {
 		return (p == null) ? null : p.left;
 	}
 
-	private Node rightOf(final Node p) {
+	private Node getRightChild(final Node p) {
 		return (p == null) ? null : p.right;
 	}
 
