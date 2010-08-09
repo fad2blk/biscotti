@@ -13,17 +13,19 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}s.
+ * Static methods which operate on or return {@link Collection}s and {@link Map}
+ * s.
  * 
  * @author Zhenya Leonov
  */
@@ -118,6 +120,50 @@ final public class Collections3 {
 	}
 
 	/**
+	 * Returns a synchronized (thread-safe) {@code SortedList} backed by the
+	 * specified sorted list. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing list is accomplished
+	 * through the returned list.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned list
+	 * when iterating over it or its views:
+	 * 
+	 * <pre>
+	 *  SortedList sortedList = Collections3.synchronizedSortedList(...);
+	 *      ...
+	 *  synchronized(sortedList) {
+	 *     for(Object o: sortedList)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  SortedList sortedList = Collections3.synchronizedSortedList(...);
+	 *  List subList = sortedList.subList(...)
+	 *      ...
+	 *  synchronized(sortedList) { // Note: sortedList not subList
+	 *     for(Object o: subList)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned list will be serializable if the specified list is
+	 * serializable.
+	 * 
+	 * @param sortedList
+	 *            the sorted list to be "wrapped" in a synchronized sorted list
+	 * @return a synchronized view of the specified sorted list
+	 */
+	public static <E> SortedList<E> synchronizedSortedList(
+			SortedList<E> sortedList) {
+		return new SynchronizedSortedList<E>(sortedList);
+	}
+
+	/**
 	 * Returns a synchronized (thread-safe) {@code Queue} backed by the
 	 * specified queue (consider using the inherently <i>thread-safe</i>
 	 * {@link PriorityBlockingQueue} instead). In order to guarantee serial
@@ -128,7 +174,7 @@ final public class Collections3 {
 	 * when iterating over it:
 	 * 
 	 * <pre>
-	 *  Queue queue = Collections3.synchronizedQueue(unsynchronizedQueue);
+	 *  Queue queue = Collections3.synchronizedQueue(...);
 	 *      ...
 	 *  synchronized(queue) {
 	 *     for(Object o: queue)  // Must be in synchronized block
@@ -159,7 +205,7 @@ final public class Collections3 {
 	 * bounded queue when iterating over it:
 	 * 
 	 * <pre>
-	 *  BoundedQueue boundedQueue = Collections3.synchronizedBoundedQueue(unsynchronizedBoundedQueue);
+	 *  BoundedQueue boundedQueue = Collections3.synchronizedBoundedQueue(...);
 	 *      ...
 	 *  synchronized(boundedQueue) {
 	 *     for(Object o: boundedQueue)  // Must be in synchronized block
@@ -191,7 +237,7 @@ final public class Collections3 {
 	 * when iterating over it:
 	 * 
 	 * <pre>
-	 *  Deque deque = Collections3.synchronizedDeque(unsynchronizedDeque);
+	 *  Deque deque = Collections3.synchronizedDeque(...);
 	 *      ...
 	 *  synchronized(deque) {
 	 *     for(Object o: deque)  // Must be in synchronized block
@@ -824,57 +870,87 @@ final public class Collections3 {
 		}
 	}
 
-	static class SynchronizedSortedMap<K, V> extends SynchronizedMap<K, V>
-			implements SortedMap<K, V> {
-		private static final long serialVersionUID = -8798146769416483793L;
-		private final SortedMap<K, V> sortedMap;
+	static class SynchronizedList<E> extends SynchronizedCollection<E>
+			implements List<E> {
+		static final long serialVersionUID = -7754090372962971524L;
+		final List<E> list;
 
-		SynchronizedSortedMap(SortedMap<K, V> sortedMap) {
-			super(sortedMap);
-			this.sortedMap = sortedMap;
+		SynchronizedList(List<E> list) {
+			super(list);
+			this.list = list;
 		}
 
-		SynchronizedSortedMap(SortedMap<K, V> m, Object mutex) {
-			super(m, mutex);
-			sortedMap = m;
+		SynchronizedList(List<E> list, Object mutex) {
+			super(list, mutex);
+			this.list = list;
 		}
 
-		public Comparator<? super K> comparator() {
+		public boolean equals(Object o) {
 			synchronized (mutex) {
-				return sortedMap.comparator();
+				return list.equals(o);
 			}
 		}
 
-		public SortedMap<K, V> subMap(K fromKey, K toKey) {
+		public int hashCode() {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(sortedMap.subMap(
-						fromKey, toKey), mutex);
+				return list.hashCode();
 			}
 		}
 
-		public SortedMap<K, V> headMap(K toKey) {
+		public E get(int index) {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(
-						sortedMap.headMap(toKey), mutex);
+				return list.get(index);
 			}
 		}
 
-		public SortedMap<K, V> tailMap(K fromKey) {
+		public E set(int index, E element) {
 			synchronized (mutex) {
-				return new SynchronizedSortedMap<K, V>(sortedMap
-						.tailMap(fromKey), mutex);
+				return list.set(index, element);
 			}
 		}
 
-		public K firstKey() {
+		public void add(int index, E element) {
 			synchronized (mutex) {
-				return sortedMap.firstKey();
+				list.add(index, element);
 			}
 		}
 
-		public K lastKey() {
+		public E remove(int index) {
 			synchronized (mutex) {
-				return sortedMap.lastKey();
+				return list.remove(index);
+			}
+		}
+
+		public int indexOf(Object o) {
+			synchronized (mutex) {
+				return list.indexOf(o);
+			}
+		}
+
+		public int lastIndexOf(Object o) {
+			synchronized (mutex) {
+				return list.lastIndexOf(o);
+			}
+		}
+
+		public boolean addAll(int index, Collection<? extends E> c) {
+			synchronized (mutex) {
+				return list.addAll(index, c);
+			}
+		}
+
+		public ListIterator<E> listIterator() {
+			return list.listIterator();
+		}
+
+		public ListIterator<E> listIterator(int index) {
+			return list.listIterator(index);
+		}
+
+		public List<E> subList(int fromIndex, int toIndex) {
+			synchronized (mutex) {
+				return new SynchronizedList<E>(
+						list.subList(fromIndex, toIndex), mutex);
 			}
 		}
 	}
@@ -902,6 +978,49 @@ final public class Collections3 {
 				return boundedMap.remainingCapacity();
 			}
 		}
+	}
+
+	static class SynchronizedSortedList<E> extends SynchronizedList<E>
+			implements SortedList<E> {
+		private static final long serialVersionUID = 1L;
+		private final SortedList<E> sortedList;
+
+		SynchronizedSortedList(SortedList<E> boundedMap) {
+			super(boundedMap);
+			this.sortedList = boundedMap;
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			synchronized (mutex) {
+				return sortedList.comparator();
+			}
+		}
+
+		@Override
+		public List<E> headList(E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedList<E>(sortedList.headList(toElement),
+						mutex);
+			}
+		}
+
+		@Override
+		public List<E> subList(E fromElement, E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedList<E>(sortedList.subList(fromElement,
+						toElement), mutex);
+			}
+		}
+
+		@Override
+		public List<E> tailList(E fromElement) {
+			synchronized (mutex) {
+				return new SynchronizedList<E>(
+						sortedList.tailList(fromElement), mutex);
+			}
+		}
+
 	}
 
 }
