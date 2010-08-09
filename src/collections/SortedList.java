@@ -15,8 +15,8 @@ import java.util.List;
  * This class may be thought of as the {@code List} analog of {@code SortedSet}
  * with several key differences. In order to maintain element order typical view
  * implementations do not support most or all of the optional operations in the
- * {@code List} interface, further note a view of this list is not guaranteed to
- * be an instance of {@code SortedList}.
+ * {@code List} interface, further a view returned by this list is not
+ * guaranteed to be an instance of {@code SortedList}.
  * 
  * 
  * 
