@@ -1,8 +1,10 @@
 package collections;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
@@ -11,7 +13,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
@@ -38,7 +39,7 @@ import com.google.common.collect.Ordering;
  * <p>
  * This list not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@code Collections.synchronizedList(List)} method.
+ * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and {@code
@@ -47,8 +48,8 @@ import com.google.common.collect.Ordering;
  * correctly.
  * <p>
  * The underlying red-black tree provides the following worst case running time
- * (where <i>n</i> is the size of this list, and <i>m</i> is the size of the
- * specified collection):
+ * for this list and its sub views (where <i>n</i> is the size of this list, and
+ * <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  * <tr>
@@ -86,12 +87,11 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
- * A list obtained from the {@link #headList(Object) headList(E)},
+ * A sorted list obtained from the {@link #headList(Object) headList(E)},
  * {@link #subList(int, int) subList(int, int)},
  * {@link #subList(Object, Object) subList(E, E)}, and {@link #tailList(Object)
- * tailSet(E)} methods provides identical running time to that of a standard
- * linked list. The {@code add}, {@code addAll}, and {@code set} operations are
- * not supported. The {@code remove} operations are supported.
+ * tailSet(E)} methods does not support the {@code add}, {@code addAll}, and
+ * {@code set} operations. The {@code remove} operations are supported.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -108,6 +108,14 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	private static final boolean BLACK = true;
 	transient private Comparator<? super E> comparator;
 	private static final long serialVersionUID = 1L;
+
+	private TreeList(TreeList.Node root, TreeList.Node min, TreeList.Node max,
+			int size) {
+		this.min = min;
+		this.max = max;
+		this.size = size;
+		this.modCount = modCount;
+	}
 
 	private TreeList(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -281,7 +289,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public int indexOf(Object o) {
 		if (o != null)
-			return super.indexOf(o);
+			super.indexOf(o);
 		return -1;
 	}
 
@@ -312,84 +320,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
-		return new ListIterator<E>() {
-			int index = 0;
-			Node next = min;
-			Node prev = null;
-			Node last = null;
-			int expectedModCount = modCount;
-
-			@Override
-			public void add(E e) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean hasNext() {
-				return index < size;
-			}
-
-			@Override
-			public boolean hasPrevious() {
-				return index > 0;
-			}
-
-			@Override
-			public E next() {
-				if (index == size)
-					throw new NoSuchElementException();
-				checkForConcurrentModification();
-				Node node = prev = next;
-				index++;
-				next = successor(node);
-				last = node;
-				return node.element;
-			}
-
-			@Override
-			public int nextIndex() {
-				return index;
-			}
-
-			@Override
-			public E previous() {
-				if (index == 0)
-					throw new NoSuchElementException();
-				checkForConcurrentModification();
-				Node node = next = prev;
-				index--;
-				prev = predecessor(node);
-				last = node;
-				return node.element;
-			}
-
-			@Override
-			public int previousIndex() {
-				return index - 1;
-			}
-
-			@Override
-			public void remove() {
-				checkState(last != null);
-				checkForConcurrentModification();
-				if (last.left != null && last.right != null)
-					next = last;
-				delete(last);
-				index--;
-				expectedModCount = modCount;
-				last = null;
-			}
-
-			@Override
-			public void set(E e) {
-				throw new UnsupportedOperationException();
-			}
-
-			private void checkForConcurrentModification() {
-				if (expectedModCount != modCount)
-					throw new ConcurrentModificationException();
-			}
-		};
+		return new ListItor();
 	}
 
 	/**
@@ -444,20 +375,20 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	}
 
 	@Override
-	public List<E> headList(E toElement) {
+	public SortedList<E> headList(E toElement) {
 		checkNotNull(toElement);
 		Iterator<E> itor = iterator();
 		int i = 0;
 		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
 			i++;
-		return subList(0, i);
+		return new TreeList(root, min, max, i);
 	}
 
 	@Override
-	public List<E> subList(E fromElement, E toElement) {
+	public SortedList<E> subList(E fromElement, E toElement) {
 		checkNotNull(fromElement);
 		checkNotNull(toElement);
-		checkState(comparator.compare(fromElement, toElement) <= 0);
+		checkArgument(comparator.compare(fromElement, toElement) <= 0);
 		Iterator<E> itor = iterator();
 		int fromIndex = 0;
 		while (itor.hasNext()
@@ -466,18 +397,28 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		int toIndex = fromIndex + 1;
 		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
 			toIndex++;
-		return subList(fromIndex, toIndex);
+		return new TreeList(root, min, max, toIndex - fromIndex);
 	}
 
 	@Override
-	public List<E> tailList(E fromElement) {
+	public SortedList<E> subList(int fromIndex, int toIndex) {
+		checkPositionIndexes(fromIndex, toIndex, size());
+		Node max = min = ((ListItor) listIterator(fromIndex)).nextNode();
+		for (int i = fromIndex; i < toIndex - 1; i++)
+			max = successor(max);
+		System.out.println(min.element + ":" + max.element);
+		return new TreeList(root, min, max, toIndex - fromIndex);
+	}
+
+	@Override
+	public SortedList<E> tailList(E fromElement) {
 		checkNotNull(fromElement);
 		Iterator<E> itor = iterator();
 		int i = 0;
 		while (itor.hasNext()
 				&& comparator.compare(itor.next(), fromElement) < 0)
 			i++;
-		return subList(i, size);
+		return new TreeList(root, min, max, size - i);
 	}
 
 	// serializable object
@@ -500,6 +441,162 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			add((E) s.readObject());
 	}
 
+	private class ListItor implements ListIterator<E> {
+		int index = 0;
+		Node next = min;
+		Node prev = null;
+		Node last = null;
+		int expectedModCount = modCount;
+
+		@Override
+		public void add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return index < size;
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return index > 0;
+		}
+
+		public Node nextNode() {
+			if (index == size)
+				throw new NoSuchElementException();
+			checkForConcurrentModification();
+			Node node = prev = next;
+			index++;
+			next = successor(node);
+			last = node;
+			return node;
+		}
+
+		@Override
+		public E next() {
+			return nextNode().element;
+		}
+
+		@Override
+		public int nextIndex() {
+			return index;
+		}
+
+		@Override
+		public E previous() {
+			if (index == 0)
+				throw new NoSuchElementException();
+			checkForConcurrentModification();
+			Node node = next = prev;
+			index--;
+			prev = predecessor(node);
+			last = node;
+			return node.element;
+		}
+
+		@Override
+		public int previousIndex() {
+			return index - 1;
+		}
+
+		@Override
+		public void remove() {
+			checkState(last != null);
+			checkForConcurrentModification();
+			if (last.left != null && last.right != null)
+				next = last;
+			delete(last);
+			index--;
+			expectedModCount = modCount;
+			last = null;
+		}
+
+		@Override
+		public void set(E e) {
+			throw new UnsupportedOperationException();
+		}
+		
+		private void checkForConcurrentModification() {
+			if (expectedModCount != modCount)
+				throw new ConcurrentModificationException();
+		}
+	}
+
+	private class SubList extends TreeList<E> {
+
+		SortedList sortedList;
+
+		SubList(TreeList.Node root, TreeList.Node min, TreeList.Node max,
+				int size, SortedList sortedList) {
+			super(root, min, max, size);
+			this.sortedList = sortedList;
+		}
+
+		@Override
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E get(int index) {
+			checkForConcurrentModification();
+			return super.get(index);
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public E set(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+	}
+
 	// Red-Black-Tree methods
 
 	protected class Node {
@@ -517,7 +614,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 	protected Node search(final E e) {
 		Node node = root;
-		while (node != null && e != null) {
+		Node leftBoundry = predecessor(min);
+		Node rightBoundry = successor(max);
+		while (node != leftBoundry && node != rightBoundry) {
 			int cmp = comparator.compare(e, node.element);
 			if (cmp == 0 && e.equals(node.element))
 				return node;

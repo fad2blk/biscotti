@@ -27,17 +27,17 @@ public abstract class ForwardingSortedList<E> extends ForwardingList<E>
 	}
 
 	@Override
-	public List<E> headList(E toElement) {
+	public SortedList<E> headList(E toElement) {
 		return delegate().headList(toElement);
 	}
 
 	@Override
-	public List<E> subList(E fromElement, E toElement) {
+	public SortedList<E> subList(E fromElement, E toElement) {
 		return delegate().subList(fromElement, toElement);
 	}
 
 	@Override
-	public List<E> tailList(E fromElement) {
+	public SortedList<E> tailList(E fromElement) {
 		return delegate().tailList(fromElement);
 	}
 
