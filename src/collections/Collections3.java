@@ -984,9 +984,14 @@ final public class Collections3 {
 		private static final long serialVersionUID = 1L;
 		private final SortedList<E> sortedList;
 
-		SynchronizedSortedList(SortedList<E> boundedMap) {
-			super(boundedMap);
-			this.sortedList = boundedMap;
+		SynchronizedSortedList(SortedList<E> sortedList) {
+			super(sortedList);
+			this.sortedList = sortedList;
+		}
+
+		SynchronizedSortedList(SortedList<E> sortedList, Object mutex) {
+			super(sortedList, mutex);
+			this.sortedList = sortedList;
 		}
 
 		@Override
@@ -997,26 +1002,26 @@ final public class Collections3 {
 		}
 
 		@Override
-		public List<E> headList(E toElement) {
+		public SortedList<E> headList(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedList<E>(sortedList.headList(toElement),
-						mutex);
+				return new SynchronizedSortedList<E>(sortedList
+						.headList(toElement), mutex);
 			}
 		}
 
 		@Override
-		public List<E> subList(E fromElement, E toElement) {
+		public SortedList<E> subList(E fromElement, E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedList<E>(sortedList.subList(fromElement,
-						toElement), mutex);
+				return new SynchronizedSortedList<E>(sortedList.subList(
+						fromElement, toElement), mutex);
 			}
 		}
 
 		@Override
-		public List<E> tailList(E fromElement) {
+		public SortedList<E> tailList(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedList<E>(
-						sortedList.tailList(fromElement), mutex);
+				return new SynchronizedSortedList<E>(sortedList
+						.tailList(fromElement), mutex);
 			}
 		}
 

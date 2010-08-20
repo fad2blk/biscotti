@@ -5,18 +5,12 @@ import java.util.List;
 
 /**
  * A {@link List} that further provides a <i>total ordering</i> on its elements.
+ * This class may be thought of as the {@code List} analog of {@code SortedSet}.
  * The elements are ordered using their {@code natural ordering}, or by an
  * explicit {@link Comparator} provided at creation time.
  * <p>
  * To take advantage of the specified ordering additional {@code headList(E)},
- * {@code subList(E, E)}, {@code tailList(E)} operations which return a view of
- * this list are provided.
- * <p>
- * This class may be thought of as the {@code List} analog of {@code SortedSet}
- * with several key differences. In order to maintain element order typical view
- * implementations do not support most or all of the optional operations in the
- * {@code List} interface, furthermore, a view returned by this list is not
- * guaranteed to be an instance of {@code SortedList}.
+ * {@code subList(E, E)}, {@code tailList(E)} operations are provided.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -47,7 +41,7 @@ public interface SortedList<E> extends List<E> {
 	 *             if {@code toElement} is {@code null} and this list does not
 	 *             permit {@code null} elements
 	 */
-	public List<E> headList(E toElement);
+	public SortedList<E> headList(E toElement);
 
 	/**
 	 * Returns a view of the portion of this list whose elements range from
@@ -74,7 +68,7 @@ public interface SortedList<E> extends List<E> {
 	 * @throws IllegalArgumentException
 	 *             if {@code fromElement} is greater than {@code toElement}
 	 */
-	public List<E> subList(E fromElement, E toElement);
+	public SortedList<E> subList(E fromElement, E toElement);
 
 	/**
 	 * Returns a view of the portion of this list whose elements are greater
@@ -95,6 +89,6 @@ public interface SortedList<E> extends List<E> {
 	 *             if {@code fromElement} is {@code null} and this list does not
 	 *             permit {@code null} elements
 	 */
-	public List<E> tailList(E fromElement);
+	public SortedList<E> tailList(E fromElement);
 
 }
