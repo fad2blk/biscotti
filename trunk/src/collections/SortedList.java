@@ -15,12 +15,7 @@ import java.util.List;
  * @author Zhenya Leonov
  * @param <E>
  */
-public interface SortedList<E> extends List<E> {
-
-	/**
-	 * Returns the comparator used to order the elements in this list.
-	 */
-	public Comparator<? super E> comparator();
+public interface SortedList<E> extends SortedCollection<E>, List<E> {
 
 	/**
 	 * Returns a view of the portion of this list whose elements are strictly
@@ -69,6 +64,9 @@ public interface SortedList<E> extends List<E> {
 	 *             if {@code fromElement} is greater than {@code toElement}
 	 */
 	public SortedList<E> subList(E fromElement, E toElement);
+
+	@Override
+	public SortedList<E> subList(int fromIndex, int toIndex);
 
 	/**
 	 * Returns a view of the portion of this list whose elements are greater

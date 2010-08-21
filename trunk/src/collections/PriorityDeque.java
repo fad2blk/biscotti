@@ -1,5 +1,5 @@
 package collections;
- 
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -47,56 +47,44 @@ import com.google.common.base.Preconditions;
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *  <tr>
- *    <th align="center">Method</th>
- *    <th align="center">Running Time</th>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #addAll(Collection) addAll(Collection)}<br>
- *      {@link #containsAll(Collection) containsAll(Collection)}</br>
- *      {@link #retainAll(Collection) retainAll(Collection)}</br>
- *      {@link #removeAll(Collection) removeAll(Collection)}
- *    </td>
- *    <td align="center"><i>O(m log n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #clear() clear()}<br>
- *    </td>
- *    <td align="center"><i>O(n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #add(Object) add(E)}</br>
- *      {@link #contains(Object) contains(Object)}</br>
- *      {@link #offer(Object) offer(E)}</br>
- *      {@link #remove(Object) remove(Object)}</br>
- *      {@link #removeFirstOccurrence(Object)}</br>
- *      {@link #removeLastOccurrence(Object)}</br>
- *    </td>
- *    <td align="center"><i>O(log n)</i></td>
- *  </tr>
- *  <tr>
- *    <td>
- *      {@link #element() element()}</br>
- *      {@link #isEmpty() isEmpty()}</br>
- *      {@link #peek() peek()}</br>
- *      {@link #poll() poll()}</br>
- *      {@link #remove() remove()}</br>
- *      {@link #size() size()}<br>
- *      {@link #getFirst() getFirst()}</br>
- *      {@link #getLast() getLast()}</br>
- *      {@link #peekFirst() peekFirst()}</br>
- *      {@link #peekLast() peekLast()}</br>
- *      {@link #pollFirst() pollFirst()}</br>
- *      {@link #pollLast() pollLast()}</br>
- *      {@link #pop() pop()}</br>
- *      {@link #removeFirst() removeFirst()}</br>
- *      {@link #removeLast() removeLast()}</br>
- *    </td>
- *    <td align="center"><i>O(1)</i></td>
- *  </tr>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object) contains(Object)}
+ * </br> {@link #offer(Object) offer(E)}</br> {@link #remove(Object)
+ * remove(Object)}</br> {@link #removeFirstOccurrence(Object)}</br>
+ * {@link #removeLastOccurrence(Object)}</br></td>
+ * <td align="center"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek() peek()}</br> {@link #poll() poll()}</br> {@link #remove()
+ * remove()}</br> {@link #size() size()}<br>
+ * {@link #getFirst() getFirst()}</br> {@link #getLast() getLast()}</br>
+ * {@link #peekFirst() peekFirst()}</br> {@link #peekLast() peekLast()}</br>
+ * {@link #pollFirst() pollFirst()}</br> {@link #pollLast() pollLast()}</br>
+ * {@link #pop() pop()}</br> {@link #removeFirst() removeFirst()}</br>
+ * {@link #removeLast() removeLast()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
  * </table>
  * <p>
  * Note: This deque uses the same ordering rules as
@@ -149,9 +137,9 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 
 	/**
 	 * Creates a new {@code PriorityDeque} containing the elements of the
-	 * specified {@code Iterable}. If the specified iterable is an instance of a
-	 * {@link SortedList}, {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@link PriorityQueue} this deque will be
+	 * specified {@code Iterable}. If the specified iterable is an instance of
+	 * of {@link SortedSet}, {@link java.util.PriorityQueue
+	 * java.util.PriorityQueue}, or {@code SortedCollection} this deque will be
 	 * ordered according to the same ordering. Otherwise, this priority deque
 	 * will be ordered according to the <i>natural ordering</i> of its elements.
 	 * 
