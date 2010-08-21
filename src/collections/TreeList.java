@@ -556,7 +556,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		@Override
 		public E get(int index) {
-			checkForConcurrentModification();
 			return super.get(index);
 		}
 
