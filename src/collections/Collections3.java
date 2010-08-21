@@ -24,7 +24,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}s.
+ * Static methods which operate on or return {@link Collection}s and {@link Map}
+ * s.
  * 
  * @author Zhenya Leonov
  */
@@ -1014,6 +1015,14 @@ final public class Collections3 {
 			synchronized (mutex) {
 				return new SynchronizedSortedList<E>(sortedList.subList(
 						fromElement, toElement), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sortedList.subList(
+						fromIndex, toIndex), mutex);
 			}
 		}
 

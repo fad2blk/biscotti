@@ -53,38 +53,38 @@ import com.google.common.collect.Ordering;
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}</td>
- *     <td align="center"><i>O(m log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
- *     <td align="center"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
- *       {@link #size()}<br>
- *     </td>
- *     <td align="center"><i>O(1)</i></td>
- *   </tr>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
+ * {@link #size()}<br>
+ * </td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
  * </table>
  * <p>
  * Note: This queue uses the same ordering rules as
@@ -96,7 +96,8 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
+public class PriorityQueue<E> extends AbstractQueue<E> implements
+		SortedCollection<E>, Serializable {
 
 	private int size = 0;
 	protected Node max = null;
@@ -122,8 +123,8 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();
-		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		for (E element : elements)
@@ -158,10 +159,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 
 	/**
 	 * Creates a new {@code PriorityQueue} containing the elements of the
-	 * specified {@code Iterable}. If the specified iterable is an instance of a
-	 * {@link SortedList}, {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or this {@code PriorityQueue} this queue will
-	 * be ordered according to the same ordering. Otherwise, this priority queue
+	 * specified {@code Iterable}. If the specified iterable is an instance of
+	 * {@link SortedSet}, {@link java.util.PriorityQueue
+	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
+	 * ordered according to the same ordering. Otherwise, this priority queue
 	 * will be ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
@@ -183,12 +184,12 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
 	}
 
 	/**
-	 * Returns the comparator used to order the elements in this queue. If one
-	 * was not explicitly provided a <i>natural order</i> comparator is
-	 * returned.
+	 * {@inheritDoc} If one was not explicitly provided a <i>natural order</i>
+	 * comparator is returned.
 	 * 
 	 * @return the comparator used to order this queue
 	 */
+	@Override
 	public Comparator<? super E> comparator() {
 		return comparator;
 	}

@@ -1,7 +1,6 @@
 package collections;
 
 import java.util.Comparator;
-import java.util.List;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.ForwardingObject;
@@ -34,6 +33,11 @@ public abstract class ForwardingSortedList<E> extends ForwardingList<E>
 	@Override
 	public SortedList<E> subList(E fromElement, E toElement) {
 		return delegate().subList(fromElement, toElement);
+	}
+
+	@Override
+	public SortedList<E> subList(int fromIndex, int toIndex) {
+		return delegate().subList(fromIndex, toIndex);
 	}
 
 	@Override
