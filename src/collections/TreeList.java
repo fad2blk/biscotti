@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -32,17 +33,17 @@ import com.google.common.collect.Ordering;
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
  * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a {@code
- * ConcurrentModificationException}. Further, the list iterator does not support
- * the {@code add(E)} and {@code set(E)} operations.
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}. Further, the list iterator does not
+ * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
  * This list not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
  * comparator must be <i>consistent with equals</i> if this list is to function
  * correctly.
  * <p>
@@ -96,7 +97,8 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements maintained by this list
  */
-public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
+public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
+		Serializable {
 
 	private int size = 0;
 	private Node<E> maximum = null;
@@ -105,6 +107,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
 	transient private Comparator<? super E> comparator;
+	private static final long serialVersionUID = 1L;
 
 	private TreeList(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -157,8 +160,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	 * {@link SortedSet}, {@link java.util.PriorityQueue
 	 * java.util.PriorityQueue}, or {@code SortedCollection}, this list will be
 	 * ordered according to the same ordering. Otherwise, this list will be
-	 * ordered according to the {@link Comparable natural ordering} of its
-	 * elements.
+	 * ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the list
@@ -171,10 +173,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	@SuppressWarnings("unchecked")
 	public static <E> TreeList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new TreeList(elements);
+		return new TreeList<E>(elements);
 	}
 
 	/**
@@ -304,8 +305,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
@@ -392,8 +393,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
@@ -481,6 +482,26 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 				&& comparator.compare(itor.next(), fromElement) < 0)
 			fromIndex++;
 		return new SubList(this, fromIndex, size);
+	}
+
+	// serializable object
+	private void writeObject(java.io.ObjectOutputStream s)
+			throws java.io.IOException {
+		s.defaultWriteObject();
+		s.writeInt(size);
+		s.writeObject(comparator);
+		for (E e : this)
+			s.writeObject(e);
+	}
+
+	// deserializable object
+	private void readObject(java.io.ObjectInputStream s)
+			throws java.io.IOException, ClassNotFoundException {
+		s.defaultReadObject();
+		int size = s.readInt();
+		comparator = (Comparator<? super E>) s.readObject();
+		for (int i = 0; i < size; i++)
+			add((E) s.readObject());
 	}
 
 	private class SubList extends TreeList<E> {
@@ -596,10 +617,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 				@Override
 				public void remove() {
-	                i.remove();
-	                expectedModCount = l.modCount;
-	                size--;
-	                modCount++;
+					i.remove();
+					expectedModCount = l.modCount;
+					size--;
+					modCount++;
 				}
 
 				@Override
@@ -656,6 +677,18 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		public int size() {
 			checkForConcurrentModification();
 			return size;
+		}
+
+		// not supported by sub views
+		private void readObject(java.io.ObjectInputStream ois)
+				throws ClassNotFoundException, java.io.IOException {
+			throw new java.io.NotSerializableException();
+		}
+
+		// not supported by sub views
+		private void writeObject(java.io.ObjectOutputStream ois)
+				throws java.io.IOException {
+			throw new java.io.NotSerializableException();
 		}
 
 		@Override
