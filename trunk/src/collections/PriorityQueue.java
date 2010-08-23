@@ -117,9 +117,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	protected PriorityQueue(final Iterable<? extends E> elements) {
-		if (elements instanceof SortedList<?>)
-			comparator = ((SortedList) elements).comparator();
-		else if (elements instanceof SortedSet<?>)
+		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();

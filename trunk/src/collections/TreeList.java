@@ -1,6 +1,11 @@
 package collections;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.AbstractList;
 import java.util.Collection;
@@ -13,6 +18,84 @@ import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
 
+/**
+ * A {@link SortedList} implementation, based on a modified <a
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
+ * Elements are ordered from <i>least</i> to <i>greatest</i> according to their
+ * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
+ * creation. Attempting to remove or insert {@code null} elements will fail
+ * cleanly and safely leaving this list unmodified. Querying for {@code null}
+ * elements is allowed. Inserting non-comparable elements will result in a
+ * {@code ClassCastException}. The {@code add(int, E)}, {@code addAll(int,
+ * Collection)}, and {@code set(int, E)} operations are not supported.
+ * <p>
+ * The iterators obtained from the {@link #iterator()} and
+ * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
+ * elements in this list at any time after an iterator is created, in any way
+ * except through the iterator's own remove method, will result in a {@code
+ * ConcurrentModificationException}. Further, the list iterator does not support
+ * the {@code add(E)} and {@code set(E)} operations.
+ * <p>
+ * This list not <i>thread-safe</i>. If multiple threads modify this list
+ * concurrently it must be synchronized externally, considering "wrapping" the
+ * list using the {@code Collections.synchronizedSortedList(List)} method.
+ * <p>
+ * <b>Implementation Note:</b>This implementation uses a comparator (whether or
+ * not one is explicitly provided) to maintain priority order, and {@code
+ * equals} when testing for element equality. The ordering imposed by the
+ * comparator must be <i>consistent with equals</i> if this list is to function
+ * correctly.
+ * <p>
+ * The underlying red-black tree provides the following worst case running time
+ * for this list and its views (where <i>n</i> is the size of this list, and
+ * <i>m</i> is the size of the specified collection):
+ * <p>
+ * <table border cellpadding="3" cellspacing="1">
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * {@link #indexOf(Object)}<br>
+ * {@link #lastIndexOf(Object)}<br>
+ * {@link #get(int)}<br>
+ * {@link #remove(int)}</br></td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #isEmpty() isEmpty()}</br> {@link #size()}<br>
+ * </td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
+ * </table>
+ * <p>
+ * A sorted list obtained from the {@link #headList(Object) headList(E)},
+ * {@link #subList(int, int) subList(int, int)},
+ * {@link #subList(Object, Object) subList(E, E)}, and {@link #tailList(Object)
+ * tailSet(E)} methods does not support the {@code add}, {@code addAll}, and
+ * {@code set} operations. The {@code remove} operations are supported.
+ * 
+ * @author Zhenya Leonov
+ * @param <E>
+ *            the type of elements maintained by this list
+ */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 	private int size = 0;
@@ -31,14 +114,12 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	}
 
 	private TreeList(final Iterable<? extends E> elements) {
-		if (elements instanceof SortedList<?>)
-			comparator = ((SortedList) elements).comparator();
-		else if (elements instanceof SortedSet<?>)
+		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();
-		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		for (E element : elements)
@@ -409,7 +490,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		private Node<E> minimum;
 		private Node<E> maximum;
 		private int expectedModCount;
-
+		
 		private void checkForConcurrentModification() {
 			if (expectedModCount != l.modCount)
 				throw new ConcurrentModificationException();
@@ -453,8 +534,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		@Override
 		public boolean contains(Object o) {
-			// TODO Auto-generated method stub
-			return false;
+			checkForConcurrentModification();
+			return o != null && search((E) o) != null;
 		}
 
 		@Override
@@ -535,8 +616,15 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		@Override
 		public boolean remove(Object o) {
-			// TODO Auto-generated method stub
-			return false;
+			checkForConcurrentModification();
+			Node<E> node = search((E) o);
+			if (node == null)
+				return false;
+			l.delete(node);
+			size--;
+			expectedModCount = l.modCount;
+			modCount++;
+			return true;
 		}
 
 		@Override
@@ -560,6 +648,35 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			checkForConcurrentModification();
 			return size;
 		}
+
+		@Override
+		protected Node<E> search(final E e) {
+			Node<E> node;
+			int compareMax = comparator.compare(e, maximum.element);
+			int compareMin = comparator.compare(e, minimum.element);
+			if (compareMin < 0 || compareMax > 0) {
+				return null;
+			}
+			if (compareMin == 0) {
+				node = minimum;
+				while (comparator.compare(e, node.element) == 0) {
+					if (e.equals(node.element))
+						return node;
+					node = successor(node);
+				}
+				return null;
+			}
+			if (compareMax == 0) {
+				node = maximum;
+				while (comparator.compare(e, node.element) == 0) {
+					if (e.equals(node.element))
+						return node;
+					node = predecessor(node);
+				}
+				return null;
+			}
+			return l.search(e);
+		}
 	}
 
 	// Red-Black-Tree methods
@@ -577,7 +694,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 	}
 
-	private Node<E> search(final E e) {
+	protected Node<E> search(final E e) {
 		Node<E> node = root;
 		while (node != null) {
 			int cmp = comparator.compare(e, node.element);
