@@ -24,8 +24,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import com.google.common.base.Preconditions;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}
- * s.
+ * Static methods which operate on or return {@link Collection}s and {@link Map}s.
  * 
  * @author Zhenya Leonov
  */
@@ -120,6 +119,39 @@ final public class Collections3 {
 	}
 
 	/**
+	 * Returns a synchronized (thread-safe) {@code SortedCollection} backed by
+	 * the specified sorted collection. In order to guarantee serial access, it
+	 * is critical that <b>all</b> access to the backing collection is
+	 * accomplished through the returned collection.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * collection when iterating over it:
+	 * 
+	 * <pre>
+	 *  SortedCollection sortedCollection = Collections3.synchronizedSortedCollection(...);
+	 *      ...
+	 *  synchronized(sortedCollection) {
+	 *     for(Object o: sortedCollection)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned collection will be serializable if the specified collection
+	 * is serializable.
+	 * 
+	 * @param sortedCollection
+	 *            the sorted collection to be "wrapped" in a synchronized sorted
+	 *            collection
+	 * @return a synchronized view of the specified sorted collection
+	 */
+	public static <E> SortedCollection<E> synchronizedSortedCollection(
+			final SortedCollection<E> sortedCollection) {
+		return new SynchronizedSortedCollection<E>(sortedCollection);
+	}
+
+	/**
 	 * Returns a synchronized (thread-safe) {@code SortedList} backed by the
 	 * specified sorted list. In order to guarantee serial access, it is
 	 * critical that <b>all</b> access to the backing list is accomplished
@@ -159,7 +191,7 @@ final public class Collections3 {
 	 * @return a synchronized view of the specified sorted list
 	 */
 	public static <E> SortedList<E> synchronizedSortedList(
-			SortedList<E> sortedList) {
+			final SortedList<E> sortedList) {
 		return new SynchronizedSortedList<E>(sortedList);
 	}
 
@@ -191,7 +223,7 @@ final public class Collections3 {
 	 *            the queue to be "wrapped" in a synchronized queue
 	 * @return a synchronized view of the specified queue
 	 */
-	public static <E> Queue<E> synchronizedQueue(Queue<E> queue) {
+	public static <E> Queue<E> synchronizedQueue(final Queue<E> queue) {
 		return new SynchronizedQueue<E>(queue);
 	}
 
@@ -223,7 +255,7 @@ final public class Collections3 {
 	 * @return a synchronized view of the specified bounded queue
 	 */
 	public static <E> Queue<E> synchronizedBoundedQueue(
-			BoundedQueue<E> boundedQueue) {
+			final BoundedQueue<E> boundedQueue) {
 		return new SynchronizedBoundedQueue<E>(boundedQueue);
 	}
 
@@ -260,7 +292,7 @@ final public class Collections3 {
 	 *            the deque to be "wrapped" in a synchronized deque
 	 * @return a synchronized view of the specified deque
 	 */
-	public static <E> Deque<E> synchronizedDeque(Deque<E> deque) {
+	public static <E> Deque<E> synchronizedDeque(final Deque<E> deque) {
 		return new SynchronizedDeque<E>(deque);
 	}
 
@@ -456,6 +488,24 @@ final public class Collections3 {
 		private void writeObject(ObjectOutputStream s) throws IOException {
 			synchronized (mutex) {
 				s.defaultWriteObject();
+			}
+		}
+	}
+
+	static class SynchronizedSortedCollection<E> extends
+			SynchronizedCollection<E> implements SortedCollection<E> {
+		private static final long serialVersionUID = 1L;
+		private final SortedCollection<E> sortedCollection;
+
+		SynchronizedSortedCollection(SortedCollection<E> sortedCollection) {
+			super(sortedCollection);
+			this.sortedCollection = sortedCollection;
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			synchronized (mutex) {
+				return sortedCollection.comparator();
 			}
 		}
 	}
