@@ -490,7 +490,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		private Node<E> minimum;
 		private Node<E> maximum;
 		private int expectedModCount;
-		
+
 		private void checkForConcurrentModification() {
 			if (expectedModCount != l.modCount)
 				throw new ConcurrentModificationException();
@@ -596,10 +596,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 				@Override
 				public void remove() {
-					i.remove();
-					expectedModCount = l.modCount;
-					expectedModCount++;
-					size--;
+	                i.remove();
+	                expectedModCount = l.modCount;
+	                size--;
+	                modCount++;
 				}
 
 				@Override
@@ -617,13 +617,18 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		@Override
 		public boolean remove(Object o) {
 			checkForConcurrentModification();
+			checkNotNull(o);
 			Node<E> node = search((E) o);
 			if (node == null)
 				return false;
+			if (node == maximum)
+				maximum = predecessor(maximum);
+			if (node == minimum)
+				minimum = successor(minimum);
 			l.delete(node);
-			size--;
 			expectedModCount = l.modCount;
 			modCount++;
+			size--;
 			return true;
 		}
 
@@ -631,6 +636,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		public E remove(int index) {
 			checkForConcurrentModification();
 			checkElementIndex(index, size);
+			if (index == 0)
+				minimum = successor(minimum);
+			if (index == size - 1)
+				maximum = predecessor(maximum);
 			E e = l.remove(index + offset);
 			expectedModCount = l.modCount;
 			modCount++;
@@ -652,27 +661,20 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		@Override
 		protected Node<E> search(final E e) {
 			Node<E> node;
-			int compareMax = comparator.compare(e, maximum.element);
 			int compareMin = comparator.compare(e, minimum.element);
-			if (compareMin < 0 || compareMax > 0) {
+			int compareMax = comparator.compare(e, maximum.element);
+			if (compareMin < 0 || compareMax > 0)
 				return null;
-			}
 			if (compareMin == 0) {
-				node = minimum;
-				while (comparator.compare(e, node.element) == 0) {
+				for (node = minimum; comparator.compare(e, node.element) == 0; node = successor(node))
 					if (e.equals(node.element))
 						return node;
-					node = successor(node);
-				}
 				return null;
 			}
 			if (compareMax == 0) {
-				node = maximum;
-				while (comparator.compare(e, node.element) == 0) {
+				for (node = maximum; comparator.compare(e, node.element) == 0; node = predecessor(node))
 					if (e.equals(node.element))
 						return node;
-					node = predecessor(node);
-				}
 				return null;
 			}
 			return l.search(e);
