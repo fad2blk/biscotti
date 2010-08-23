@@ -14,6 +14,7 @@ import java.util.List;
  * 
  * @author Zhenya Leonov
  * @param <E>
+ *            the type of elements held in this list
  */
 public interface SortedList<E> extends SortedCollection<E>, List<E> {
 
