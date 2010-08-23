@@ -23,8 +23,8 @@ import com.google.common.collect.Ordering;
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
  * Attempting to remove or insert {@code null} elements will fail cleanly and
  * safely leaving this queue unmodified. Querying for {@code null} elements is
- * allowed. Inserting non-comparable elements will result in a {@code
- * ClassCastException}.
+ * allowed. Inserting non-comparable elements will result in a
+ * {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with
@@ -43,8 +43,8 @@ import com.google.common.collect.Ordering;
  * method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
  * comparator must be <i>consistent with equals</i> if this queue is to function
  * correctly.
  * <p>
@@ -174,11 +174,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	@SuppressWarnings("unchecked")
 	public static <E> PriorityQueue<E> create(
 			final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
-		return new PriorityQueue(elements);
+		return new PriorityQueue<E>(elements);
 	}
 
 	/**
@@ -244,10 +243,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	/**
 	 * Adds all of the elements in the specified collection to this queue.
-	 * Attempts to {@code addAll} of a queue to itself will result in an {@code
-	 * IllegalArgumentException}. Further, the behavior of this operation is
-	 * undefined if the specified collection is modified while the operation is
-	 * in progress.
+	 * Attempts to {@code addAll} of a queue to itself will result in an
+	 * {@code IllegalArgumentException}. Further, the behavior of this operation
+	 * is undefined if the specified collection is modified while the operation
+	 * is in progress.
 	 * <p>
 	 * This implementation iterates over the specified collection, and adds each
 	 * element returned by the iterator to this queue, in turn.
@@ -346,6 +345,26 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	public int size() {
 		return size;
 	}
+	
+    // serializable object 
+    private void writeObject(java.io.ObjectOutputStream s) 
+                    throws java.io.IOException { 
+            s.defaultWriteObject(); 
+            s.writeInt(size); 
+            s.writeObject(comparator); 
+            for (E e : this) 
+                    s.writeObject(e); 
+    } 
+
+    // deserializable object 
+    private void readObject(java.io.ObjectInputStream s) 
+                    throws java.io.IOException, ClassNotFoundException { 
+            s.defaultReadObject(); 
+            int size = s.readInt(); 
+            comparator = (Comparator<? super E>) s.readObject(); 
+            for (int i = 0; i < size; i++) 
+                    add((E) s.readObject()); 
+    }
 
 	// Red-Black-Tree methods
 
