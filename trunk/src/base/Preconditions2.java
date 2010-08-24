@@ -64,8 +64,8 @@ final public class Preconditions2 {
 	 * This method differs from
 	 * {@link Preconditions#checkNotNull(Object, String, Object...)
 	 * Preconditions.checkNotNull(T, String, Object...)} in that it throws an
-	 * {@code IllegalArgumentException} instead of a {@code
-	 * NullPointerException} if the {@code arg} parameter is {@code null}.
+	 * {@code IllegalArgumentException} instead of a
+	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -73,8 +73,8 @@ final public class Preconditions2 {
 	 *            a template for the exception message should the check fail.
 	 *            The message is formed by replacing each {@code %s} placeholder
 	 *            in the template with an argument. These are matched by
-	 *            position - the first {@code %s} gets {@code
-	 *            errorMessageArgs[0]}, etc. Unmatched arguments will be
+	 *            position - the first {@code %s} gets
+	 *            {@code errorMessageArgs[0]}, etc. Unmatched arguments will be
 	 *            appended to the formatted message in square braces. Unmatched
 	 *            placeholders will be left as-is.
 	 * @param messages
@@ -90,42 +90,6 @@ final public class Preconditions2 {
 		if (arg == null)
 			throw new IllegalArgumentException(format(template, messages));
 		return arg;
-	}
-
-	/**
-	 * Ensures that {@code start} and {@code end} specify valid <i>elements</i>
-	 * in an array or list of size {@code size}, and are in order. An element
-	 * index may range from zero, inclusive, to {@code size}, <b>exclusive</b>.
-	 * This method differs from
-	 * {@link Preconditions#checkPositionIndexes(int, int, int)} because the
-	 * {@code size} argument is exclusive; not inclusive.
-	 * 
-	 * @param start
-	 *            a user-supplied index identifying an element in an array or
-	 *            list
-	 * @param end
-	 *            a user-supplied index identifying an element in an array or
-	 *            list
-	 * @param size
-	 *            the size of that array, list or string
-	 * @throws IndexOutOfBoundsException
-	 *             if either index is negative or is not less than {@code size},
-	 *             or if {@code end} is less than {@code start}
-	 * @throws IllegalArgumentException
-	 *             if {@code size} is negative
-	 */
-	public static void checkElementIndexes(int start, int end, int size) {
-		if (size < 0)
-			throw new IllegalArgumentException("negative size: " + size);
-		if (start < 0)
-			throw new IndexOutOfBoundsException("start index (" + start
-					+ ") must not be negative");
-		if (end < start)
-			throw new IndexOutOfBoundsException("end index (" + end
-					+ ") must not be less than start index (" + start + ")");
-		if (end > size)
-			throw new IndexOutOfBoundsException("end index (" + end
-					+ ") must not be greater than size (" + size + ")");
 	}
 
 	/**
