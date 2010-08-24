@@ -9,7 +9,7 @@ import java.util.Random;
 
 import com.google.common.collect.Ordering;
 
-public class SkipListCollection<E> extends AbstractCollection<E> {
+class SkipListCollection<E> extends AbstractCollection<E> {
 
 	private class Node {
 		public Object[] next;
