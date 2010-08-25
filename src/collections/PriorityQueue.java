@@ -117,14 +117,17 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	protected PriorityQueue(final Iterable<? extends E> elements) {
+		Comparator<? super E> comparator = null;
 		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection) elements).comparator();
+		if(comparator == null)
+			this.comparator = (Comparator<? super E>) Ordering.natural();
 		else
-			comparator = (Comparator<? super E>) Ordering.natural();
+			this.comparator = comparator;
 		for (E element : elements)
 			add(element);
 	}
