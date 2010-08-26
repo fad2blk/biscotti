@@ -42,14 +42,15 @@ import com.google.common.collect.Ordering;
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
+ * not one is explicitly provided) to maintain element ordering, and {@code
  * equals} when testing for element equality. The ordering imposed by the
  * comparator must be <i>consistent with equals</i> if this list is to function
  * correctly.
  * <p>
- * The underlying red-black tree provides the following worst case running time
- * for this list and its views (where <i>n</i> is the size of this list, and
- * <i>m</i> is the size of the specified collection):
+ * If the list has no duplicate elements the underlying red-black tree provides
+ * the following worst case running time for this list and its views (where
+ * <i>n</i> is the size of this list, and <i>m</i> is the size of the specified
+ * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  * <tr>
@@ -86,6 +87,8 @@ import com.google.common.collect.Ordering;
  * <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
+ * <p>
+ * Duplicate elements as determined by the comparator are resolved linearly.
  * <p>
  * A sorted list obtained from the {@link #headList(Object) headList(E)},
  * {@link #subList(int, int) subList(int, int)},
@@ -124,7 +127,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			comparator = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection) elements).comparator();
-		if(comparator == null)
+		if (comparator == null)
 			this.comparator = (Comparator<? super E>) Ordering.natural();
 		else
 			this.comparator = comparator;
@@ -238,18 +241,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	@Override
 	public void add(int index, E element) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
-	 */
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
