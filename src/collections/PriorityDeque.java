@@ -18,8 +18,8 @@ import com.google.common.base.Preconditions;
  * Inserting {@code null} elements will fail cleanly and safely leaving this
  * deque unmodified. Querying for {@code null} elements is allowed. Attempting
  * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
- * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
+ * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)}, {@code
+ * offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
  * the specified ordering. Elements with equal priority are ordered according to
@@ -37,8 +37,8 @@ import com.google.common.base.Preconditions;
  * deque using the {@code Collections3.synchronizedDeque(Deque)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and
- * {@code equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and {@code
+ * equals} when testing for element equality. The ordering imposed by the
  * comparator must be <i>consistent with equals</i> if this deque is to function
  * correctly.
  * <p>
@@ -69,8 +69,7 @@ import com.google.common.base.Preconditions;
  * <td>
  * {@link #add(Object) add(E)}</br> {@link #contains(Object) contains(Object)}
  * </br> {@link #offer(Object) offer(E)}</br> {@link #remove(Object)
- * remove(Object)}</br> {@link #removeFirstOccurrence(Object)}</br>
- * {@link #removeLastOccurrence(Object)}</br></td>
+ * remove(Object)}</br></td>
  * <td align="center"><i>O(log n)</i></td>
  * </tr>
  * <tr>
@@ -309,9 +308,15 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 		return remove();
 	}
 
-	@Override
+	/**
+	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
+	 * and leave the underlying data unmodified.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	public boolean removeFirstOccurrence(Object o) {
-		return remove(o);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -323,15 +328,15 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 			throw new NoSuchElementException();
 	}
 
-	@Override
+	/**
+	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
+	 * and leave the underlying data unmodified.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	public boolean removeLastOccurrence(Object o) {
-		Node node = search((E) o);
-		if (node == null)
-			return false;
-		while (node.left != null && node.left.element.equals(o))
-			node = node.left;
-		delete(node);
-		return true;
+		throw new UnsupportedOperationException();
 	}
 
 }

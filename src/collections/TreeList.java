@@ -47,10 +47,9 @@ import com.google.common.collect.Ordering;
  * comparator must be <i>consistent with equals</i> if this list is to function
  * correctly.
  * <p>
- * If the list has no duplicate elements the underlying red-black tree provides
- * the following worst case running time for this list and its views (where
- * <i>n</i> is the size of this list, and <i>m</i> is the size of the specified
- * collection):
+ * The underlying red-black tree provides the following worst case running time
+ * for this list and its views (where <i>n</i> is the size of this list, and
+ * <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  * <tr>
