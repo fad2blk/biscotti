@@ -48,10 +48,9 @@ import com.google.common.collect.Ordering;
  * comparator must be <i>consistent with equals</i> if this queue is to function
  * correctly.
  * <p>
- * If this queue does not contain elements with equal priority the underlying
- * red-black tree provides the following worst case running time (where <i>n</i>
- * is the size of this queue, and <i>m</i> is the size of the specified
- * collection):
+ * The underlying red-black tree provides the following worst case running time
+ * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
+ * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  * <tr>
