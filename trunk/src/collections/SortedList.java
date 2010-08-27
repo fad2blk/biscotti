@@ -2,12 +2,13 @@ package collections;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * A {@link List} that further provides a <i>total ordering</i> on its elements.
- * This class may be thought of as the {@code List} analog of {@code SortedSet}.
- * The elements are ordered using their {@code natural ordering}, or by an
- * explicit {@link Comparator} provided at creation time.
+ * This interface is the {@code List} analog of {@link SortedSet}. The elements
+ * are ordered using their <i>natural ordering</i>, or by an explicit
+ * {@link Comparator} provided at creation time.
  * <p>
  * To take advantage of the specified ordering additional {@code headList(E)},
  * {@code subList(E, E)}, {@code tailList(E)} operations are provided.
