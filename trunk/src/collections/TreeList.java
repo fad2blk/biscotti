@@ -92,8 +92,6 @@ import com.google.common.collect.Ordering;
  *   </tr>
  * </table>
  * <p>
- * Duplicate elements as determined by the comparator are resolved linearly.
- * <p>
  * A sorted list obtained from the {@link #headList(Object) headList(E)},
  * {@link #subList(int, int) subList(int, int)},
  * {@link #subList(Object, Object) subList(E, E)}, and {@link #tailList(Object)
