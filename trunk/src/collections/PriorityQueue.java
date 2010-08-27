@@ -23,8 +23,8 @@ import com.google.common.collect.Ordering;
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
  * Attempting to remove or insert {@code null} elements will fail cleanly and
  * safely leaving this queue unmodified. Querying for {@code null} elements is
- * allowed. Inserting non-comparable elements will result in a {@code
- * ClassCastException}.
+ * allowed. Inserting non-comparable elements will result in a
+ * {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with
@@ -43,10 +43,11 @@ import com.google.common.collect.Ordering;
  * method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
- * comparator must be <i>consistent with equals</i> if this queue is to function
- * correctly.
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
+ * comparator may or may not be <i>consistent with equals</i>. For any two
+ * elements {@code e1} and {@code e2} such that {@code e1.equals(e2) == true} it
+ * follows that {@code c.compare(e1, e2) == 0}, but not necessarily visa-versa.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
@@ -87,10 +88,9 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
- * Note: This queue uses the same ordering rules as
- * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
- * provides identical functionality, faster overall running time and ordered
- * traversals via its iterators.
+ * This queue uses the same ordering rules as {@link java.util.PriorityQueue
+ * java.util.PriorityQueue}. In comparison it provides identical functionality,
+ * faster overall running time and ordered traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -246,10 +246,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	/**
 	 * Adds all of the elements in the specified collection to this queue.
-	 * Attempts to {@code addAll} of a queue to itself will result in an {@code
-	 * IllegalArgumentException}. Further, the behavior of this operation is
-	 * undefined if the specified collection is modified while the operation is
-	 * in progress.
+	 * Attempts to {@code addAll} of a queue to itself will result in an
+	 * {@code IllegalArgumentException}. Further, the behavior of this operation
+	 * is undefined if the specified collection is modified while the operation
+	 * is in progress.
 	 * <p>
 	 * This implementation iterates over the specified collection, and adds each
 	 * element returned by the iterator to this queue, in turn.
