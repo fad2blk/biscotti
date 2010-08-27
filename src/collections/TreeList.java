@@ -42,10 +42,11 @@ import com.google.common.collect.Ordering;
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain element ordering, and {@code
- * equals} when testing for element equality. The ordering imposed by the
- * comparator must be <i>consistent with equals</i> if this list is to function
- * correctly.
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
+ * comparator may or may not be <i>consistent with equals</i>. For any two
+ * elements {@code e1} and {@code e2} such that {@code e1.equals(e2) == true} it
+ * follows that {@code c.compare(e1, e2) == 0}, but not necessarily visa-versa.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * for this list and its views (where <i>n</i> is the size of this list, and

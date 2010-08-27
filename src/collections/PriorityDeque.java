@@ -18,8 +18,8 @@ import com.google.common.base.Preconditions;
  * Inserting {@code null} elements will fail cleanly and safely leaving this
  * deque unmodified. Querying for {@code null} elements is allowed. Attempting
  * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)}, {@code
- * offerLast(E)}, and {@code push(E)} operations are not supported.
+ * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
+ * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
  * the specified ordering. Elements with equal priority are ordered according to
@@ -37,10 +37,11 @@ import com.google.common.base.Preconditions;
  * deque using the {@code Collections3.synchronizedDeque(Deque)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
- * comparator must be <i>consistent with equals</i> if this deque is to function
- * correctly.
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
+ * comparator may or may not be <i>consistent with equals</i>. For any two
+ * elements {@code e1} and {@code e2} such that {@code e1.equals(e2) == true} it
+ * follows that {@code c.compare(e1, e2) == 0}, but not necessarily visa-versa.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
