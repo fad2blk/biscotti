@@ -87,9 +87,6 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
- * Elements with equal priority as determined by the comparator are resolved
- * linearly.
- * <p>
  * Note: This queue uses the same ordering rules as
  * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
  * provides identical functionality, faster overall running time and ordered
