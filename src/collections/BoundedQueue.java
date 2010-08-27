@@ -56,9 +56,9 @@ public interface BoundedQueue<E> extends Queue<E> {
 	/**
 	 * Inserts the specified element into this queue, removing the <i>eldest</i>
 	 * element (according to this queue's policy) as necessary to prevent the
-	 * queue from overflowing, returning {@code true} upon success or {@code
-	 * false} if this element was rejected due to capacity restrictions. This
-	 * method is generally preferable to {@code add(E)}, which can fail to
+	 * queue from overflowing, returning {@code true} upon success or
+	 * {@code false} if this element was rejected due to capacity restrictions.
+	 * This method is generally preferable to {@code add(E)}, which can fail to
 	 * insert an element only by throwing an exception.
 	 */
 	@Override
@@ -67,11 +67,11 @@ public interface BoundedQueue<E> extends Queue<E> {
 	/**
 	 * Adds all of the elements in the specified collection to this queue,
 	 * removing stale elements (according to this queue's policy) as necessary
-	 * to prevent the queue from overflowing; ignoring rejected elements quietly
-	 * <i>without</i> throwing exceptions. This method is generally preferable
-	 * to {@code addAll(Collection)}, which can fail only by throwing an
-	 * exception when one or more elements cannot be added due to capacity
-	 * restrictions.
+	 * to prevent the queue from overflowing. Elements rejected due to capacity
+	 * restrictions are ignored <i>without</i> throwing runtime exceptions. This
+	 * method is generally preferable to {@code addAll(Collection)}, which can
+	 * fail only by throwing an exception when one or more elements cannot be
+	 * added due to capacity restrictions.
 	 * 
 	 * @param c
 	 *            collection containing elements to be added to this collection
