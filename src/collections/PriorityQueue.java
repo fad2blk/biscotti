@@ -112,14 +112,14 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	transient private Comparator<? super E> comparator;
 	private static final long serialVersionUID = 1L;
 
-	protected PriorityQueue(final Comparator<? super E> comparator) {
+	PriorityQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
 			this.comparator = comparator;
 		else
 			this.comparator = (Comparator<? super E>) Ordering.natural();
 	}
 
-	protected PriorityQueue(final Iterable<? extends E> elements) {
+	PriorityQueue(final Iterable<? extends E> elements) {
 		Comparator<? super E> comparator = null;
 		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
@@ -210,20 +210,20 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			do {
 				parent = t;
 				cmp = comparator.compare(element, t.element);
-				if (cmp <= 0)
+				if (cmp < 0)
 					t = t.left;
 				else
 					t = t.right;
 			} while (t != null);
 			newNode = new Node(element, parent);
-			if (cmp <= 0)
+			if (cmp < 0)
 				parent.left = newNode;
 			else
 				parent.right = newNode;
 			fixAfterInsertion(newNode);
-			if (comparator.compare(element, max.element) > 0)
+			if (comparator.compare(element, max.element) >= 0)
 				max = newNode;
-			else if (comparator.compare(element, min.element) <= 0)
+			else if (comparator.compare(element, min.element) < 0)
 				min = newNode;
 		}
 		size++;
@@ -352,7 +352,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		return size;
 	}
 
+	//
 	// serializable object
+	//
 	private void writeObject(java.io.ObjectOutputStream s)
 			throws java.io.IOException {
 		s.defaultWriteObject();
@@ -362,7 +364,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			s.writeObject(e);
 	}
 
+	//
 	// deserializable object
+	//
 	private void readObject(java.io.ObjectInputStream s)
 			throws java.io.IOException, ClassNotFoundException {
 		s.defaultReadObject();
@@ -374,7 +378,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	// Red-Black-Tree methods
 
-	protected class Node {
+	class Node {
 		E element;
 		Node left = null;
 		Node right = null;
@@ -387,13 +391,13 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		}
 	}
 
-	protected Node search(final E e) {
+	private Node search(final E e) {
 		Node node = root;
 		while (node != null && e != null) {
 			int cmp = comparator.compare(e, node.element);
 			if (cmp == 0 && e.equals(node.element))
 				return node;
-			if (cmp <= 0)
+			if (cmp < 0)
 				node = node.left;
 			else
 				node = node.right;
@@ -401,7 +405,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		return null;
 	}
 
-	protected void delete(Node node) {
+	void delete(Node node) {
 		size--;
 		count++;
 		if (max == node)
@@ -459,7 +463,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		}
 	}
 
-	protected Node predecessor(final Node node) {
+	Node predecessor(final Node node) {
 		if (node == null)
 			return null;
 		else if (node.left != null) {

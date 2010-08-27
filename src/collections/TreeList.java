@@ -52,39 +52,44 @@ import com.google.common.collect.Ordering;
  * <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center">Method</th>
- * <th align="center">Running Time</th>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection)}<br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td align="center"><i>O(m log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}<br>
- * {@link #indexOf(Object)}<br>
- * {@link #lastIndexOf(Object)}<br>
- * {@link #get(int)}<br>
- * {@link #remove(int)}</br></td>
- * <td align="center"><i>O(n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
- * {@link #remove(Object)}</br></td>
- * <td align="center"><i>O(log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #isEmpty() isEmpty()}</br> {@link #size()}<br>
- * </td>
- * <td align="center"><i>O(1)</i></td>
- * </tr>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection)}</br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}</br>
+ *       {@link #indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #get(int)}</br>
+ *       {@link #remove(int)}</br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #remove(Object)}</br>
+ *     </td>
+ *     <td align="center"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #size()}</br>
+ *     </td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * <p>
  * Duplicate elements as determined by the comparator are resolved linearly.
@@ -210,20 +215,20 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			do {
 				parent = t;
 				cmp = comparator.compare(e, t.element);
-				if (cmp <= 0)
+				if (cmp < 0)
 					t = t.left;
 				else
 					t = t.right;
 			} while (t != null);
 			newNode = new Node(e, parent);
-			if (cmp <= 0)
+			if (cmp < 0)
 				parent.left = newNode;
 			else
 				parent.right = newNode;
 			fixAfterInsertion(newNode);
-			if (comparator.compare(e, maximum.element) > 0)
+			if (comparator.compare(e, maximum.element) >= 0)
 				maximum = newNode;
-			else if (comparator.compare(e, minimum.element) <= 0)
+			else if (comparator.compare(e, minimum.element) < 0)
 				minimum = newNode;
 		}
 		size++;
@@ -477,7 +482,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		return new SubList(this, fromIndex, size);
 	}
 
+	//
 	// serializable object
+	//
 	private void writeObject(java.io.ObjectOutputStream s)
 			throws java.io.IOException {
 		s.defaultWriteObject();
@@ -487,7 +494,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			s.writeObject(e);
 	}
 
+	//
 	// deserializable object
+	//
 	private void readObject(java.io.ObjectInputStream s)
 			throws java.io.IOException, ClassNotFoundException {
 		s.defaultReadObject();
@@ -722,13 +731,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		}
 	}
 
-	protected Node search(final E e) {
+	Node search(final E e) {
 		Node node = root;
 		while (node != null) {
 			int cmp = comparator.compare(e, node.element);
 			if (cmp == 0 && e.equals(node.element))
 				return node;
-			if (cmp <= 0)
+			if (cmp < 0)
 				node = node.left;
 			else
 				node = node.right;
