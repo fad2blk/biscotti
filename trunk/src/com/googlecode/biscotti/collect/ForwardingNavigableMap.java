@@ -15,7 +15,7 @@ import com.google.common.collect.ForwardingSortedMap;
  * @see ForwardingObject
  * @author Zhenya Leonov
  */
-abstract class ForwardingNavigableMap<K, V> extends ForwardingSortedMap<K, V>
+public abstract class ForwardingNavigableMap<K, V> extends ForwardingSortedMap<K, V>
 		implements NavigableMap<K, V> {
 
 	@Override
