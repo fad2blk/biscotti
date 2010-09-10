@@ -33,20 +33,20 @@ import com.google.common.collect.Ordering;
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
  * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a {@code
- * ConcurrentModificationException}. Further, the list iterator does not support
- * the {@code add(E)} and {@code set(E)} operations.
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}. Further, the list iterator does not
+ * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
- * This list not <i>thread-safe</i>. If multiple threads modify this list
+ * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
  * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator may or may not be <i>consistent with equals</i>. For any two
- * elements {@code e1} and {@code e2} such that {@code e1.equals(e2) == true} it
- * follows that {@code c.compare(e1, e2) == 0}, but not necessarily visa-versa.
+ * comparator is not <i>consistent with equals</i>. For any two elements
+ * {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it is not
+ * guaranteed {@code e1.equals(e2) == true}.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * for this list and its views (where <i>n</i> is the size of this list, and
@@ -621,7 +621,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 					i.remove();
 					expectedModCount = l.modCount;
 					size--;
-					modCount++;
+					//modCount++;
 				}
 
 				@Override
@@ -649,11 +649,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				minimum = successor(minimum);
 			l.delete(node);
 			expectedModCount = l.modCount;
-			modCount++;
+			//modCount++;
 			size--;
 			return true;
 		}
-
+		
 		@Override
 		public E remove(int index) {
 			checkForConcurrentModification();
@@ -664,7 +664,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				maximum = predecessor(maximum);
 			E e = l.remove(index + offset);
 			expectedModCount = l.modCount;
-			modCount++;
+			//modCount++;
 			size--;
 			return e;
 		}

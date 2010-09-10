@@ -12,12 +12,12 @@ import com.google.common.collect.Ordering;
 class SkipListCollection<E> extends AbstractCollection<E> {
 
 	private class Node {
-		public Object[] next;
+		public Node[] next;
 		public E element;
 
 		public Node(E value, int level) {
 			this.element = value;
-			this.next = new Object[level];
+			this.next = (Node[]) new Object[level];
 		}
 	}
 
@@ -62,10 +62,10 @@ class SkipListCollection<E> extends AbstractCollection<E> {
 	public boolean contains(Object o) {
 		Node itor = head;
 		for (int i = levels - 1; i >= 0; i--) {
-			for (; itor.next[i] != null; itor = ((Node)itor.next[i])) {
-				if (comparator.compare(((Node)itor.next[i]).element, (E) o) > 0)
+			for (; itor.next[i] != null; itor = itor.next[i]) {
+				if (comparator.compare(itor.next[i].element, (E) o) > 0)
 					break;
-				if (((Node)itor.next[i]).element.equals(0))
+				if (itor.next[i].element.equals(0))
 					return true;
 			}
 		}
@@ -77,7 +77,7 @@ class SkipListCollection<E> extends AbstractCollection<E> {
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
 			int index = 0;
-			Node next = (Node) head.next[0];
+			Node next = head.next[0];
 
 			@Override
 			public boolean hasNext() {
@@ -87,7 +87,7 @@ class SkipListCollection<E> extends AbstractCollection<E> {
 			@Override
 			public E next() {
 				E element = next.element;
-				next = (Node) next.next[0];
+				next = next.next[0];
 				index++;
 				return element;
 			}
@@ -113,8 +113,8 @@ class SkipListCollection<E> extends AbstractCollection<E> {
 		Node newNode = new Node(e, level + 1);
 		Node itor = head;
 		for (int i = levels - 1; i >= 0; i--) {
-			for (; itor.next[i] != null; itor = ((Node)itor.next[i])) {
-				if (comparator.compare(((Node)itor.next[i]).element, e) > 0)
+			for (; itor.next[i] != null; itor = itor.next[i]) {
+				if (comparator.compare(itor.next[i].element, e) > 0)
 					break;
 			}
 			if (i <= level) {
@@ -130,13 +130,13 @@ class SkipListCollection<E> extends AbstractCollection<E> {
 		Node itor = head;
 		boolean found = false;
 		for (int i = levels - 1; i >= 0; i--) {
-			for (; itor.next[i] != null; itor = (Node)itor.next[i]) {
-				if (((Node)itor.next[i]).element.equals(o)) {
+			for (; itor.next[i] != null; itor = itor.next[i]) {
+				if (itor.next[i].element.equals(o)) {
 					found = true;
-					itor.next[i] = ((Node)itor.next[i]).next[i];
+					itor.next[i] = itor.next[i].next[i];
 					break;
 				}
-				if (comparator.compare(((Node)itor.next[i]).element, (E) o) > 0)
+				if (comparator.compare(itor.next[i].element, (E) o) > 0)
 					break;
 			}
 		}
