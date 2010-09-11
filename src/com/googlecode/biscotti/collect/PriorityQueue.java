@@ -45,9 +45,9 @@ import com.google.common.collect.Ordering;
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
  * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator is not <i>consistent with equals</i>. For any two elements
- * {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it is not
- * guaranteed {@code e1.equals(e2) == true}.
+ * comparator is not guaranteed to be <i>consistent with equals</i>. For any two
+ * elements {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it
+ * is not guaranteed {@code e1.equals(e2) == true}.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
