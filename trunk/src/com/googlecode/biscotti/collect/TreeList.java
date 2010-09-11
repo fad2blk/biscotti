@@ -42,9 +42,9 @@ import com.google.common.collect.Ordering;
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
  * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and
- * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator is not <i>consistent with equals</i>. For any two elements
+ * not one is explicitly provided) to maintain sorted order, and {@code equals}
+ * when testing for element equality. The ordering imposed by this list is not
+ * guaranteed to be <i>consistent with equals</i>. That is for any two elements
  * {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it is not
  * guaranteed {@code e1.equals(e2) == true}.
  * <p>
