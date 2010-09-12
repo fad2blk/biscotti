@@ -9,7 +9,9 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.AbstractList;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -17,6 +19,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 /**
@@ -41,12 +44,12 @@ import com.google.common.collect.Ordering;
  * concurrently it must be synchronized externally, considering "wrapping" the
  * list using the {@code Collections.synchronizedSortedList(List)} method.
  * <p>
- * <b>Implementation Note:</b>This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain sorted order, and {@code equals}
- * when testing for element equality. The ordering imposed by this list is not
- * guaranteed to be <i>consistent with equals</i>. That is for any two elements
- * {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it is not
- * guaranteed {@code e1.equals(e2) == true}.
+ * <b>Implementation Note:</b> This implementation uses a comparator (whether or
+ * not one is explicitly provided) to both maintain sorted order and test for
+ * element equality. Two elements which are deemed equal by the comparator's
+ * {@code compare(E, E)} method are, from the standpoint of this list, equal.
+ * Thus the ordering maintained by this list must be <i>consistent with
+ * equals</i> if this list is to function correctly.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * for this list and its views (where <i>n</i> is the size of this list, and
@@ -185,6 +188,26 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	public static <E> TreeList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		return new TreeList<E>(elements);
+	}
+	
+	/**
+	 * Creates a new {@code TreeList} containing the specified initial elements
+	 * ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this list
+	 * @return a new {@code TreeList} containing the specified initial elements
+	 * @throws ClassCastException
+	 *             if specified elements cannot be compared to one another
+	 *             according to their natural ordering
+	 * @throws NullPointerException
+	 *             if any of the specified elements are {@code null}
+	 */
+	public static <E> TreeList<E> create(final E... elements) {
+		checkNotNull(elements);
+		TreeList<E> l = create();
+		Collections.addAll(l, elements);
+		return l;
 	}
 
 	/**
@@ -734,7 +757,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		Node node = root;
 		while (node != null) {
 			int cmp = comparator.compare(e, node.element);
-			if (cmp == 0 && e.equals(node.element))
+			if (cmp == 0)
 				return node;
 			if (cmp < 0)
 				node = node.left;
