@@ -1,8 +1,11 @@
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.util.AbstractQueue;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -42,12 +45,13 @@ import com.google.common.collect.Ordering;
  * "wrapping" the queue using the {@code Collections3.synchronizedQueue(Queue)}
  * method.
  * <p>
- * <b>Implementation Note:</b>This implementation uses a comparator (whether or
+ * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
  * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator is not guaranteed to be <i>consistent with equals</i>. For any two
+ * comparator is not required to be <i>consistent with equals</i>. For any two
  * elements {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it
- * is not guaranteed {@code e1.equals(e2) == true}.
+ * is not necessary for {@code e1.equals(e2) == true}. This is allows duplicate
+ * elements to have different priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
@@ -187,6 +191,27 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
 		return new PriorityQueue<E>(elements);
+	}
+	
+	/**
+	 * Creates a new {@code PriorityQueue} containing the specified initial
+	 * elements ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this queue
+	 * @return a new {@code PriorityQueue} containing the specified initial
+	 *         elements
+	 * @throws ClassCastException
+	 *             if specified elements cannot be compared to one another
+	 *             according to their natural ordering
+	 * @throws NullPointerException
+	 *             if any of the specified elements are {@code null}
+	 */
+	public static <E> PriorityQueue<E> create(final E... elements) {
+		checkNotNull(elements);
+		PriorityQueue<E> q = create();
+		Collections.addAll(q, elements);
+		return q;
 	}
 
 	/**
