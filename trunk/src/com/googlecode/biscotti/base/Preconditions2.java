@@ -1,6 +1,10 @@
 package com.googlecode.biscotti.base;
 
+import java.util.Comparator;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Ordering;
+import com.googlecode.biscotti.collect.TreeList;
 
 /**
  * Static methods used to verify correctness of arguments passed to your own
@@ -83,11 +87,59 @@ final public class Preconditions2 {
 	 * @throws IllegalArgumentException
 	 *             if the argument is {@code null}
 	 */
-	public static <T> T checkArgumentNotNull(final T arg, final String template,
-			final Object... messages) {
+	public static <T> T checkArgumentNotNull(final T arg,
+			final String template, final Object... messages) {
 		if (arg == null)
 			throw new IllegalArgumentException(format(template, messages));
 		return arg;
+	}
+
+	/**
+	 * Ensures that the specified element is in range between {@code
+	 * fromElement} inclusive, and {@code toElement} inclusive, according to
+	 * their <i>natural ordering</i>.
+	 * 
+	 * @param element
+	 *            a user-supplied element
+	 * @param fromElement
+	 *            low endpoint (inclusive) of the specified range
+	 * @param toElement
+	 *            high endpoint (inclusive) of the specified range
+	 * @return the specified element
+	 */
+	public static <T> T checkElementPosition(final T element,
+			final T fromElement, final T toElement) {
+		return checkElementPosition(element, fromElement, toElement,
+				(Comparator<? super T>) Ordering.natural());
+	}
+
+	/**
+	 * Ensures that the specified element is in range between {@code
+	 * fromElement} inclusive, and {@code toElement} inclusive, according to the
+	 * specified {@code Comparator}.
+	 * 
+	 * @param element
+	 *            a user-supplied element
+	 * @param fromElement
+	 *            low endpoint (inclusive) of the specified range
+	 * @param toElement
+	 *            high endpoint (inclusive) of the specified range
+	 * @param comparator
+	 *            a user-supplied comparator
+	 * @return the specified element
+	 */
+	public static <T> T checkElementPosition(final T element,
+			final T fromElement, final T toElement,
+			Comparator<? super T> comparator) {
+		if (comparator.compare(element, fromElement) < 0)
+			throw new IllegalArgumentException(format(
+					"element (%s) must not be less than start element (%s)",
+					element, fromElement));
+		if (comparator.compare(element, toElement) > 0)
+			throw new IllegalArgumentException(format(
+					"element (%s) must not be greater than end element(%s)",
+					element, toElement));
+		return element;
 	}
 
 	/**
