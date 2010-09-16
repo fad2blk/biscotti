@@ -6,10 +6,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
+import static com.googlecode.biscotti.base.Preconditions2.checkElementPosition;
 
 import java.io.Serializable;
 import java.util.AbstractList;
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +19,6 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 /**
@@ -95,12 +94,6 @@ import com.google.common.collect.Ordering;
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
  * </table>
- * <p>
- * A sorted list obtained from the {@link #headList(Object) headList(E)},
- * {@link #subList(int, int) subList(int, int)},
- * {@link #subList(Object, Object) subList(E, E)}, and {@link #tailList(Object)
- * tailSet(E)} methods does not support the {@code add}, {@code addAll}, and
- * {@code set} operations. The {@code remove} operations are supported.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -189,7 +182,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		checkNotNull(elements);
 		return new TreeList<E>(elements);
 	}
-	
+
 	/**
 	 * Creates a new {@code TreeList} containing the specified initial elements
 	 * ordered according to their <i>natural ordering</i>.
@@ -559,16 +552,17 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		@Override
 		public boolean add(E e) {
-			throw new UnsupportedOperationException();
+			checkElementPosition(e, minimum.element, maximum.element, comparator);
+			l.add(e);
+			expectedModCount = l.modCount;
+			size++;
+			if (comparator.compare(maximum.element, e) == 0)
+				maximum = successor(maximum);
+			return true;
 		}
 
 		@Override
 		public void add(int index, E element) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends E> c) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -644,7 +638,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 					i.remove();
 					expectedModCount = l.modCount;
 					size--;
-					//modCount++;
+					// modCount++;
 				}
 
 				@Override
@@ -672,11 +666,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				minimum = successor(minimum);
 			l.delete(node);
 			expectedModCount = l.modCount;
-			//modCount++;
+			// modCount++;
 			size--;
 			return true;
 		}
-		
+
 		@Override
 		public E remove(int index) {
 			checkForConcurrentModification();
@@ -687,7 +681,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				maximum = predecessor(maximum);
 			E e = l.remove(index + offset);
 			expectedModCount = l.modCount;
-			//modCount++;
+			// modCount++;
 			size--;
 			return e;
 		}
