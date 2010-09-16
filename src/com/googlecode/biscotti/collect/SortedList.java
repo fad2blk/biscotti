@@ -26,6 +26,9 @@ public interface SortedList<E> extends SortedCollection<E>, List<E> {
 	 * {@code toElement}, will be included in the returned list. The returned
 	 * list is backed by this list, so changes in the returned list are
 	 * reflected in this list.
+	 * <p>
+	 * Attempts to insert an element outside the specified range will result in
+	 * an {@code IllegalArgumentException}.
 	 * 
 	 * @param toElement
 	 *            high endpoint (exclusive) of the returned list
@@ -49,6 +52,9 @@ public interface SortedList<E> extends SortedCollection<E>, List<E> {
 	 * returned list. (If {@code fromElement} and {@code toElement} are equal,
 	 * the returned list is empty.) The returned list is backed by this list, so
 	 * changes in the returned list are reflected in this list.
+	 * <p>
+	 * Attempts to insert an element outside the specified range will result in
+	 * an {@code IllegalArgumentException}.
 	 * 
 	 * @param fromElement
 	 *            low endpoint (inclusive) of the returned list
@@ -67,6 +73,12 @@ public interface SortedList<E> extends SortedCollection<E>, List<E> {
 	 */
 	public SortedList<E> subList(E fromElement, E toElement);
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Attempts to insert an element outside the specified range will result in
+	 * an {@code IllegalArgumentException}.
+	 */
 	@Override
 	public SortedList<E> subList(int fromIndex, int toIndex);
 
@@ -77,6 +89,9 @@ public interface SortedList<E> extends SortedCollection<E>, List<E> {
 	 * to {@code fromElement}, will be included in the returned list. The
 	 * returned list is backed by this list, so changes in the returned list are
 	 * reflected in this list.
+	 * <p>
+	 * Attempts to insert an element outside the specified range will result in
+	 * an {@code IllegalArgumentException}.
 	 * 
 	 * @param fromElement
 	 *            low endpoint (inclusive) of the returned list
