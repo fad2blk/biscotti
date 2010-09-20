@@ -141,7 +141,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * @return a new {@code TreeList} that orders its elements according to
 	 *         their natural ordering
 	 */
-	public static <E> TreeList<E> create() {
+	public static <E extends Comparable<? super E>> TreeList<E> create() {
 		return new TreeList<E>((Comparator<? super E>) null);
 	}
 
@@ -196,7 +196,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * @throws NullPointerException
 	 *             if any of the specified elements are {@code null}
 	 */
-	public static <E> TreeList<E> create(final E... elements) {
+	public static <E extends Comparable<? super E>> TreeList<E> create(
+			final E... elements) {
 		checkNotNull(elements);
 		TreeList<E> l = create();
 		Collections.addAll(l, elements);
@@ -552,7 +553,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		@Override
 		public boolean add(E e) {
-			checkElementPosition(e, minimum.element, maximum.element, comparator);
+			checkElementPosition(e, minimum.element, maximum.element,
+					comparator);
 			l.add(e);
 			expectedModCount = l.modCount;
 			size++;
