@@ -36,9 +36,9 @@ import com.google.common.collect.Sets;
  * 
  * @author Zhenya Leonov
  */
-final public class CopyOfCollections3 {
+final public class Collections3 {
 
-	private CopyOfCollections3() {
+	private Collections3() {
 	}
 
 	/**
