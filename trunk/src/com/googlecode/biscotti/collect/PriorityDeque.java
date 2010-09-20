@@ -52,54 +52,43 @@ import com.google.common.base.Preconditions;
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object) contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object) remove(Object)}</br>
- *     </td>
- *     <td align="center"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek() peek()}</br>
- *       {@link #poll() poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size() size()}<br>
- *       {@link #getFirst() getFirst()}</br>
- *       {@link #getLast() getLast()}</br>
- *       {@link #peekFirst() peekFirst()}</br>
- *       {@link #peekLast() peekLast()}</br>
- *       {@link #pollFirst() pollFirst()}</br>
- *       {@link #pollLast() pollLast()}</br>
- *       {@link #pop() pop()}</br>
- *       {@link #removeFirst() removeFirst()}</br>
- *       {@link #removeLast() removeLast()}</br>
- *     </td>
- *     <td align="center"><i>O(1)</i></td>
- *   </tr>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object) contains(Object)}
+ * </br> {@link #offer(Object) offer(E)}</br> {@link #remove(Object)
+ * remove(Object)}</br></td>
+ * <td align="center"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek() peek()}</br> {@link #poll() poll()}</br> {@link #remove()
+ * remove()}</br> {@link #size() size()}<br>
+ * {@link #getFirst() getFirst()}</br> {@link #getLast() getLast()}</br>
+ * {@link #peekFirst() peekFirst()}</br> {@link #peekLast() peekLast()}</br>
+ * {@link #pollFirst() pollFirst()}</br> {@link #pollLast() pollLast()}</br>
+ * {@link #pop() pop()}</br> {@link #removeFirst() removeFirst()}</br>
+ * {@link #removeLast() removeLast()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
  * </table>
  * <p>
  * Note: This deque uses the same ordering rules as
@@ -131,7 +120,7 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	 * @return a new {@code PriorityDeque} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E> PriorityDeque<E> create() {
+	public static <E extends Comparable<? super E>> PriorityDeque<E> create() {
 		return new PriorityDeque<E>((Comparator<? super E>) null);
 	}
 
@@ -174,7 +163,7 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 		Preconditions.checkNotNull(elements);
 		return new PriorityDeque<E>(elements);
 	}
-	
+
 	/**
 	 * Creates a new {@code PriorityDeque} containing the specified initial
 	 * elements ordered according to their <i>natural ordering</i>.
@@ -189,7 +178,8 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	 * @throws NullPointerException
 	 *             if any of the specified elements are {@code null}
 	 */
-	public static <E> PriorityDeque<E> create(final E... elements) {
+	public static <E extends Comparable<? super E>> PriorityDeque<E> create(
+			final E... elements) {
 		checkNotNull(elements);
 		PriorityDeque<E> d = create();
 		Collections.addAll(d, elements);
