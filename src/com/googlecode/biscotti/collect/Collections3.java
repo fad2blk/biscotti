@@ -18,27 +18,273 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 
 /**
- * Static methods which operate on or return {@link Collection}s and {@link Map}s.
+ * Static utility methods which operate on or return {@link Collection}s and
+ * {@link Map}s.
  * 
  * @author Zhenya Leonov
  */
-final public class Collections3 {
+final public class CopyOfCollections3 {
 
-	private Collections3() {
+	private CopyOfCollections3() {
 	}
+
+	/**
+	 * Creates a new {@code TreeMap} containing the same mappings as the
+	 * specified map, sorted according to the <i>natural ordering</i> of its
+	 * keys.
+	 * 
+	 * @param map
+	 *            the map whose mappings are to be placed in this map
+	 * @return a new {@code TreeMap} containing the same mappings as the
+	 *         specified map, sorted according to the <i>natural ordering</i> of
+	 *         its keys
+	 */
+
+	public static <K extends Comparable<? super K>, V> TreeMap<K, V> newTreeMap(
+			Map<? extends K, ? extends V> map) {
+		return new TreeMap<K, V>(map);
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListMap} sorted according to the
+	 * <i>natural ordering</i> of its keys.
+	 * 
+	 * @return a new {@code ConcurrentSkipListMap} sorted according to the
+	 *         <i>natural ordering</i> of its keys
+	 */
+
+	public static <K extends Comparable<? super K>, V> ConcurrentSkipListMap<K, V> newConcurrentSkipListMap() {
+		return new ConcurrentSkipListMap<K, V>();
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListMap} that orders its keys
+	 * according to the specified comparator.
+	 * 
+	 * @param comparator
+	 *            the {@code Comparator} used to order the keys in this map
+	 * @return a new {@code ConcurrentSkipListMap} that orders its keys
+	 *         according to the specified comparator
+	 */
+
+	public static <K, V> ConcurrentSkipListMap<K, V> newConcurrentSkipListMap(
+			Comparator<? super K> comparator) {
+		return new ConcurrentSkipListMap<K, V>(comparator);
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListMap} containing the same mappings
+	 * as the specified map, sorted according to the <i>natural ordering</i> of
+	 * its keys.
+	 * 
+	 * @param map
+	 *            the map whose mappings are to be placed in this map
+	 * @return a new {@code ConcurrentSkipListMap} containing the same mappings
+	 *         as the specified map, sorted according to the <i>natural
+	 *         ordering</i> of its keys
+	 */
+
+	public static <K extends Comparable<? super K>, V> ConcurrentSkipListMap<K, V> newConcurrentSkipListMap(
+			Map<? extends K, ? extends V> map) {
+		return new ConcurrentSkipListMap<K, V>(map);
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListMap} containing the same mappings
+	 * and using the same ordering as the specified sorted map.
+	 * 
+	 * @param map
+	 *            the sorted map whose mappings are to be placed in this map,
+	 *            and whose comparator is to be used to sort this map
+	 * @return a new {@code ConcurrentSkipListMap} containing the same mappings
+	 *         and using the same ordering as the specified sorted map
+	 */
+
+	public static <K, V> ConcurrentSkipListMap<K, V> newConcurrentSkipListMap(
+			SortedMap<K, ? extends V> map) {
+		return new ConcurrentSkipListMap<K, V>(map);
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListSet} that orders its elements
+	 * according to their <i>natural ordering</i>.
+	 * 
+	 * @return a new {@code ConcurrentSkipListSet} that orders its elements
+	 *         according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> ConcurrentSkipListSet<E> newConcurrentSkipListSet() {
+		return new ConcurrentSkipListSet<E>();
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListSet} that orders its elements
+	 * according to to the specified comparator.
+	 * 
+	 * @param comparator
+	 *            the {@code Comparator} used to order the elements in this set
+	 * @return a new {@code ConcurrentSkipListSet} that orders its elements
+	 *         according to to the specified comparator
+	 */
+	public static <E> ConcurrentSkipListSet<E> newConcurrentSkipListSet(
+			final Comparator<? super E> comparator) {
+		checkNotNull(comparator);
+		return new ConcurrentSkipListSet<E>(comparator);
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListSet} containing the specified
+	 * initial elements, ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the specified initial elements this set should contain
+	 * @return a new {@code ConcurrentSkipListSet} containing the specified
+	 *         initial elements, ordered according to their <i>natural
+	 *         ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> ConcurrentSkipListSet<E> newConcurrentSkipListSet(
+			final E... elements) {
+		checkNotNull(elements);
+		ConcurrentSkipListSet<E> concurrentSkipListSet = newConcurrentSkipListSet();
+		Collections.addAll(concurrentSkipListSet, elements);
+		return concurrentSkipListSet;
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListSet} containing the elements
+	 * returned by the specified iterator, ordered according to their <i>natural
+	 * ordering</i>.
+	 * 
+	 * @param elements
+	 *            the iterator whose elements are to be placed into the set
+	 * @return a new {@code ConcurrentSkipListSet} containing the elements
+	 *         returned by the specified iterator, ordered according to their
+	 *         <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> ConcurrentSkipListSet<E> newConcurrentSkipListSet(
+			final Iterator<? extends E> elements) {
+		checkNotNull(elements);
+		ConcurrentSkipListSet<E> concurrentSkipListSet = newConcurrentSkipListSet();
+		Iterators.addAll(concurrentSkipListSet, elements);
+		return concurrentSkipListSet;
+	}
+
+	/**
+	 * Creates a new {@code ConcurrentSkipListSet} containing the elements of
+	 * the specified iterable. If the iterable is an instance of a
+	 * {@link SortedSet}, {@link PriorityQueue java.util.PriorityQueue}, or
+	 * {@link SortedCollection}, this set will be ordered according to the same
+	 * ordering. Otherwise, this set will be ordered according to the <i>natural
+	 * ordering</i> of its elements.
+	 * 
+	 * @param elements
+	 *            the iterable whose elements are to be placed into the set
+	 * @return a new {@code ConcurrentSkipListSet} containing the elements in
+	 *         the specified iterable
+	 */
+	public static <E> ConcurrentSkipListSet<E> newConcurrentSkipListSet(
+			final Iterable<? extends E> elements) {
+		checkNotNull(elements);
+		ConcurrentSkipListSet<E> concurrentSkipListSet;
+		Comparator<? super E> c = null;
+		if (elements instanceof SortedSet<?>)
+			c = ((SortedSet) elements).comparator();
+		else if (elements instanceof java.util.PriorityQueue<?>)
+			c = ((java.util.PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			c = ((SortedCollection) elements).comparator();
+
+		if (c == null)
+			concurrentSkipListSet = new ConcurrentSkipListSet<E>();
+		else
+			concurrentSkipListSet = newConcurrentSkipListSet(c);
+		Iterables.addAll(concurrentSkipListSet, elements);
+		return concurrentSkipListSet;
+	}
+
+	/**
+	 * Creates a new {@code TreeSet} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the element this tree set should contain
+	 * @return a new {@code TreeSet} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeSet<E> treeSet = Sets.newTreeSet();
+		Collections.addAll(treeSet, elements);
+		return treeSet;
+	}
+
+	/**
+	 * Creates a new {@code TreeSet} containing the elements returned by the
+	 * specified iterator, sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the iterator whose elements are to be placed into this set
+	 * @return a new {@code TreeSet} containing the elements returned by the
+	 *         specified iterator, sorted according to their <i>natural
+	 *         ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
+			final Iterator<? extends E> elements) {
+		checkNotNull(elements);
+		TreeSet<E> treeSet = Sets.newTreeSet();
+		Iterators.addAll(treeSet, elements);
+		return treeSet;
+	}
+
+	// /**
+	// * Creates a new {@code TreeSet} containing the elements of the specified
+	// * iterable. If the iterable is an instance of a {@link SortedSet},
+	// * {@link PriorityQueue java.util.PriorityQueue}, or
+	// * {@link SortedCollection}, this set will be ordered according to the
+	// same
+	// * ordering. Otherwise, this set will be ordered according to the
+	// <i>natural
+	// * ordering</i> of its elements.
+	// *
+	// * @param <E>
+	// * the type of elements held in this tree set
+	// * @param elements
+	// * the iterable whose elements are to be placed into this set
+	// * @return a new {@code TreeSet} containing the elements of the specified
+	// * iterable
+	// */
+	// public static <E> TreeSet<E> newTreeSet(final Iterable<? extends E>
+	// elements) {
+	// checkNotNull(elements);
+	// Comparator<? super E> c = null;
+	// if (elements instanceof SortedSet<?>)
+	// c = ((SortedSet) elements).comparator();
+	// else if (elements instanceof java.util.PriorityQueue<?>)
+	// c = ((java.util.PriorityQueue) elements).comparator();
+	// else if (elements instanceof SortedCollection<?>)
+	// c = ((SortedCollection) elements).comparator();
+	// TreeSet<E> treeSet = c == null ? new TreeSet<E>() : new TreeSet<E>(c);
+	// Iterables.addAll(treeSet, elements);
+	// return treeSet;
+	// }
 
 	/**
 	 * Creates a new {@code ArrayDeque} with an initial capacity sufficient to
 	 * hold 16 elements.
 	 * 
-	 * @param <E>
-	 *            the type of elements held in this deque
 	 * @return a new {@code ArrayDeque} with an initial capacity sufficient to
 	 *         hold 16 elements
 	 */
@@ -50,8 +296,6 @@ final public class Collections3 {
 	 * Creates a new {@code ArrayDeque} with initial capacity sufficient to hold
 	 * the specified number of elements.
 	 * 
-	 * @param <E>
-	 *            the type of elements held in this deque
 	 * @param numElements
 	 *            lower bound on initial capacity of the deque
 	 * @return a new {@code ArrayDeque} with initial capacity sufficient to hold
@@ -65,14 +309,12 @@ final public class Collections3 {
 	/**
 	 * Creates a new {@code ArrayDeque} containing the provided elements.
 	 * 
-	 * @param <E>
-	 *            the type of elements held in this deque
 	 * @param elements
 	 *            the elements this deque should contain
 	 * @return a new {@code ArrayDeque} containing the provided elements
 	 */
 	public static <E> ArrayDeque<E> newArrayDeque(final E... elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		ArrayDeque<E> arrayDeque = new ArrayDeque<E>(elements.length);
 		Collections.addAll(arrayDeque, elements);
 		return arrayDeque;
@@ -82,8 +324,6 @@ final public class Collections3 {
 	 * Creates a new {@code ArrayDeque} containing the elements of the provided
 	 * {@code Iterable}.
 	 * 
-	 * @param <E>
-	 *            the type of elements held in this deque
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the deque
 	 * @return a new {@code ArrayDeque} containing the elements of the provided
@@ -91,7 +331,7 @@ final public class Collections3 {
 	 */
 	public static <E> ArrayDeque<E> newArrayDeque(
 			final Iterable<? extends E> elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		if (elements instanceof Collection<?>)
 			return new ArrayDeque<E>((Collection<? extends E>) elements);
 		else
@@ -102,8 +342,6 @@ final public class Collections3 {
 	 * Creates a new {@code ArrayDeque} containing the elements returned by the
 	 * provided iterator.
 	 * 
-	 * @param <E>
-	 *            the type of elements held in this deque
 	 * @param elements
 	 *            the iterator whose elements are to be placed into the deque
 	 * @return a new {@code ArrayDeque} containing the elements returned by the
@@ -111,10 +349,9 @@ final public class Collections3 {
 	 */
 	public static <E> ArrayDeque<E> newArrayDeque(
 			final Iterator<? extends E> elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		ArrayDeque<E> arrayDeque = new ArrayDeque<E>();
-		while (elements.hasNext())
-			arrayDeque.add(elements.next());
+		Iterators.addAll(arrayDeque, elements);
 		return arrayDeque;
 	}
 
