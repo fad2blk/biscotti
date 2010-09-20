@@ -20,9 +20,9 @@ final public class Preconditions2 {
 	 * not {@code null}.
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object)
-	 * Preconditions.checkNotNull(T)} this method throws an {@code
-	 * IllegalArgumentException} instead of a {@code NullPointerException} if
-	 * the {@code arg} parameter is {@code null}.
+	 * Preconditions.checkNotNull(T)} this method throws an
+	 * {@code IllegalArgumentException} instead of a
+	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -41,9 +41,9 @@ final public class Preconditions2 {
 	 * not {@code null}.
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object, Object)
-	 * Preconditions.checkNotNull(T, Object)} this method throws an {@code
-	 * IllegalArgumentException} instead of a {@code NullPointerException} if
-	 * the {@code arg} parameter is {@code null}.
+	 * Preconditions.checkNotNull(T, Object)} this method throws an
+	 * {@code IllegalArgumentException} instead of a
+	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -66,8 +66,8 @@ final public class Preconditions2 {
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object, String, Object...)
 	 * Preconditions.checkNotNull(T, String, Object...)} this method throws an
-	 * {@code IllegalArgumentException} instead of a {@code
-	 * NullPointerException} if the {@code arg} parameter is {@code null}.
+	 * {@code IllegalArgumentException} instead of a
+	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -75,8 +75,8 @@ final public class Preconditions2 {
 	 *            a template for the exception message should the check fail.
 	 *            The message is formed by replacing each {@code %s} placeholder
 	 *            in the template with an argument. These are matched by
-	 *            position - the first {@code %s} gets {@code
-	 *            errorMessageArgs[0]}, etc. Unmatched arguments will be
+	 *            position - the first {@code %s} gets
+	 *            {@code errorMessageArgs[0]}, etc. Unmatched arguments will be
 	 *            appended to the formatted message in square braces. Unmatched
 	 *            placeholders will be left as-is.
 	 * @param messages
@@ -95,9 +95,9 @@ final public class Preconditions2 {
 	}
 
 	/**
-	 * Ensures that the specified element is in range between {@code
-	 * fromElement} inclusive, and {@code toElement} inclusive, according to
-	 * their <i>natural ordering</i>.
+	 * Ensures that the specified element is located between {@code fromElement}
+	 * inclusive, and {@code toElement} inclusive, according to their <i>natural
+	 * ordering</i>.
 	 * 
 	 * @param element
 	 *            a user-supplied element
@@ -114,9 +114,9 @@ final public class Preconditions2 {
 	}
 
 	/**
-	 * Ensures that the specified element is in range between {@code
-	 * fromElement} inclusive, and {@code toElement} inclusive, according to the
-	 * specified {@code Comparator}.
+	 * Ensures that the specified element is located between {@code fromElement}
+	 * inclusive, and {@code toElement} inclusive, according to the specified
+	 * {@code Comparator}.
 	 * 
 	 * @param element
 	 *            a user-supplied element
