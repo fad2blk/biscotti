@@ -149,7 +149,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * @return a new {@code PriorityQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E> PriorityQueue<E> create() {
+	public static <E extends Comparable<? super E>> PriorityQueue<E> create() {
 		return new PriorityQueue<E>((Comparator<? super E>) null);
 	}
 
@@ -207,7 +207,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * @throws NullPointerException
 	 *             if any of the specified elements are {@code null}
 	 */
-	public static <E> PriorityQueue<E> create(final E... elements) {
+	public static <E extends Comparable<? super E>>  PriorityQueue<E> create(final E... elements) {
 		checkNotNull(elements);
 		PriorityQueue<E> q = create();
 		Collections.addAll(q, elements);
