@@ -383,7 +383,7 @@ final public class Collections3 {
 	 *            collection
 	 * @return a synchronized view of the specified sorted collection
 	 */
-	public static <E> SortedCollection<E> synchronizedSortedCollection(
+	public static <E> SortedCollection<E> synchronize(
 			final SortedCollection<E> sortedCollection) {
 		return new SynchronizedSortedCollection<E>(sortedCollection);
 	}
@@ -427,7 +427,7 @@ final public class Collections3 {
 	 *            the sorted list to be "wrapped" in a synchronized sorted list
 	 * @return a synchronized view of the specified sorted list
 	 */
-	public static <E> SortedList<E> synchronizedSortedList(
+	public static <E> SortedList<E> synchronize(
 			final SortedList<E> sortedList) {
 		return new SynchronizedSortedList<E>(sortedList);
 	}
@@ -460,7 +460,7 @@ final public class Collections3 {
 	 *            the queue to be "wrapped" in a synchronized queue
 	 * @return a synchronized view of the specified queue
 	 */
-	public static <E> Queue<E> synchronizedQueue(final Queue<E> queue) {
+	public static <E> Queue<E> synchronize(final Queue<E> queue) {
 		return new SynchronizedQueue<E>(queue);
 	}
 
@@ -491,7 +491,7 @@ final public class Collections3 {
 	 *            the bounded queue to be synchronized
 	 * @return a synchronized view of the specified bounded queue
 	 */
-	public static <E> Queue<E> synchronizedBoundedQueue(
+	public static <E> Queue<E> synchronize(
 			final BoundedQueue<E> boundedQueue) {
 		return new SynchronizedBoundedQueue<E>(boundedQueue);
 	}
@@ -529,13 +529,13 @@ final public class Collections3 {
 	 *            the deque to be "wrapped" in a synchronized deque
 	 * @return a synchronized view of the specified deque
 	 */
-	public static <E> Deque<E> synchronizedDeque(final Deque<E> deque) {
+	public static <E> Deque<E> synchronize(final Deque<E> deque) {
 		return new SynchronizedDeque<E>(deque);
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap}.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -549,8 +549,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap} with the same mappings as the provided {@code Map}.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap} with the same mappings as the provided {@code Map}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -572,8 +572,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap} with the specified initial capacity.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap} with the specified initial capacity.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -617,7 +617,7 @@ final public class Collections3 {
 	 *            the specified bounded map to synchronize
 	 * @return a synchronized view of the specified {@code BoundedMap}
 	 */
-	public static <K, V> BoundedMap<K, V> synchronizedBoundedMap(
+	public static <K, V> BoundedMap<K, V> synchronize(
 			final BoundedMap<K, V> boundedMap) {
 		return new SynchronizedBoundedMap<K, V>(boundedMap);
 	}
@@ -945,12 +945,12 @@ final public class Collections3 {
 			}
 		}
 
-		@Override
-		public boolean offerAll(Collection<? extends E> c) {
-			synchronized (mutex) {
-				return boundedQueue.offerAll(c);
-			}
-		}
+		// @Override
+		// public boolean offerAll(Collection<? extends E> c) {
+		// synchronized (mutex) {
+		// return boundedQueue.offerAll(c);
+		// }
+		// }
 	}
 
 	static class SynchronizedSet<E> extends SynchronizedCollection<E> implements
@@ -1008,15 +1008,15 @@ final public class Collections3 {
 
 		public SortedSet<E> headSet(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet
-						.headSet(toElement), mutex);
+				return new SynchronizedSortedSet<E>(
+						sortedSet.headSet(toElement), mutex);
 			}
 		}
 
 		public SortedSet<E> tailSet(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet
-						.tailSet(fromElement), mutex);
+				return new SynchronizedSortedSet<E>(
+						sortedSet.tailSet(fromElement), mutex);
 			}
 		}
 
@@ -1118,8 +1118,8 @@ final public class Collections3 {
 		public Set<Map.Entry<K, V>> entrySet() {
 			synchronized (mutex) {
 				if (entrySet == null)
-					entrySet = new SynchronizedSet<Map.Entry<K, V>>(m
-							.entrySet(), mutex);
+					entrySet = new SynchronizedSet<Map.Entry<K, V>>(
+							m.entrySet(), mutex);
 				return entrySet;
 			}
 		}
@@ -1265,6 +1265,13 @@ final public class Collections3 {
 				return boundedMap.remainingCapacity();
 			}
 		}
+
+		@Override
+		public boolean offer(K key, V value) {
+			synchronized (mutex) {
+				return boundedMap.offer(key, value);
+			}
+		}
 	}
 
 	static class SynchronizedSortedList<E> extends SynchronizedList<E>
@@ -1292,8 +1299,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> headList(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(sortedList
-						.headList(toElement), mutex);
+				return new SynchronizedSortedList<E>(
+						sortedList.headList(toElement), mutex);
 			}
 		}
 
@@ -1316,8 +1323,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> tailList(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(sortedList
-						.tailList(fromElement), mutex);
+				return new SynchronizedSortedList<E>(
+						sortedList.tailList(fromElement), mutex);
 			}
 		}
 

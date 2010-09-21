@@ -103,4 +103,10 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 		return maxSize - size();
 	}
 
+	@Override
+	public boolean offer(K key, V value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
