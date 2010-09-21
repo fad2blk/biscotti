@@ -153,28 +153,29 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 		return super.addAll(c);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * Attempts to {@code offerAll} of a collection which contains {@code null}
-	 * elements will fail cleanly and safely leaving this queue unmodified. If
-	 * you are not sure whether or not your collection contains {@code null}
-	 * elements considering filtering it by calling {@link Collections2#filter
-	 * Collections2.filter(Collection, Predicate)} with a predicate obtained
-	 * from {@link Predicates#notNull()}. Other runtime exception encountered
-	 * while trying to add an element may result in only some of the elements
-	 * having been successfully added when the associated exception is thrown.
-	 */
-	public boolean offerAll(Collection<? extends E> c) {
-		Preconditions.checkNotNull(c);
-		for (E e : c)
-			Preconditions.checkNotNull(e);
-		boolean returnValue = false;
-		for (E element : c)
-			if (offer(element))
-				returnValue = true;
-		return returnValue;
-	}
+//	/**
+//	 * {@inheritDoc}
+//	 * <p>
+//	 * Attempts to {@code offerAll} of a collection which contains {@code null}
+//	 * elements will fail cleanly and safely leaving this queue unmodified. If
+//	 * you are not sure whether or not your collection contains {@code null}
+//	 * elements considering filtering it by calling {@link Collections2#filter
+//	 * Collections2.filter(Collection, Predicate)} with a predicate obtained
+//	 * from {@link Predicates#notNull()}. Other runtime exception encountered
+//	 * while trying to add an element may result in only some of the elements
+//	 * having been successfully added when the associated exception is thrown.
+//	 */
+//	@Override
+//	public boolean offerAll(Collection<? extends E> c) {
+//		Preconditions.checkNotNull(c);
+//		for (E e : c)
+//			Preconditions.checkNotNull(e);
+//		boolean returnValue = false;
+//		for (E element : c)
+//			if (offer(element))
+//				returnValue = true;
+//		return returnValue;
+//	}
 
 	@Override
 	public int maxSize() {
