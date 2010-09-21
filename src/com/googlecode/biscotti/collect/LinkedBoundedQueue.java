@@ -116,16 +116,16 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		return returnValue;
 	}
 
-	@Override
-	public boolean offerAll(Collection<? extends E> c) {
-		Preconditions.checkNotNull(c);
-		Preconditions.checkState(c != this);
-		boolean returnValue = false;
-		for (E element : c)
-			if (offer(element))
-				returnValue = true;
-		return returnValue;
-	}
+//	@Override
+//	public boolean offerAll(Collection<? extends E> c) {
+//		Preconditions.checkNotNull(c);
+//		Preconditions.checkState(c != this);
+//		boolean returnValue = false;
+//		for (E element : c)
+//			if (offer(element))
+//				returnValue = true;
+//		return returnValue;
+//	}
 
 	@Override
 	public int maxSize() {
