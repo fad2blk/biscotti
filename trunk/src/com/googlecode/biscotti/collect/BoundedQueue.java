@@ -64,33 +64,33 @@ public interface BoundedQueue<E> extends Queue<E> {
 	@Override
 	public boolean offer(E e);
 
-	/**
-	 * Adds all of the elements in the specified collection to this queue,
-	 * removing stale elements (according to this queue's policy) as necessary
-	 * to prevent the queue from overflowing. Elements rejected due to capacity
-	 * restrictions are ignored <i>without</i> throwing runtime exceptions. This
-	 * method is generally preferable to {@code addAll(Collection)}, which can
-	 * fail only by throwing an exception when one or more elements cannot be
-	 * added due to capacity restrictions.
-	 * 
-	 * @param c
-	 *            collection containing elements to be added to this collection
-	 * @return {@code true} if at least one element was added to this queue,
-	 *         else returns {@code false}
-	 * @throws UnsupportedOperationException
-	 *             if the {@code offerAll(Collection)} operation is not
-	 *             supported
-	 * @throws ClassCastException
-	 *             if the class of an element of the specified collection
-	 *             prevents it from being added to this queue
-	 * @throws NullPointerException
-	 *             if the specified collection contains a {@code null} element
-	 *             and this queue does not permit {@code null} elements, or if
-	 *             the specified collection is {@code null}
-	 * @see Queue#offer(Object) offer(E)
-	 * @see Queue#add(Object) add(E)
-	 */
-	public boolean offerAll(Collection<? extends E> c);
+//	/**
+//	 * Adds all of the elements in the specified collection to this queue,
+//	 * removing stale elements (according to this queue's policy) as necessary
+//	 * to prevent the queue from overflowing. Elements rejected due to capacity
+//	 * restrictions are ignored <i>without</i> throwing runtime exceptions. This
+//	 * method is generally preferable to {@code addAll(Collection)}, which can
+//	 * fail only by throwing an exception when one or more elements cannot be
+//	 * added due to capacity restrictions.
+//	 * 
+//	 * @param c
+//	 *            collection containing elements to be added to this collection
+//	 * @return {@code true} if at least one element was added to this queue,
+//	 *         else returns {@code false}
+//	 * @throws UnsupportedOperationException
+//	 *             if the {@code offerAll(Collection)} operation is not
+//	 *             supported
+//	 * @throws ClassCastException
+//	 *             if the class of an element of the specified collection
+//	 *             prevents it from being added to this queue
+//	 * @throws NullPointerException
+//	 *             if the specified collection contains a {@code null} element
+//	 *             and this queue does not permit {@code null} elements, or if
+//	 *             the specified collection is {@code null}
+//	 * @see Queue#offer(Object) offer(E)
+//	 * @see Queue#add(Object) add(E)
+//	 */
+//	public boolean offerAll(Collection<? extends E> c);
 
 	/**
 	 * Returns the number of elements which can be added to this queue before it

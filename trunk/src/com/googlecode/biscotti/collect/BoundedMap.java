@@ -34,6 +34,8 @@ public interface BoundedMap<K, V> extends Map<K, V> {
 	 */
 	@Override
 	public V put(K key, V value);
+	
+	public boolean offer(K key, V value);
 
 	/**
 	 * Copies all of the mappings from the specified map to this map, removing
