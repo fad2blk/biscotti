@@ -38,6 +38,11 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		queue = Lists.newLinkedList();
 		this.maxSize = maxSize;
 	}
+	
+	private LinkedBoundedQueue(final Queue<E> queue, final int maxSize){
+		this.queue = queue;
+		this.maxSize = maxSize;
+	}
 
 	private LinkedBoundedQueue(final Iterable<? extends E> iterable) {
 		Preconditions.checkNotNull(iterable);
@@ -137,13 +142,19 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		return queue;
 	}
 
-	/**
-	 * Creates and returns a copy of this queue.
-	 */
-	@Override
-	public LinkedBoundedQueue<E> clone() {
-		return create(this);
-	}
+//	/**
+//	 * Creates and returns a copy of this queue.
+//	 */
+//	@Override
+//	public LinkedBoundedQueue<E> clone() {
+//		try {
+//			return (LinkedBoundedQueue<E>) super.clone();
+//		} catch (CloneNotSupportedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
 	@Override
 	public int remainingCapacity() {
