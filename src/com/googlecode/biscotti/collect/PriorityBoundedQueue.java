@@ -17,12 +17,11 @@ import com.google.common.base.Preconditions;
  * <i>least</i> element with respect to the specified ordering. Elements with
  * equal priority are ordered according to their insertion order.
  * <p>
- * When the queue is full the {@code add(E)}, {@code offer(E)},
- * {@code addAll(Collection)}, and {@code offerAll(Collection)} operations
- * behave according to the following policy: if the element to be added is
- * greater than the element with the <i>lowest</i> priority, the <i>lowest</i>
- * element is removed and the new element is added; else the new element is
- * rejected.
+ * When the queue is full the {@code add(E)}, {@code offer(E)}, and
+ * {@code addAll(Collection)}, operations behave according to the following
+ * policy: if the element to be added is greater than the element with the
+ * <i>lowest</i> priority, the <i>lowest</i> element is removed and the new
+ * element is added; else the new element is rejected.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
