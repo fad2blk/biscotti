@@ -41,7 +41,7 @@ import com.google.common.collect.Ordering;
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@code Collections.synchronizedSortedList(List)} method.
+ * list using the {@link Collections3#synchronize(List)} method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to both maintain sorted order and test for
@@ -319,8 +319,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
@@ -407,8 +407,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {

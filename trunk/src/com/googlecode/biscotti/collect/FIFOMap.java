@@ -8,12 +8,11 @@ import java.util.Map;
 
 /**
  * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
- * stale mappings in <i>insertion/first-in-first-out</i> order.
+ * stale mappings in <i>first-in-first-out</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
- * the map using the {@code Collections3.synchronizedBoundedMap(BoundedMap)}
- * method.
+ * the map using the {@link Collections3#synchronize(BoundedMap)} method.
  * 
  * @author Zhenya Leonov
  * @param <K>
@@ -70,6 +69,12 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 	 * removing the <i>least-recently-inserted</i> entry as necessary to prevent
 	 * this map from overflowing. If the map previously contained a mapping for
 	 * the key, the old value is replaced by the specified value.
+	 * 
+	 * @return {@inheritDoc}
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             {@inheritDoc}
 	 */
 	@Override
 	public V put(K key, V value) {
@@ -77,11 +82,35 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 	}
 
 	/**
-	 * Copies all of the mappings from the specified map to this map, removing
+	 * Associates the specified value with the specified key in this map,
+	 * removing the <i>least-recently-inserted</i> entry as necessary to prevent
+	 * this map from overflowing. If the map previously contained a mapping for
+	 * the key, the old value is replaced by the specified value.
+	 * 
+	 * @return {@inheritDoc}
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             {@inheritDoc}
+	 */
+	@Override
+	public boolean offer(K key, V value) {
+		put(key, value);
+		return true;
+	}
+
+	/**
+	 * Copies all of the mappings from the specified map to this map, removal
 	 * stale entries (according to their insertion order) as necessary to
 	 * prevent the map from overflowing. The effect of this call is equivalent
 	 * to that of calling {@code put(K, V)} on this map once for each mapping in
 	 * the specified map.
+	 * 
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             if some property of a key or value in the specified map
+	 *             prevents it from being stored in this map
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
@@ -101,12 +130,6 @@ public final class FIFOMap<K, V> extends LinkedHashMap<K, V> implements
 	@Override
 	public int remainingCapacity() {
 		return maxSize - size();
-	}
-
-	@Override
-	public boolean offer(K key, V value) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

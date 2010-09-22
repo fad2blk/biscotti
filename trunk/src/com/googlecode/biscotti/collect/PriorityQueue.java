@@ -42,7 +42,7 @@ import com.google.common.collect.Ordering;
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally. Consider using the
  * inherently <i>thread-safe</i> {@link PriorityBlockingQueue} instead, or
- * "wrapping" the queue using the {@code Collections3.synchronizedQueue(Queue)}
+ * "wrapping" the queue using the {@link Collections3#synchronize((Queue)}
  * method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or

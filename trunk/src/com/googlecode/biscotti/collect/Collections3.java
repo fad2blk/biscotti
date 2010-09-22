@@ -427,8 +427,7 @@ final public class Collections3 {
 	 *            the sorted list to be "wrapped" in a synchronized sorted list
 	 * @return a synchronized view of the specified sorted list
 	 */
-	public static <E> SortedList<E> synchronize(
-			final SortedList<E> sortedList) {
+	public static <E> SortedList<E> synchronize(final SortedList<E> sortedList) {
 		return new SynchronizedSortedList<E>(sortedList);
 	}
 
@@ -491,8 +490,7 @@ final public class Collections3 {
 	 *            the bounded queue to be synchronized
 	 * @return a synchronized view of the specified bounded queue
 	 */
-	public static <E> Queue<E> synchronize(
-			final BoundedQueue<E> boundedQueue) {
+	public static <E> Queue<E> synchronize(final BoundedQueue<E> boundedQueue) {
 		return new SynchronizedBoundedQueue<E>(boundedQueue);
 	}
 
