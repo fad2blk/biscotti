@@ -19,8 +19,7 @@ import com.google.common.collect.Lists;
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
- * queue using the {@code Collections3.synchronizedBoundedQueue(BoundedQueue)}
- * method.
+ * queue using the {@link Collections3#synchronize(BoundedQueue)} method.
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -38,8 +37,8 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		queue = Lists.newLinkedList();
 		this.maxSize = maxSize;
 	}
-	
-	private LinkedBoundedQueue(final Queue<E> queue, final int maxSize){
+
+	private LinkedBoundedQueue(final Queue<E> queue, final int maxSize) {
 		this.queue = queue;
 		this.maxSize = maxSize;
 	}
@@ -121,16 +120,16 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		return returnValue;
 	}
 
-//	@Override
-//	public boolean offerAll(Collection<? extends E> c) {
-//		Preconditions.checkNotNull(c);
-//		Preconditions.checkState(c != this);
-//		boolean returnValue = false;
-//		for (E element : c)
-//			if (offer(element))
-//				returnValue = true;
-//		return returnValue;
-//	}
+	// @Override
+	// public boolean offerAll(Collection<? extends E> c) {
+	// Preconditions.checkNotNull(c);
+	// Preconditions.checkState(c != this);
+	// boolean returnValue = false;
+	// for (E element : c)
+	// if (offer(element))
+	// returnValue = true;
+	// return returnValue;
+	// }
 
 	@Override
 	public int maxSize() {
@@ -142,19 +141,19 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		return queue;
 	}
 
-//	/**
-//	 * Creates and returns a copy of this queue.
-//	 */
-//	@Override
-//	public LinkedBoundedQueue<E> clone() {
-//		try {
-//			return (LinkedBoundedQueue<E>) super.clone();
-//		} catch (CloneNotSupportedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	// /**
+	// * Creates and returns a copy of this queue.
+	// */
+	// @Override
+	// public LinkedBoundedQueue<E> clone() {
+	// try {
+	// return (LinkedBoundedQueue<E>) super.clone();
+	// } catch (CloneNotSupportedException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 
 	@Override
 	public int remainingCapacity() {

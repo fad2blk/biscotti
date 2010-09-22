@@ -37,7 +37,7 @@ import com.google.common.base.Preconditions;
  * <p>
  * This deque is not <i>thread-safe</i>. If multiple threads modify this deque
  * concurrently it must be synchronized externally, consider "wrapping" the
- * deque using the {@code Collections3.synchronizedDeque(Deque)} method.
+ * deque using the {@link Collections3#synchronize(Deque)} method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and

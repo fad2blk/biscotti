@@ -1,6 +1,6 @@
 package com.googlecode.biscotti.collect;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,13 +8,12 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 /**
- * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
- * stale mappings in <i>access/least-recently-used</i> order.
+ * A {@link LinkedHashMap} implementation of {@link BoundedMap} which evicts
+ * stale mappings in <i>least-recently-accessed</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
  * this map concurrently it must be synchronized externally, consider "wrapping"
- * the map using the {@code Collections3.synchronizedBoundedMap(BoundedMap)}
- * method.
+ * the map using the {@link Collections3#synchronize(BoundedMap)} method.
  * 
  * @author Zhenya Leonov
  * @param <K>
@@ -68,9 +67,15 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 
 	/**
 	 * Associates the specified value with the specified key in this map,
-	 * removing the <i>least-recently-used</i> entry as necessary to prevent
+	 * removing the <i>least-recently-accessed</i> entry as necessary to prevent
 	 * this map from overflowing. If the map previously contained a mapping for
 	 * the key, the old value is replaced by the specified value.
+	 * 
+	 * @return {@inheritDoc}
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             {@inheritDoc}
 	 */
 	@Override
 	public V put(K key, V value) {
@@ -78,11 +83,35 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	}
 
 	/**
-	 * Copies all of the mappings from the specified map to this map, removing
+	 * Associates the specified value with the specified key in this map,
+	 * removing the <i>least-recently-accessed</i> entry as necessary to prevent
+	 * this map from overflowing. If the map previously contained a mapping for
+	 * the key, the old value is replaced by the specified value.
+	 * 
+	 * @return {@inheritDoc}
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             {@inheritDoc}
+	 */
+	@Override
+	public boolean offer(K key, V value) {
+		put(key, value);
+		return true;
+	}
+
+	/**
+	 * Copies all of the mappings from the specified map to this map, removal
 	 * stale entries (according to their access order) as necessary to prevent
 	 * the map from overflowing. The effect of this call is equivalent to that
 	 * of calling {@code put(K, V)} on this map once for each mapping in the
 	 * specified map.
+	 * 
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             if some property of a key or value in the specified map
+	 *             prevents it from being stored in this map
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
@@ -102,12 +131,6 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	@Override
 	public int remainingCapacity() {
 		return maxSize - size();
-	}
-
-	@Override
-	public boolean offer(K key, V value) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

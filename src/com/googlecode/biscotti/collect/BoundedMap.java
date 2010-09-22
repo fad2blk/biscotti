@@ -5,10 +5,18 @@ import java.util.Map;
 /**
  * A capacity restricted {@link Map}. The size of this map can vary, but never
  * exceed the maximum number of entries (the bound) specified at creation.
+ * Besides to the regular {@link Map#put(Object, Object) put(K, V)} and
+ * {@link Map#putAll(Map) putAll(Map)} operations, this interface defines an
+ * addition {@link #offer(Object, Object) offer(K, V)} operation, because
+ * failure is a normal, rather than exceptional occurrence, when attempting to
+ * store a new entry into a full map.
  * <p>
- * Classes which implement this interface must prevent the map from overflowing
- * by defining a policy for removing stale mappings, and must clearly document
- * that policy in their API.
+ * Typical implementations will define a deterministic strategy for removing
+ * <i>stale</i> mappings, or otherwise throw an {@code IllegalStateException} to
+ * prevent the map from exceeding its capacity restrictions.
+ * <p>
+ * All implementations are strongly encouraged to define their behavior in their
+ * API documentation.
  * 
  * @author Zhenya Leonov
  * @param <K>
@@ -26,23 +34,56 @@ public interface BoundedMap<K, V> extends Map<K, V> {
 	public int maxSize();
 
 	/**
-	 * Associates the specified value with the specified key in this map,
-	 * removing the <i>eldest</i> entry (according to this map's policy) as
-	 * necessary to prevent this map from overflowing. If the map previously
-	 * contained a mapping for the key, the old value is replaced by the
-	 * specified value.
+	 * Associates the specified value with the specified key in this map if it
+	 * is possible to do so immediately without violating capacity restrictions.
+	 * If the map previously contained a mapping for the key, the old value is
+	 * replaced by the specified value.
+	 * 
+	 * @return {@inheritDoc}
+	 * @throws IllegalStateException
+	 *             if the new entry is rejected due to capacity restrictions
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             {@inheritDoc}
 	 */
 	@Override
 	public V put(K key, V value);
-	
+
+	/**
+	 * Associates the specified value with the specified key in this map if it
+	 * is possible to do so immediately without violating capacity restrictions.
+	 * If the map previously contained a mapping for the key, the old value is
+	 * replaced by the specified value. This method is generally preferable to
+	 * {@link #put(Object, Object) put(K, V)}, which can fail only by throwing
+	 * an exception.
+	 * 
+	 * @param key
+	 *            key with which the specified value is to be associated
+	 * @param value
+	 *            value to be associated with the specified key
+	 * @return {@code true} if the entry was stored in this map, else
+	 *         {@code false}
+	 * @throws ClassCastException
+	 *             if the class of the specified key or value prevents it from
+	 *             being stored in this map
+	 * @throws IllegalArgumentException
+	 *             if some property of the specified key or value prevents it
+	 *             from being stored in this map
+	 */
 	public boolean offer(K key, V value);
 
 	/**
-	 * Copies all of the mappings from the specified map to this map, removing
-	 * stale entries (according to this map's policy) as necessary to prevent
-	 * the map from overflowing (optional operation). The effect of this call is
-	 * equivalent to that of calling {@code put(K, V)} on this map once for each
-	 * mapping in the specified map.
+	 * {@inheritDoc}
+	 * 
+	 * @throws IllegalStateException
+	 *             if an entry in the specified map is rejected due to capacity
+	 *             restrictions
+	 * @throws ClassCastException
+	 *             {@inheritDoc}
+	 * @throws IllegalArgumentException
+	 *             if some property of a key or value in the specified map
+	 *             prevents it from being stored in this map
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m);
