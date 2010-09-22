@@ -88,7 +88,7 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	 * this map from overflowing. If the map previously contained a mapping for
 	 * the key, the old value is replaced by the specified value.
 	 * 
-	 * @return {@inheritDoc}
+	 * @return {@code true}
 	 * @throws ClassCastException
 	 *             {@inheritDoc}
 	 * @throws IllegalArgumentException
