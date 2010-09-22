@@ -433,10 +433,9 @@ final public class Collections3 {
 
 	/**
 	 * Returns a synchronized (thread-safe) {@code Queue} backed by the
-	 * specified queue (consider using the inherently <i>thread-safe</i>
-	 * {@link PriorityBlockingQueue} instead). In order to guarantee serial
-	 * access, it is critical that <b>all</b> access to the backing queue is
-	 * accomplished through the returned queue.
+	 * specified queue. In order to guarantee serial access, it is critical that
+	 * <b>all</b> access to the backing queue is accomplished through the
+	 * returned queue.
 	 * <p>
 	 * It is imperative that the user manually synchronize on the returned queue
 	 * when iterating over it:
