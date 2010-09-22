@@ -21,7 +21,7 @@ import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
 
 /**
- * Static methods which operate on or return {@link Iterator}s.
+ * Static utility methods which operate on or return {@link Iterator}s.
  * 
  * @author Zhenya Leonov
  * @see Iterators
@@ -127,8 +127,8 @@ public final class Iterators2 {
 	 *            the provided {@code Iterator}
 	 * @param predicate
 	 *            the specified {@code Predicate}
-	 * @return the number of elements in {@code iterator} which satisfy {@code
-	 *         predicate}
+	 * @return the number of elements in {@code iterator} which satisfy
+	 *         {@code predicate}
 	 */
 	public static <E> int countIf(final Iterator<E> iterator,
 			final Predicate<? super E> predicate) {
@@ -294,9 +294,9 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Decorates the specified {@code Iterator} to behave like a {@code
-	 * ListIterator} by maintaining a {@code List} of all elements returned from
-	 * calls to {@code next()}.
+	 * Decorates the specified {@code Iterator} to behave like a
+	 * {@code ListIterator} by maintaining a {@code List} of all elements
+	 * returned from calls to {@code next()}.
 	 * <p>
 	 * The {@code remove()}, {@code set(E)}, and {@code add(E)} operations are
 	 * not supported. Modifying the underlying {@code Iterator} yields
@@ -418,12 +418,12 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Returns a {@code ListIterator} that applies the specified {@code
-	 * Function} to each element of the provided list iterator.
+	 * Returns a {@code ListIterator} that applies the specified
+	 * {@code Function} to each element of the provided list iterator.
 	 * <p>
-	 * The returned list iterator does not support {@code add(E)} and {@code
-	 * set(E)} but does support {@code remove()} if the provided list iterator
-	 * does.
+	 * The returned list iterator does not support {@code add(E)} and
+	 * {@code set(E)} but does support {@code remove()} if the provided list
+	 * iterator does.
 	 * 
 	 * @param <E>
 	 *            the type of elements traversed by the provided list iterator
@@ -491,8 +491,8 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Decorates the specified {@code PeekingIterator} to prevent {@code
-	 * remove()}.
+	 * Decorates the specified {@code PeekingIterator} to prevent
+	 * {@code remove()}.
 	 * 
 	 * @param peekingIterator
 	 *            the underlying {@code PeekingIterator}

@@ -5,7 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Static methods which operate on or return {@link Iterable}s.
+ * Static utility methods which operate on or return {@link Iterable}s.
  * 
  * @author Zhenya Leonov
  * @see Iterables
@@ -26,8 +26,8 @@ public final class Iterables2 {
 	 *            the provided {@code Iterable}
 	 * @param predicate
 	 *            the specified {@code Predicate}
-	 * @return the number of elements in {@code iterable} which satisfy {@code
-	 *         predicate}
+	 * @return the number of elements in {@code iterable} which satisfy
+	 *         {@code predicate}
 	 */
 	public static <E> int countIf(final Iterable<E> iterable,
 			final Predicate<? super E> predicate) {
