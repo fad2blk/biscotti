@@ -10,12 +10,11 @@ import com.google.common.collect.Lists;
 
 /**
  * A linked list implementation of {@link BoundedQueue}. This queue orders
- * elements in <i>insertion/first-in-first-out</i> (FIFO) manner; it considers
- * the <i>eldest</i> element to be the least recently inserted element. To
- * prevent this queue from exceeding its capacity restrictions the eldest
- * element is removed as needed when calling {@code add(E)}, {@code offer(E)},
- * {@code addAll(Collection)} and {@code offerAll(Collection)} methods. Elements
- * may be {@code null}.
+ * elements in <i>first-in-first-out</i> (FIFO) manner; it considers the
+ * <i>eldest</i> element to be the least recently inserted element. To prevent
+ * this queue from exceeding its capacity restrictions the eldest element is
+ * removed as needed when calling {@code add(E)}, {@code offer(E)}, and
+ * {@code addAll(Collection)} methods. Elements may be {@code null}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
@@ -91,9 +90,9 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * Inserts the specified element into this queue, removing the least
-	 * recently inserted element as necessary to prevent the queue from
-	 * overflowing.
+	 * Inserts the specified element into this queue, removing the
+	 * <i>least-recently-inserted</i> element as necessary to prevent the queue
+	 * from overflowing.
 	 */
 	@Override
 	public boolean offer(E e) {
@@ -120,17 +119,6 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		return returnValue;
 	}
 
-	// @Override
-	// public boolean offerAll(Collection<? extends E> c) {
-	// Preconditions.checkNotNull(c);
-	// Preconditions.checkState(c != this);
-	// boolean returnValue = false;
-	// for (E element : c)
-	// if (offer(element))
-	// returnValue = true;
-	// return returnValue;
-	// }
-
 	@Override
 	public int maxSize() {
 		return maxSize;
@@ -140,20 +128,6 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	protected Queue<E> delegate() {
 		return queue;
 	}
-
-	// /**
-	// * Creates and returns a copy of this queue.
-	// */
-	// @Override
-	// public LinkedBoundedQueue<E> clone() {
-	// try {
-	// return (LinkedBoundedQueue<E>) super.clone();
-	// } catch (CloneNotSupportedException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return null;
-	// }
 
 	@Override
 	public int remainingCapacity() {
