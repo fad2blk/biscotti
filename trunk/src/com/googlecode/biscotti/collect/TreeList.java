@@ -26,11 +26,11 @@ import com.google.common.collect.Ordering;
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
  * Elements are ordered from <i>least</i> to <i>greatest</i> according to their
  * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
- * creation. Attempting to remove or insert {@code null} elements will fail
- * cleanly and safely leaving this list unmodified. Querying for {@code null}
- * elements is allowed. Inserting non-comparable elements will result in a
- * {@code ClassCastException}. The {@code add(int, E)}, {@code addAll(int,
- * Collection)}, and {@code set(int, E)} operations are not supported.
+ * creation. Attempting to remove or insert {@code null} elements is prohibited.
+ * Querying for {@code null} elements is allowed. Inserting non-comparable
+ * elements will result in a {@code ClassCastException}. The {@code add(int, E)}
+ * , {@code addAll(int, Collection)}, and {@code set(int, E)} operations are not
+ * supported.
  * <p>
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
@@ -61,7 +61,7 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #addAll(Collection)}</br>
+ *       {@link #addAll(Collection) addAll(Collection)}</br>
  *       {@link #containsAll(Collection) containsAll(Collection)}</br>
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}

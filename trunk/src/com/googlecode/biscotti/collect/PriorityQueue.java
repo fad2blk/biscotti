@@ -24,10 +24,9 @@ import com.google.common.collect.Ordering;
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
  * elements of this queue are ordered according to their <i>natural
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
- * Attempting to remove or insert {@code null} elements will fail cleanly and
- * safely leaving this queue unmodified. Querying for {@code null} elements is
- * allowed. Inserting non-comparable elements will result in a
- * {@code ClassCastException}.
+ * Attempting to remove or insert {@code null} elements is prohibited. Querying
+ * for {@code null} elements is allowed. Inserting non-comparable elements will
+ * result in a {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with
@@ -192,7 +191,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		Preconditions.checkNotNull(elements);
 		return new PriorityQueue<E>(elements);
 	}
-	
+
 	/**
 	 * Creates a new {@code PriorityQueue} containing the specified initial
 	 * elements ordered according to their <i>natural ordering</i>.
@@ -207,7 +206,8 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * @throws NullPointerException
 	 *             if any of the specified elements are {@code null}
 	 */
-	public static <E extends Comparable<? super E>>  PriorityQueue<E> create(final E... elements) {
+	public static <E extends Comparable<? super E>> PriorityQueue<E> create(
+			final E... elements) {
 		checkNotNull(elements);
 		PriorityQueue<E> q = create();
 		Collections.addAll(q, elements);
@@ -275,45 +275,45 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		return e;
 	}
 
-	/**
-	 * Adds all of the elements in the specified collection to this queue.
-	 * Attempts to {@code addAll} of a queue to itself will result in an
-	 * {@code IllegalArgumentException}. Further, the behavior of this operation
-	 * is undefined if the specified collection is modified while the operation
-	 * is in progress.
-	 * <p>
-	 * This implementation iterates over the specified collection, and adds each
-	 * element returned by the iterator to this queue, in turn.
-	 * <p>
-	 * Attempts to {@code addAll} of a collection which contains {@code null}
-	 * elements will fail cleanly and safely leaving this queue unmodified. If
-	 * you are not sure whether or not your collection contains {@code null}
-	 * elements considering filtering it by calling {@link Collections2#filter
-	 * Collections2.filter(Collection, Predicate)} with a predicate obtained
-	 * from {@link Predicates#notNull()}. Other runtime exceptions encountered
-	 * while trying to add an element may result in only some of the elements
-	 * having been successfully added when the associated exception is thrown.
-	 * 
-	 * @param c
-	 *            collection containing elements to be added to this queue
-	 * @return {@code true} if this queue changed as a result of the call
-	 * @throws ClassCastException
-	 *             {@inheritDoc}
-	 * @throws NullPointerException
-	 *             {@inheritDoc}
-	 * @throws IllegalArgumentException
-	 *             {@inheritDoc}
-	 * @throws IllegalStateException
-	 *             {@inheritDoc}
-	 * @see #add(Object) add(E)
-	 */
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		Preconditions.checkNotNull(c);
-		for (E e : c)
-			Preconditions.checkNotNull(e);
-		return super.addAll(c);
-	}
+//	/**
+//	 * Adds all of the elements in the specified collection to this queue.
+//	 * Attempts to {@code addAll} of a queue to itself will result in an
+//	 * {@code IllegalArgumentException}. Further, the behavior of this operation
+//	 * is undefined if the specified collection is modified while the operation
+//	 * is in progress.
+//	 * <p>
+//	 * This implementation iterates over the specified collection, and adds each
+//	 * element returned by the iterator to this queue, in turn.
+//	 * <p>
+//	 * Attempts to {@code addAll} of a collection which contains {@code null}
+//	 * elements will fail cleanly and safely leaving this queue unmodified. If
+//	 * you are not sure whether or not your collection contains {@code null}
+//	 * elements considering filtering it by calling {@link Collections2#filter
+//	 * Collections2.filter(Collection, Predicate)} with a predicate obtained
+//	 * from {@link Predicates#notNull()}. Other runtime exceptions encountered
+//	 * while trying to add an element may result in only some of the elements
+//	 * having been successfully added when the associated exception is thrown.
+//	 * 
+//	 * @param c
+//	 *            collection containing elements to be added to this queue
+//	 * @return {@code true} if this queue changed as a result of the call
+//	 * @throws ClassCastException
+//	 *             {@inheritDoc}
+//	 * @throws NullPointerException
+//	 *             {@inheritDoc}
+//	 * @throws IllegalArgumentException
+//	 *             {@inheritDoc}
+//	 * @throws IllegalStateException
+//	 *             {@inheritDoc}
+//	 * @see #add(Object) add(E)
+//	 */
+//	@Override
+//	public boolean addAll(Collection<? extends E> c) {
+//		Preconditions.checkNotNull(c);
+//		for (E e : c)
+//			Preconditions.checkNotNull(e);
+//		return super.addAll(c);
+//	}
 
 	@Override
 	public boolean contains(Object o) {
