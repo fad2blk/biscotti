@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,8 +25,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.PriorityBlockingQueue;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingCollection;
+import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
@@ -1324,7 +1327,559 @@ final public class Collections3 {
 						sortedList.tailList(fromElement), mutex);
 			}
 		}
+	}
 
+	/**
+	 * Returns an unmodifiable view of the specified sorted collection. This
+	 * method allows modules to provide users with "read-only" access to
+	 * internal collections. Query operations on the returned collection
+	 * "read through" to the specified sorted collection, and attempts to modify
+	 * the returned collection, whether direct or via its iterator, result in an
+	 * {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned sorted collection does <i>not</i> pass the {@code hashCode}
+	 * and {@code equals} operations through to the backing collection, but
+	 * relies on {@code Object}'s {@code equals(Object)} and {@code hashCode()}
+	 * methods. This is necessary to preserve the contracts of these operations
+	 * in the case that the backing collection is a set or a list.
+	 * <p>
+	 * The returned collection will be serializable if the specified collection
+	 * is serializable.
+	 * 
+	 * @param c
+	 *            the sorted collection for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified sorted collection
+	 */
+	public static <E> SortedCollection<E> unmodifiable(
+			SortedCollection<? extends E> c) {
+		return new UnmodifiableSortedCollection<E>(c);
+	}
+
+	private static class UnmodifiableSortedCollection<E> extends
+			ForwardingCollection<E> implements SortedCollection<E>,
+			Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		final SortedCollection<E> c;
+
+		UnmodifiableSortedCollection(final SortedCollection<? extends E> c) {
+			checkNotNull(c);
+			this.c = (SortedCollection<E>) c;
+		}
+
+		public Iterator<E> iterator() {
+			return Iterators.unmodifiableIterator(c.iterator());
+		}
+
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean addAll(Collection<? extends E> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean removeAll(Collection<?> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean retainAll(Collection<?> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			return c.comparator();
+		}
+
+		@Override
+		protected SortedCollection<E> delegate() {
+			return c;
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified sorted list. This method
+	 * allows modules to provide users with "read-only" access to internal
+	 * sorted lists. Query operations on the returned list "read through" to the
+	 * specified list, and attempts to modify the returned sorted list, whether
+	 * direct or via its iterator, result in an
+	 * {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned list will be serializable if the specified list is
+	 * serializable.
+	 * <p>
+	 * Note: The returned list does not implement {@code RandomAccess}.
+	 * 
+	 * @param l
+	 *            the list for which an unmodifiable view is to be returned
+	 * @return an unmodifiable view of the specified sorted list
+	 */
+	public static <E> SortedList<E> unmodifiable(SortedList<? extends E> l) {
+		return new UnmodifiableSortedList<E>(l);
+	}
+
+	private static class UnmodifiableSortedList<E> extends
+			ForwardingSortedList<E> implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		final SortedList<E> l;
+
+		UnmodifiableSortedList(final SortedList<? extends E> l) {
+			checkNotNull(l);
+			this.l = (SortedList<E>) l;
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			return Iterators.unmodifiableIterator(l.iterator());
+		}
+
+		@Override
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E set(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E remove(int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return Iterators2.unmodifiable(l.listIterator());
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			return Iterators2.unmodifiable(l.listIterator(index));
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement) {
+			return new UnmodifiableSortedList<E>(l.headList(toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, E toElement) {
+			return new UnmodifiableSortedList<E>(l.subList(fromElement,
+					toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			return new UnmodifiableSortedList<E>(l.subList(fromIndex, toIndex));
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement) {
+			return new UnmodifiableSortedList<E>(l.tailList(fromElement));
+		}
+
+		@Override
+		protected SortedList<E> delegate() {
+			return l;
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified bounded map. This method
+	 * allows modules to provide users with "read-only" access to internal
+	 * bounded maps. Query operations on the returned map "read through" to the
+	 * specified map, and attempts to modify the returned bounded map, whether
+	 * direct or via its collection views, result in an
+	 * {@code nsupportedOperationException}.
+	 * <p>
+	 * The returned map will be serializable if the specified map is
+	 * serializable.
+	 * 
+	 * @param m
+	 *            the bounded map for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified bounded map
+	 */
+	public static <K, V> Map<K, V> unmodifiable(
+			BoundedMap<? extends K, ? extends V> m) {
+		return new UnmodifiableBoundedMap<K, V>(m);
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class UnmodifiableBoundedMap<K, V> extends
+			ForwardingMap<K, V> implements BoundedMap<K, V>, Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		final BoundedMap<K, V> m;
+		private transient Set<K> keySet = null;
+		private transient Set<Map.Entry<K, V>> entrySet = null;
+		private transient Collection<V> values = null;
+
+		UnmodifiableBoundedMap(BoundedMap<? extends K, ? extends V> m) {
+			checkNotNull(m);
+			this.m = (BoundedMap<K, V>) m;
+		}
+
+		public V put(K key, V value) {
+			throw new UnsupportedOperationException();
+		}
+
+		public V remove(Object key) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void putAll(Map<? extends K, ? extends V> m) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		public Set<K> keySet() {
+			if (keySet == null)
+				keySet = new UnmodifiableSet<K>(m.keySet());
+			return keySet;
+		}
+
+		public Set<Map.Entry<K, V>> entrySet() {
+			if (entrySet == null)
+				entrySet = new UnmodifiableEntrySet<K, V>(m.entrySet());
+			return entrySet;
+		}
+
+		public Collection<V> values() {
+			if (values == null)
+				values = new UnmodifiableCollection<V>(m.values());
+			return values;
+		}
+
+		/**
+		 * We need this class in addition to UnmodifiableSet as Map.Entries
+		 * themselves permit modification of the backing Map via their setValue
+		 * operation. This class is subtle: there are many possible attacks that
+		 * must be thwarted.
+		 * 
+		 * @serial include
+		 */
+		static class UnmodifiableEntrySet<K, V> extends
+				UnmodifiableSet<Map.Entry<K, V>> {
+			private static final long serialVersionUID = 7854390611657943733L;
+
+			UnmodifiableEntrySet(
+					Set<? extends Map.Entry<? extends K, ? extends V>> s) {
+				super((Set) s);
+			}
+
+			public Iterator<Map.Entry<K, V>> iterator() {
+				return new Iterator<Map.Entry<K, V>>() {
+					Iterator<? extends Map.Entry<? extends K, ? extends V>> i = c
+							.iterator();
+
+					public boolean hasNext() {
+						return i.hasNext();
+					}
+
+					public Map.Entry<K, V> next() {
+						return new UnmodifiableEntry<K, V>(i.next());
+					}
+
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+
+			public Object[] toArray() {
+				Object[] a = c.toArray();
+				for (int i = 0; i < a.length; i++)
+					a[i] = new UnmodifiableEntry<K, V>((Map.Entry<K, V>) a[i]);
+				return a;
+			}
+
+			public <T> T[] toArray(T[] a) {
+				// We don't pass a to c.toArray, to avoid window of
+				// vulnerability wherein an unscrupulous multithreaded client
+				// could get his hands on raw (unwrapped) Entries from c.
+				Object[] arr = c.toArray(a.length == 0 ? a : Arrays
+						.copyOf(a, 0));
+
+				for (int i = 0; i < arr.length; i++)
+					arr[i] = new UnmodifiableEntry<K, V>(
+							(Map.Entry<K, V>) arr[i]);
+
+				if (arr.length > a.length)
+					return (T[]) arr;
+
+				System.arraycopy(arr, 0, a, 0, arr.length);
+				if (a.length > arr.length)
+					a[arr.length] = null;
+				return a;
+			}
+
+			/**
+			 * This method is overridden to protect the backing set against an
+			 * object with a nefarious equals function that senses that the
+			 * equality-candidate is Map.Entry and calls its setValue method.
+			 */
+			public boolean contains(Object o) {
+				if (!(o instanceof Map.Entry))
+					return false;
+				return c.contains(new UnmodifiableEntry<K, V>(
+						(Map.Entry<K, V>) o));
+			}
+
+			/**
+			 * The next two methods are overridden to protect against an
+			 * unscrupulous List whose contains(Object o) method senses when o
+			 * is a Map.Entry, and calls o.setValue.
+			 */
+			public boolean containsAll(Collection<?> coll) {
+				Iterator<?> e = coll.iterator();
+				while (e.hasNext())
+					if (!contains(e.next())) // Invokes safe contains() above
+						return false;
+				return true;
+			}
+
+			public boolean equals(Object o) {
+				if (o == this)
+					return true;
+
+				if (!(o instanceof Set))
+					return false;
+				Set<?> s = (Set<?>) o;
+				if (s.size() != c.size())
+					return false;
+				return containsAll(s); // Invokes safe containsAll() above
+			}
+
+			/**
+			 * This "wrapper class" serves two purposes: it prevents the client
+			 * from modifying the backing Map, by short-circuiting the setValue
+			 * method, and it protects the backing Map against an ill-behaved
+			 * Map.Entry that attempts to modify another Map Entry when asked to
+			 * perform an equality check.
+			 */
+			private static class UnmodifiableEntry<K, V> implements
+					Map.Entry<K, V> {
+				private Map.Entry<? extends K, ? extends V> e;
+
+				UnmodifiableEntry(Map.Entry<? extends K, ? extends V> e) {
+					this.e = e;
+				}
+
+				public K getKey() {
+					return e.getKey();
+				}
+
+				public V getValue() {
+					return e.getValue();
+				}
+
+				public V setValue(V value) {
+					throw new UnsupportedOperationException();
+				}
+
+				public int hashCode() {
+					return e.hashCode();
+				}
+
+				public boolean equals(Object o) {
+					if (!(o instanceof Map.Entry))
+						return false;
+					Map.Entry<?, ?> t = (Map.Entry<?, ?>) o;
+					return Objects.equal(e.getKey(), t.getKey())
+							&& Objects.equal(e.getValue(), t.getValue());
+				}
+
+				public String toString() {
+					return e.toString();
+				}
+			}
+		}
+
+		@Override
+		public int maxSize() {
+			return m.maxSize();
+		}
+
+		@Override
+		public boolean offer(K key, V value) {
+			return m.offer(key, value);
+		}
+
+		@Override
+		public int remainingCapacity() {
+			return m.remainingCapacity();
+		}
+
+		@Override
+		protected BoundedMap<K, V> delegate() {
+			return m;
+		}
+	}
+
+	static class UnmodifiableCollection<E> implements Collection<E>,
+			Serializable {
+
+		// serialVersionUID from JDK 6
+		private static final long serialVersionUID = 1820017752578914078L;
+
+		final Collection<? extends E> c;
+
+		UnmodifiableCollection(Collection<? extends E> c) {
+			checkNotNull(c);
+			this.c = c;
+		}
+
+		public int size() {
+			return c.size();
+		}
+
+		public boolean isEmpty() {
+			return c.isEmpty();
+		}
+
+		public boolean contains(Object o) {
+			return c.contains(o);
+		}
+
+		public Object[] toArray() {
+			return c.toArray();
+		}
+
+		public <T> T[] toArray(T[] a) {
+			return c.toArray(a);
+		}
+
+		public String toString() {
+			return c.toString();
+		}
+
+		public Iterator<E> iterator() {
+			return new Iterator<E>() {
+				Iterator<? extends E> i = c.iterator();
+
+				public boolean hasNext() {
+					return i.hasNext();
+				}
+
+				public E next() {
+					return i.next();
+				}
+
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
+
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean containsAll(Collection<?> coll) {
+			return c.containsAll(coll);
+		}
+
+		public boolean addAll(Collection<? extends E> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean removeAll(Collection<?> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean retainAll(Collection<?> coll) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	static class UnmodifiableSet<E> extends UnmodifiableCollection<E> implements
+			Set<E>, Serializable {
+
+		// serialVersionUID from JDK 6
+		private static final long serialVersionUID = -9215047833775013803L;
+
+		UnmodifiableSet(Set<? extends E> s) {
+			super(s);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return o == this || c.equals(o);
+		}
+
+		@Override
+		public int hashCode() {
+			return c.hashCode();
+		}
 	}
 
 }
