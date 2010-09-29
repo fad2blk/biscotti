@@ -397,7 +397,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				throw new UnsupportedOperationException();
 			}
 
-			protected void checkForConcurrentModification() {
+			private void checkForConcurrentModification() {
 				if (expectedModCount != modCount)
 					throw new ConcurrentModificationException();
 			}
