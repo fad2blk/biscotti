@@ -619,67 +619,67 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			from.color = to == null ? Color.BLACK : to.color;
 	}
 
-	public void verifyProperties() {
-		verifyProperty1(root);
-		verifyProperty2(root);
-		// Property 3 is implicit
-		verifyProperty4(root);
-		verifyProperty5(root);
-	}
-
-	private void verifyProperty1(Node n) {
-		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
-		if (n == null)
-			return;
-		verifyProperty1(n.left);
-		verifyProperty1(n.right);
-	}
-
-	private void verifyProperty2(Node root) {
-		assert getColor(root) == Color.BLACK;
-	}
-
-	private void verifyProperty4(Node n) {
-		// System.out.println(getColor(n));
-		if (getColor(n) == Color.RED) {
-			assert getColor(n.left) == Color.BLACK;
-			// System.out.println(getColor(n.left));
-			assert getColor(n.right) == Color.BLACK;
-			// System.out.println(getColor(n.right));
-			assert getColor(n.parent) == Color.BLACK;
-			// System.out.println(getColor(n.parent));
-		}
-		if (n == null)
-			return;
-		verifyProperty4(n.left);
-		verifyProperty4(n.right);
-	}
-
-	private void verifyProperty5(Node root) {
-		verifyProperty5Helper(root, 0, -1);
-	}
-
-	private int verifyProperty5Helper(Node n, int blackCount, int pathBlackCount) {
-		if (getColor(n) == Color.BLACK) {
-			blackCount++;
-		}
-		if (n == null) {
-			if (pathBlackCount == -1) {
-				pathBlackCount = blackCount;
-			} else {
-				assert blackCount == pathBlackCount;
-			}
-			return pathBlackCount;
-		}
-		pathBlackCount = verifyProperty5Helper(n.left, blackCount,
-				pathBlackCount);
-		pathBlackCount = verifyProperty5Helper(n.right, blackCount,
-				pathBlackCount);
-		return pathBlackCount;
-	}
-
-	private Color getColor(final Node p) {
-		return (p == null ? Color.BLACK : p.color);
-	}
+//	public void verifyProperties() {
+//		verifyProperty1(root);
+//		verifyProperty2(root);
+//		// Property 3 is implicit
+//		verifyProperty4(root);
+//		verifyProperty5(root);
+//	}
+//
+//	private void verifyProperty1(Node n) {
+//		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
+//		if (n == null)
+//			return;
+//		verifyProperty1(n.left);
+//		verifyProperty1(n.right);
+//	}
+//
+//	private void verifyProperty2(Node root) {
+//		assert getColor(root) == Color.BLACK;
+//	}
+//
+//	private void verifyProperty4(Node n) {
+//		// System.out.println(getColor(n));
+//		if (getColor(n) == Color.RED) {
+//			assert getColor(n.left) == Color.BLACK;
+//			// System.out.println(getColor(n.left));
+//			assert getColor(n.right) == Color.BLACK;
+//			// System.out.println(getColor(n.right));
+//			assert getColor(n.parent) == Color.BLACK;
+//			// System.out.println(getColor(n.parent));
+//		}
+//		if (n == null)
+//			return;
+//		verifyProperty4(n.left);
+//		verifyProperty4(n.right);
+//	}
+//
+//	private void verifyProperty5(Node root) {
+//		verifyProperty5Helper(root, 0, -1);
+//	}
+//
+//	private int verifyProperty5Helper(Node n, int blackCount, int pathBlackCount) {
+//		if (getColor(n) == Color.BLACK) {
+//			blackCount++;
+//		}
+//		if (n == null) {
+//			if (pathBlackCount == -1) {
+//				pathBlackCount = blackCount;
+//			} else {
+//				assert blackCount == pathBlackCount;
+//			}
+//			return pathBlackCount;
+//		}
+//		pathBlackCount = verifyProperty5Helper(n.left, blackCount,
+//				pathBlackCount);
+//		pathBlackCount = verifyProperty5Helper(n.right, blackCount,
+//				pathBlackCount);
+//		return pathBlackCount;
+//	}
+//
+//	private Color getColor(final Node p) {
+//		return (p == null ? Color.BLACK : p.color);
+//	}
 
 }
