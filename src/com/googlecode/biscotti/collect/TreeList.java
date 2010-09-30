@@ -320,7 +320,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
-//		return new BoundedListIterator(min, max, this);
+		// return new BoundedListIterator(min, max, this);
 		return new ListIterator<E>() {
 			int index = 0;
 			Node next = min;
@@ -1020,94 +1020,94 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		if (from != null)
 			from.color = to == null ? Color.BLACK : to.color;
 	}
-	
-//	private class BoundedListIterator implements ListIterator<E>{
-//		
-//		int index = 0;
-//		Node next;
-//		Node prev = null;
-//		Node last = null;
-//		TreeList2<E> l;
-//		int expectedModCount;
-//		
-//		private BoundedListIterator(Node min, Node max, TreeList2<E> l){
-//			this.next = min;
-//			this.l = l;
-//			expectedModCount = l.modCount;
-//		}
-//		
-//		
-//
-//		@Override
-//		public void add(E e) {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		@Override
-//		public boolean hasNext() {
-//			return index < l.size();
-//		}
-//
-//		@Override
-//		public boolean hasPrevious() {
-//			return index > 0;
-//		}
-//
-//		@Override
-//		public E next() {
-//			checkForConcurrentModification();
-//			if (index == l.size())
-//				throw new NoSuchElementException();
-//			Node node = prev = next;
-//			index++;
-//			next = successor(node);
-//			last = node;
-//			return node.element;
-//		}
-//
-//		@Override
-//		public int nextIndex() {
-//			return index;
-//		}
-//
-//		@Override
-//		public E previous() {
-//			checkForConcurrentModification();
-//			if (index == 0)
-//				throw new NoSuchElementException();
-//			Node node = next = prev;
-//			index--;
-//			prev = predecessor(node);
-//			last = node;
-//			return node.element;
-//		}
-//
-//		@Override
-//		public int previousIndex() {
-//			return index - 1;
-//		}
-//
-//		@Override
-//		public void remove() {
-//			checkForConcurrentModification();
-//			checkState(last != null);
-//			if (last.left != null && last.right != null)
-//				next = last;
-//			l.delete(last);
-//			index--;
-//			expectedModCount = l.modCount;
-//			last = null;
-//		}
-//
-//		@Override
-//		public void set(E e) {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		private void checkForConcurrentModification() {
-//			if (expectedModCount != l.modCount)
-//				throw new ConcurrentModificationException();
-//		}
-//	}
+
+	// private class BoundedListIterator implements ListIterator<E>{
+	//
+	// int index = 0;
+	// Node next;
+	// Node prev = null;
+	// Node last = null;
+	// TreeList2<E> l;
+	// int expectedModCount;
+	//
+	// private BoundedListIterator(Node min, Node max, TreeList2<E> l){
+	// this.next = min;
+	// this.l = l;
+	// expectedModCount = l.modCount;
+	// }
+	//
+	//
+	//
+	// @Override
+	// public void add(E e) {
+	// throw new UnsupportedOperationException();
+	// }
+	//
+	// @Override
+	// public boolean hasNext() {
+	// return index < l.size();
+	// }
+	//
+	// @Override
+	// public boolean hasPrevious() {
+	// return index > 0;
+	// }
+	//
+	// @Override
+	// public E next() {
+	// checkForConcurrentModification();
+	// if (index == l.size())
+	// throw new NoSuchElementException();
+	// Node node = prev = next;
+	// index++;
+	// next = successor(node);
+	// last = node;
+	// return node.element;
+	// }
+	//
+	// @Override
+	// public int nextIndex() {
+	// return index;
+	// }
+	//
+	// @Override
+	// public E previous() {
+	// checkForConcurrentModification();
+	// if (index == 0)
+	// throw new NoSuchElementException();
+	// Node node = next = prev;
+	// index--;
+	// prev = predecessor(node);
+	// last = node;
+	// return node.element;
+	// }
+	//
+	// @Override
+	// public int previousIndex() {
+	// return index - 1;
+	// }
+	//
+	// @Override
+	// public void remove() {
+	// checkForConcurrentModification();
+	// checkState(last != null);
+	// if (last.left != null && last.right != null)
+	// next = last;
+	// l.delete(last);
+	// index--;
+	// expectedModCount = l.modCount;
+	// last = null;
+	// }
+	//
+	// @Override
+	// public void set(E e) {
+	// throw new UnsupportedOperationException();
+	// }
+	//
+	// private void checkForConcurrentModification() {
+	// if (expectedModCount != l.modCount)
+	// throw new ConcurrentModificationException();
+	// }
+	// }
 
 }
