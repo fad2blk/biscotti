@@ -10,12 +10,12 @@ import java.util.concurrent.BlockingQueue;
  * <p>
  * Classes which implement this interface are not required to be to be
  * <i>thread-safe</i>, and should not be used as a substitute for the
- * {@link BlockingQueue} implementations offered in the
- * {@code java.util.concurrent} package.
+ * {@link BlockingQueue} implementations offered in the {@code
+ * java.util.concurrent} package.
  * <p>
- * Typical implementations will define a deterministic strategy for removing
- * <i>stale</i> elements, or otherwise throw an {@code IllegalStateException} to
- * prevent the queue from exceeding its capacity restrictions.
+ * Typical implementations will define a policy for removing <i>stale</i>
+ * elements, or otherwise throw an {@code IllegalStateException} to prevent the
+ * queue from exceeding its capacity restrictions.
  * 
  * @author Zhenya Leonov
  * @param <E>
