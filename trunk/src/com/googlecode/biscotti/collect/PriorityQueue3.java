@@ -2,7 +2,6 @@ package com.googlecode.biscotti.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,8 +14,6 @@ import java.util.SortedSet;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
 
 /**
@@ -106,17 +103,13 @@ import com.google.common.collect.Ordering;
  *            the type of elements held in this queue
  */
 public class PriorityQueue3<E> extends AbstractQueue<E> implements
-		SortedCollection<E>, Serializable {
+		SortedCollection<E> {
 
 	private int size = 0;
-	protected Node max = null;
-	protected Node min = null;
+	private Node min = null;
 	private Node root = null;
-	transient protected int count = 0;
-	private static final boolean RED = false;
-	private static final boolean BLACK = true;
-	transient private Comparator<? super E> comparator;
-	private static final long serialVersionUID = 1L;
+	int modCount = 0;
+	Comparator<? super E> comparator;
 
 	PriorityQueue3(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -226,36 +219,10 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 	}
 
 	@Override
-	public boolean offer(E element) {
-		Preconditions.checkNotNull(element);
-		Node newNode;
-		if (root == null)
-			min = max = root = new Node(element, null);
-		else {
-			int cmp;
-			Node parent;
-			Node t = root;
-			do {
-				parent = t;
-				cmp = comparator.compare(element, t.element);
-				if (cmp < 0)
-					t = t.left;
-				else
-					t = t.right;
-			} while (t != null);
-			newNode = new Node(element, parent);
-			if (cmp < 0)
-				parent.left = newNode;
-			else
-				parent.right = newNode;
-			fixAfterInsertion(newNode);
-			if (comparator.compare(element, max.element) >= 0)
-				max = newNode;
-			else if (comparator.compare(element, min.element) < 0)
-				min = newNode;
-		}
-		size++;
-		count++;
+	public boolean offer(E e) {
+		checkNotNull(e);
+		Node newNode = new Node(e);
+		insert(newNode);
 		return true;
 	}
 
@@ -275,46 +242,6 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 		return e;
 	}
 
-//	/**
-//	 * Adds all of the elements in the specified collection to this queue.
-//	 * Attempts to {@code addAll} of a queue to itself will result in an
-//	 * {@code IllegalArgumentException}. Further, the behavior of this operation
-//	 * is undefined if the specified collection is modified while the operation
-//	 * is in progress.
-//	 * <p>
-//	 * This implementation iterates over the specified collection, and adds each
-//	 * element returned by the iterator to this queue, in turn.
-//	 * <p>
-//	 * Attempts to {@code addAll} of a collection which contains {@code null}
-//	 * elements will fail cleanly and safely leaving this queue unmodified. If
-//	 * you are not sure whether or not your collection contains {@code null}
-//	 * elements considering filtering it by calling {@link Collections2#filter
-//	 * Collections2.filter(Collection, Predicate)} with a predicate obtained
-//	 * from {@link Predicates#notNull()}. Other runtime exceptions encountered
-//	 * while trying to add an element may result in only some of the elements
-//	 * having been successfully added when the associated exception is thrown.
-//	 * 
-//	 * @param c
-//	 *            collection containing elements to be added to this queue
-//	 * @return {@code true} if this queue changed as a result of the call
-//	 * @throws ClassCastException
-//	 *             {@inheritDoc}
-//	 * @throws NullPointerException
-//	 *             {@inheritDoc}
-//	 * @throws IllegalArgumentException
-//	 *             {@inheritDoc}
-//	 * @throws IllegalStateException
-//	 *             {@inheritDoc}
-//	 * @see #add(Object) add(E)
-//	 */
-//	@Override
-//	public boolean addAll(Collection<? extends E> c) {
-//		Preconditions.checkNotNull(c);
-//		for (E e : c)
-//			Preconditions.checkNotNull(e);
-//		return super.addAll(c);
-//	}
-
 	@Override
 	public boolean contains(Object o) {
 		return o != null && search((E) o) != null;
@@ -331,7 +258,7 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 		return new Iterator<E>() {
 			private Node next = min;
 			private Node last = null;
-			private int expectedModCount = count;
+			private int expectedModCount = modCount;
 
 			@Override
 			public boolean hasNext() {
@@ -340,27 +267,30 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 
 			@Override
 			public void remove() {
+				checkForConcurrentModification();
 				if (last == null)
 					throw new IllegalStateException();
-				if (count != expectedModCount)
-					throw new ConcurrentModificationException();
 				if (last.left != null && last.right != null)
 					next = last;
 				delete(last);
-				expectedModCount = count;
+				expectedModCount = modCount;
 				last = null;
 			}
 
 			@Override
 			public E next() {
+				checkForConcurrentModification();
 				Node node = next;
 				if (node == null)
 					throw new NoSuchElementException();
-				if (count != expectedModCount)
-					throw new ConcurrentModificationException();
 				next = successor(node);
 				last = node;
 				return node.element;
+			}
+
+			private void checkForConcurrentModification() {
+				if (modCount != expectedModCount)
+					throw new ConcurrentModificationException();
 			}
 		};
 	}
@@ -380,64 +310,69 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 		return size;
 	}
 
-	//
-	// serializable object
-	//
-	private void writeObject(java.io.ObjectOutputStream s)
-			throws java.io.IOException {
-		s.defaultWriteObject();
-		s.writeInt(size);
-		s.writeObject(comparator);
-		for (E e : this)
-			s.writeObject(e);
-	}
-
-	//
-	// deserializable object
-	//
-	private void readObject(java.io.ObjectInputStream s)
-			throws java.io.IOException, ClassNotFoundException {
-		s.defaultReadObject();
-		int size = s.readInt();
-		comparator = (Comparator<? super E>) s.readObject();
-		for (int i = 0; i < size; i++)
-			add((E) s.readObject());
-	}
-
 	// Red-Black-Tree methods
 
+	private static enum Color {
+		BLACK, RED;
+	}
+
 	class Node {
-		E element;
+		E element = null;
 		Node left = null;
 		Node right = null;
-		Node parent;
-		boolean color = BLACK;
+		Node parent = null;
+		private Color color = Color.BLACK;
 
-		Node(final E element, final Node parent) {
+		private Node(final E element) {
 			this.element = element;
-			this.parent = parent;
 		}
 	}
 
 	private Node search(final E e) {
-		Node node = root;
-		while (node != null && e != null) {
-			int cmp = comparator.compare(e, node.element);
-			if (cmp == 0 && e.equals(node.element))
-				return node;
+		Node n = root;
+		while (n != null && e != null) {
+			int cmp = comparator.compare(e, n.element);
+			if (cmp == 0 && e.equals(n.element))
+				return n;
 			if (cmp < 0)
-				node = node.left;
+				n = n.left;
 			else
-				node = node.right;
+				n = n.right;
 		}
 		return null;
 	}
 
+	void insert(final Node node) {
+		size++;
+		modCount++;
+		if (root == null)
+			root = node;
+		else {
+			int cmp;
+			Node parent;
+			Node n = root;
+			do {
+				parent = n;
+				cmp = comparator.compare(node.element, n.element);
+				if (cmp < 0)
+					n = n.left;
+				else
+					n = n.right;
+			} while (n != null);
+			node.parent = parent;
+			if (cmp < 0)
+				parent.left = node;
+			else
+				parent.right = node;
+			fixAfterInsertion(node);
+		}
+		if (min == null || comparator.compare(node.element, min.element) < 0)
+			min = node;
+	}
+
 	void delete(Node node) {
 		size--;
-		count++;
-		if (max == node)
-			max = predecessor(node);
+		modCount++;
 		if (min == node)
 			min = successor(node);
 		if (node.left != null && node.right != null) {
@@ -445,22 +380,26 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 			node.element = successor.element;
 			node = successor;
 		}
-		Node replacement = (node.left != null ? node.left : node.right);
-		if (replacement != null) {
-			replacement.parent = node.parent;
+		Node n;
+		if (node.left != null)
+			n = node.left;
+		else
+			n = node.right;
+		if (n != null) {
+			n.parent = node.parent;
 			if (node.parent == null)
-				root = replacement;
+				root = n;
 			else if (node == node.parent.left)
-				node.parent.left = replacement;
+				node.parent.left = n;
 			else
-				node.parent.right = replacement;
+				node.parent.right = n;
 			node.left = node.right = node.parent = null;
-			if (node.color == BLACK)
-				fixAfterDeletion(replacement);
+			if (node.color == Color.BLACK)
+				fixAfterDeletion(n);
 		} else if (node.parent == null) {
 			root = null;
 		} else {
-			if (node.color == BLACK)
+			if (node.color == Color.BLACK)
 				fixAfterDeletion(node);
 			if (node.parent != null) {
 				if (node == node.parent.left)
@@ -491,177 +430,256 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 		}
 	}
 
-	Node predecessor(final Node node) {
-		if (node == null)
-			return null;
-		else if (node.left != null) {
-			Node predecessor = node.left;
-			while (predecessor.right != null)
-				predecessor = predecessor.right;
-			return predecessor;
-		} else {
-			Node parent = node.parent;
-			Node child = node;
-			while (parent != null && child == parent.left) {
-				child = parent;
-				parent = parent.parent;
-			}
-			return parent;
-		}
-	}
-
 	private void rotateLeft(final Node node) {
 		if (node != null) {
-			Node temp = node.right;
-			node.right = temp.left;
-			if (temp.left != null)
-				temp.left.parent = node;
-			temp.parent = node.parent;
+			Node n = node.right;
+			node.right = n.left;
+			if (n.left != null)
+				n.left.parent = node;
+			n.parent = node.parent;
 			if (node.parent == null)
-				root = temp;
+				root = n;
 			else if (node.parent.left == node)
-				node.parent.left = temp;
+				node.parent.left = n;
 			else
-				node.parent.right = temp;
-			temp.left = node;
-			node.parent = temp;
+				node.parent.right = n;
+			n.left = node;
+			node.parent = n;
 		}
 	}
 
 	private void rotateRight(final Node node) {
 		if (node != null) {
-			Node temp = node.left;
-			node.left = temp.right;
-			if (temp.right != null)
-				temp.right.parent = node;
-			temp.parent = node.parent;
+			Node n = node.left;
+			node.left = n.right;
+			if (n.right != null)
+				n.right.parent = node;
+			n.parent = node.parent;
 			if (node.parent == null)
-				root = temp;
+				root = n;
 			else if (node.parent.right == node)
-				node.parent.right = temp;
+				node.parent.right = n;
 			else
-				node.parent.left = temp;
-			temp.right = node;
-			node.parent = temp;
+				node.parent.left = n;
+			n.right = node;
+			node.parent = n;
 		}
 	}
 
-	private void fixAfterInsertion(Node x) {
-		x.color = RED;
-		while (x != null && x != root && x.parent.color == RED) {
-			if (getParent(x) == getLeftChild(getParent(getParent(x)))) {
-				Node y = getRightChild(getParent(getParent(x)));
-				if (getColor(y) == RED) {
-					setColor(getParent(x), BLACK);
-					setColor(y, BLACK);
-					setColor(getParent(getParent(x)), RED);
-					x = getParent(getParent(x));
+	private void fixAfterInsertion(Node node) {
+		makeRed(node);
+		while (node != null && node != root && isRed(node.parent)) {
+			if (parent(node) == leftUncle(node)) {
+				Node n = rightUncle(node);
+				if (isRed(n)) {
+					makeBlack(parent(node));
+					makeBlack(n);
+					makeRed(grandParent(node));
+					node = grandParent(node);
 				} else {
-					if (x == getRightChild(getParent(x))) {
-						x = getParent(x);
-						rotateLeft(x);
+					if (node == rightSibling(node)) {
+						node = parent(node);
+						rotateLeft(node);
 					}
-					setColor(getParent(x), BLACK);
-					setColor(getParent(getParent(x)), RED);
-					rotateRight(getParent(getParent(x)));
+					makeBlack(parent(node));
+					makeRed(grandParent(node));
+					rotateRight(grandParent(node));
 				}
 			} else {
-				Node y = getLeftChild(getParent(getParent(x)));
-				if (getColor(y) == RED) {
-					setColor(getParent(x), BLACK);
-					setColor(y, BLACK);
-					setColor(getParent(getParent(x)), RED);
-					x = getParent(getParent(x));
+				Node n = leftUncle(node);
+				if (isRed(n)) {
+					makeBlack(parent(node));
+					makeBlack(n);
+					makeRed(grandParent(node));
+					node = grandParent(node);
 				} else {
-					if (x == getLeftChild(getParent(x))) {
-						x = getParent(x);
-						rotateRight(x);
+					if (node == leftSibling(node)) {
+						node = parent(node);
+						rotateRight(node);
 					}
-					setColor(getParent(x), BLACK);
-					setColor(getParent(getParent(x)), RED);
-					rotateLeft(getParent(getParent(x)));
+					makeBlack(parent(node));
+					makeRed(grandParent(node));
+					rotateLeft(grandParent(node));
 				}
 			}
 		}
-		root.color = BLACK;
+		makeBlack(root);
 	}
 
 	private void fixAfterDeletion(Node node) {
-		while (node != root && getColor(node) == BLACK) {
-			if (node == getLeftChild(getParent(node))) {
-				Node sib = getRightChild(getParent(node));
-				if (getColor(sib) == RED) {
-					setColor(sib, BLACK);
-					setColor(getParent(node), RED);
-					rotateLeft(getParent(node));
-					sib = getRightChild(getParent(node));
+		while (node != root && isBlack(node)) {
+			if (node == leftSibling(node)) {
+				Node n = rightSibling(node);
+				if (isRed(n)) {
+					makeBlack(n);
+					makeRed(parent(node));
+					rotateLeft(parent(node));
+					n = rightSibling(node);
 				}
-				if (getColor(getLeftChild(sib)) == BLACK
-						&& getColor(getRightChild(sib)) == BLACK) {
-					setColor(sib, RED);
-					node = getParent(node);
+				if (isBlack(left(n)) && isBlack(right(n))) {
+					makeRed(n);
+					node = parent(node);
 				} else {
-					if (getColor(getRightChild(sib)) == BLACK) {
-						setColor(getLeftChild(sib), BLACK);
-						setColor(sib, RED);
-						rotateRight(sib);
-						sib = getRightChild(getParent(node));
+					if (isBlack(right(n))) {
+						makeBlack(left(n));
+						makeRed(n);
+						rotateRight(n);
+						n = rightSibling(node);
 					}
-					setColor(sib, getColor(getParent(node)));
-					setColor(getParent(node), BLACK);
-					setColor(getRightChild(sib), BLACK);
-					rotateLeft(getParent(node));
+					copyColor(n, parent(node));
+					makeBlack(parent(node));
+					makeBlack(right(n));
+					rotateLeft(parent(node));
 					node = root;
 				}
 			} else {
-				Node sib = getLeftChild(getParent(node));
-				if (getColor(sib) == RED) {
-					setColor(sib, BLACK);
-					setColor(getParent(node), RED);
-					rotateRight(getParent(node));
-					sib = getLeftChild(getParent(node));
+				Node n = leftSibling(node);
+				if (isRed(n)) {
+					makeBlack(n);
+					makeRed(parent(node));
+					rotateRight(parent(node));
+					n = leftSibling(node);
 				}
-				if (getColor(getRightChild(sib)) == BLACK
-						&& getColor(getLeftChild(sib)) == BLACK) {
-					setColor(sib, RED);
-					node = getParent(node);
+				if (isBlack(right(n)) && isBlack(left(n))) {
+					makeRed(n);
+					node = parent(node);
 				} else {
-					if (getColor(getLeftChild(sib)) == BLACK) {
-						setColor(getRightChild(sib), BLACK);
-						setColor(sib, RED);
-						rotateLeft(sib);
-						sib = getLeftChild(getParent(node));
+					if (isBlack(left(n))) {
+						makeBlack(right(n));
+						makeRed(n);
+						rotateLeft(n);
+						n = leftSibling(node);
 					}
-					setColor(sib, getColor(getParent(node)));
-					setColor(getParent(node), BLACK);
-					setColor(getLeftChild(sib), BLACK);
-					rotateRight(getParent(node));
+					copyColor(n, parent(node));
+					makeBlack(parent(node));
+					makeBlack(left(n));
+					rotateRight(parent(node));
 					node = root;
 				}
 			}
 		}
-		setColor(node, BLACK);
+		makeBlack(node);
 	}
 
-	private boolean getColor(final Node p) {
-		return (p == null ? BLACK : p.color);
+	private Node parent(final Node node) {
+		return node == null ? null : node.parent;
 	}
 
-	private Node getParent(final Node p) {
-		return (p == null ? null : p.parent);
+	private Node left(final Node node) {
+		return node == null ? null : node.left;
 	}
 
-	private void setColor(final Node p, final boolean c) {
-		if (p != null)
-			p.color = c;
+	private Node right(final Node node) {
+		return node == null ? null : node.right;
 	}
 
-	private Node getLeftChild(final Node p) {
-		return (p == null) ? null : p.left;
+	private Node grandParent(final Node node) {
+		return (node == null || node.parent == null) ? null
+				: node.parent.parent;
 	}
 
-	private Node getRightChild(final Node p) {
-		return (p == null) ? null : p.right;
+	private Node leftSibling(final Node node) {
+		return (node == null || node.parent == null) ? null : node.parent.left;
+	}
+
+	private Node rightSibling(final Node node) {
+		return (node == null || node.parent == null) ? null : node.parent.right;
+	}
+
+	private Node leftUncle(final Node node) {
+		return (node == null || node.parent == null || node.parent.parent == null) ? null
+				: node.parent.parent.left;
+	}
+
+	private Node rightUncle(final Node node) {
+		return (node == null || node.parent == null || node.parent.parent == null) ? null
+				: node.parent.parent.right;
+	}
+
+	private boolean isRed(final Node node) {
+		return (node == null || node.color == Color.BLACK) ? false : true;
+	}
+
+	private boolean isBlack(final Node node) {
+		return (node == null || node.color == Color.BLACK) ? true : false;
+	}
+
+	private void makeRed(final Node node) {
+		if (node != null)
+			node.color = Color.RED;
+	}
+
+	private void makeBlack(final Node node) {
+		if (node != null)
+			node.color = Color.BLACK;
+	}
+
+	private void copyColor(final Node from, final Node to) {
+		if (from != null)
+			from.color = to == null ? Color.BLACK : to.color;
+	}
+
+	public void verifyProperties() {
+		verifyProperty1(root);
+		verifyProperty2(root);
+		// Property 3 is implicit
+		verifyProperty4(root);
+		verifyProperty5(root);
+	}
+
+	private void verifyProperty1(Node n) {
+		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
+		if (n == null)
+			return;
+		verifyProperty1(n.left);
+		verifyProperty1(n.right);
+	}
+
+	private void verifyProperty2(Node root) {
+		assert getColor(root) == Color.BLACK;
+	}
+
+	private void verifyProperty4(Node n) {
+		// System.out.println(getColor(n));
+		if (getColor(n) == Color.RED) {
+			assert getColor(n.left) == Color.BLACK;
+			// System.out.println(getColor(n.left));
+			assert getColor(n.right) == Color.BLACK;
+			// System.out.println(getColor(n.right));
+			assert getColor(n.parent) == Color.BLACK;
+			// System.out.println(getColor(n.parent));
+		}
+		if (n == null)
+			return;
+		verifyProperty4(n.left);
+		verifyProperty4(n.right);
+	}
+
+	private void verifyProperty5(Node root) {
+		verifyProperty5Helper(root, 0, -1);
+	}
+
+	private int verifyProperty5Helper(Node n, int blackCount, int pathBlackCount) {
+		if (getColor(n) == Color.BLACK) {
+			blackCount++;
+		}
+		if (n == null) {
+			if (pathBlackCount == -1) {
+				pathBlackCount = blackCount;
+			} else {
+				assert blackCount == pathBlackCount;
+			}
+			return pathBlackCount;
+		}
+		pathBlackCount = verifyProperty5Helper(n.left, blackCount,
+				pathBlackCount);
+		pathBlackCount = verifyProperty5Helper(n.right, blackCount,
+				pathBlackCount);
+		return pathBlackCount;
+	}
+
+	private Color getColor(final Node p) {
+		return (p == null ? Color.BLACK : p.color);
 	}
 
 }
