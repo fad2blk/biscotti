@@ -54,43 +54,36 @@ import com.google.common.collect.Ordering;
  * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object)}</br>
- *     </td>
- *     <td align="center"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br> {@link #poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size()}</br>
- *   </td>
- *   <td align="center"><i>O(1)</i></td>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
+ * {@link #size()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
  * <p>
@@ -102,23 +95,23 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-public class PriorityQueue3<E> extends AbstractQueue<E> implements
+public class PriorityQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E> {
 
 	private int size = 0;
-	private Node min = null;
-	private Node root = null;
+	Node min = null;
+	Node root = null;
 	int modCount = 0;
 	Comparator<? super E> comparator;
 
-	PriorityQueue3(final Comparator<? super E> comparator) {
+	PriorityQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
 			this.comparator = comparator;
 		else
 			this.comparator = (Comparator<? super E>) Ordering.natural();
 	}
 
-	PriorityQueue3(final Iterable<? extends E> elements) {
+	PriorityQueue(final Iterable<? extends E> elements) {
 		Comparator<? super E> comparator = null;
 		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
@@ -141,8 +134,8 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 	 * @return a new {@code PriorityQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> PriorityQueue3<E> create() {
-		return new PriorityQueue3<E>((Comparator<? super E>) null);
+	public static <E extends Comparable<? super E>> PriorityQueue<E> create() {
+		return new PriorityQueue<E>((Comparator<? super E>) null);
 	}
 
 	/**
@@ -154,10 +147,10 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 	 * @return a new {@code PriorityQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> PriorityQueue3<E> create(
+	public static <E> PriorityQueue<E> create(
 			final Comparator<? super E> comparator) {
 		Preconditions.checkNotNull(comparator);
-		return new PriorityQueue3<E>(comparator);
+		return new PriorityQueue<E>(comparator);
 	}
 
 	/**
@@ -179,10 +172,10 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> PriorityQueue3<E> create(
+	public static <E> PriorityQueue<E> create(
 			final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
-		return new PriorityQueue3<E>(elements);
+		return new PriorityQueue<E>(elements);
 	}
 
 	/**
@@ -199,10 +192,10 @@ public class PriorityQueue3<E> extends AbstractQueue<E> implements
 	 * @throws NullPointerException
 	 *             if any of the specified elements are {@code null}
 	 */
-	public static <E extends Comparable<? super E>> PriorityQueue3<E> create(
+	public static <E extends Comparable<? super E>> PriorityQueue<E> create(
 			final E... elements) {
 		checkNotNull(elements);
-		PriorityQueue3<E> q = create();
+		PriorityQueue<E> q = create();
 		Collections.addAll(q, elements);
 		return q;
 	}
