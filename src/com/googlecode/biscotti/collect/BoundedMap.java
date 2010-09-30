@@ -11,9 +11,9 @@ import java.util.Map;
  * failure is a normal, rather than exceptional occurrence, when attempting to
  * store a new entry into a full map.
  * <p>
- * Typical implementations will define a deterministic strategy for removing
- * <i>stale</i> mappings, or otherwise throw an {@code IllegalStateException} to
- * prevent the map from exceeding its capacity restrictions.
+ * Typical implementations will define a policy for removing <i>stale</i>
+ * mappings, or otherwise throw an {@code IllegalStateException} to prevent the
+ * map from exceeding its capacity restrictions.
  * <p>
  * All implementations are strongly encouraged to define their behavior in their
  * API documentation.
@@ -62,8 +62,8 @@ public interface BoundedMap<K, V> extends Map<K, V> {
 	 *            key with which the specified value is to be associated
 	 * @param value
 	 *            value to be associated with the specified key
-	 * @return {@code true} if the entry was stored in this map, else
-	 *         {@code false}
+	 * @return {@code true} if the entry was stored in this map, else {@code
+	 *         false}
 	 * @throws ClassCastException
 	 *             if the class of the specified key or value prevents it from
 	 *             being stored in this map
