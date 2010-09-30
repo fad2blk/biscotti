@@ -41,14 +41,14 @@ import com.google.common.collect.Ordering;
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@link Collections3#synchronize(List)} method.
+ * list using the {@link Collections#synchronizedList(List)} method.
  * <p>
- * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to both maintain sorted order and test for
- * element equality. Two elements which are deemed equal by the comparator's
- * {@code compare(E, E)} method are, from the standpoint of this list, equal.
- * Thus the ordering maintained by this list must be <i>consistent with
- * equals</i> if this list is to function correctly.
+ * <b>Implementation Note:</b> The the ordering maintained by this list must be
+ * <i>consistent with equals</i> if this list is to function correctly. This is
+ * so because this implementation uses a comparator (whether or not one is
+ * explicitly provided) to perform all element comparisons. Two elements which
+ * are deemed equal by the comparator's {@code compare(E, E)} method are, from
+ * the standpoint of this list, equal.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * for this list and its views (where <i>n</i> is the size of this list, and
@@ -93,7 +93,7 @@ import com.google.common.collect.Ordering;
  *     </td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
- * </table>
+ * </table> 
  * 
  * @author Zhenya Leonov
  * @param <E>
