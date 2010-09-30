@@ -38,16 +38,17 @@ import com.google.common.collect.Ordering;
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally. Consider using the
  * inherently <i>thread-safe</i> {@link PriorityBlockingQueue} instead, or
- * "wrapping" the queue using the {@link Collections3#synchronize((Queue)}
+ * "wrapping" the queue using the {@link Collections3#synchronize(Queue)}
  * method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
  * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator is not required to be <i>consistent with equals</i>. For any two
- * elements {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it
- * is not necessary for {@code e1.equals(e2) == true}. This is allows duplicate
- * elements to have different priority.
+ * comparator is not required to be <i>consistent with equals</i>. Given a
+ * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that
+ * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
+ * different priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
@@ -93,7 +94,7 @@ import com.google.common.collect.Ordering;
  *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
- * <p>
+ * <p> 
  * This queue uses the same ordering rules as {@link java.util.PriorityQueue
  * java.util.PriorityQueue}. In comparison it provides identical functionality,
  * faster overall running time and ordered traversals via its iterators.
@@ -619,67 +620,68 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			from.color = to == null ? Color.BLACK : to.color;
 	}
 
-//	public void verifyProperties() {
-//		verifyProperty1(root);
-//		verifyProperty2(root);
-//		// Property 3 is implicit
-//		verifyProperty4(root);
-//		verifyProperty5(root);
-//	}
-//
-//	private void verifyProperty1(Node n) {
-//		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
-//		if (n == null)
-//			return;
-//		verifyProperty1(n.left);
-//		verifyProperty1(n.right);
-//	}
-//
-//	private void verifyProperty2(Node root) {
-//		assert getColor(root) == Color.BLACK;
-//	}
-//
-//	private void verifyProperty4(Node n) {
-//		// System.out.println(getColor(n));
-//		if (getColor(n) == Color.RED) {
-//			assert getColor(n.left) == Color.BLACK;
-//			// System.out.println(getColor(n.left));
-//			assert getColor(n.right) == Color.BLACK;
-//			// System.out.println(getColor(n.right));
-//			assert getColor(n.parent) == Color.BLACK;
-//			// System.out.println(getColor(n.parent));
-//		}
-//		if (n == null)
-//			return;
-//		verifyProperty4(n.left);
-//		verifyProperty4(n.right);
-//	}
-//
-//	private void verifyProperty5(Node root) {
-//		verifyProperty5Helper(root, 0, -1);
-//	}
-//
-//	private int verifyProperty5Helper(Node n, int blackCount, int pathBlackCount) {
-//		if (getColor(n) == Color.BLACK) {
-//			blackCount++;
-//		}
-//		if (n == null) {
-//			if (pathBlackCount == -1) {
-//				pathBlackCount = blackCount;
-//			} else {
-//				assert blackCount == pathBlackCount;
-//			}
-//			return pathBlackCount;
-//		}
-//		pathBlackCount = verifyProperty5Helper(n.left, blackCount,
-//				pathBlackCount);
-//		pathBlackCount = verifyProperty5Helper(n.right, blackCount,
-//				pathBlackCount);
-//		return pathBlackCount;
-//	}
-//
-//	private Color getColor(final Node p) {
-//		return (p == null ? Color.BLACK : p.color);
-//	}
+	// public void verifyProperties() {
+	// verifyProperty1(root);
+	// verifyProperty2(root);
+	// // Property 3 is implicit
+	// verifyProperty4(root);
+	// verifyProperty5(root);
+	// }
+	//
+	// private void verifyProperty1(Node n) {
+	// assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
+	// if (n == null)
+	// return;
+	// verifyProperty1(n.left);
+	// verifyProperty1(n.right);
+	// }
+	//
+	// private void verifyProperty2(Node root) {
+	// assert getColor(root) == Color.BLACK;
+	// }
+	//
+	// private void verifyProperty4(Node n) {
+	// // System.out.println(getColor(n));
+	// if (getColor(n) == Color.RED) {
+	// assert getColor(n.left) == Color.BLACK;
+	// // System.out.println(getColor(n.left));
+	// assert getColor(n.right) == Color.BLACK;
+	// // System.out.println(getColor(n.right));
+	// assert getColor(n.parent) == Color.BLACK;
+	// // System.out.println(getColor(n.parent));
+	// }
+	// if (n == null)
+	// return;
+	// verifyProperty4(n.left);
+	// verifyProperty4(n.right);
+	// }
+	//
+	// private void verifyProperty5(Node root) {
+	// verifyProperty5Helper(root, 0, -1);
+	// }
+	//
+	// private int verifyProperty5Helper(Node n, int blackCount, int
+	// pathBlackCount) {
+	// if (getColor(n) == Color.BLACK) {
+	// blackCount++;
+	// }
+	// if (n == null) {
+	// if (pathBlackCount == -1) {
+	// pathBlackCount = blackCount;
+	// } else {
+	// assert blackCount == pathBlackCount;
+	// }
+	// return pathBlackCount;
+	// }
+	// pathBlackCount = verifyProperty5Helper(n.left, blackCount,
+	// pathBlackCount);
+	// pathBlackCount = verifyProperty5Helper(n.right, blackCount,
+	// pathBlackCount);
+	// return pathBlackCount;
+	// }
+	//
+	// private Color getColor(final Node p) {
+	// return (p == null ? Color.BLACK : p.color);
+	// }
 
 }
