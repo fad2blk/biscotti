@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.AbstractQueue;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -50,9 +49,10 @@ import com.google.common.collect.Ordering;
  * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
  * different priority.
  * <p>
- * The underlying red-black tree provides the following worst case running time
- * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
- * specified collection):
+ * For a queue which does not contain elements with equal priority the
+ * underlying red-black tree provides the following worst case running time
+ * where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
+ * specified collection (elements with equal priority are resolved linearly):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -66,7 +66,7 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
+ *     <td align="center"><i>O(m lg n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -81,7 +81,7 @@ import com.google.common.collect.Ordering;
  *       {@link #offer(Object) offer(E)}</br>
  *       {@link #remove(Object)}</br>
  *     </td>
- *     <td align="center"><i>O(log n)</i></td>
+ *     <td align="center"><i>O(lg n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -94,7 +94,7 @@ import com.google.common.collect.Ordering;
  *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
- * <p> 
+ * <p>
  * This queue uses the same ordering rules as {@link java.util.PriorityQueue
  * java.util.PriorityQueue}. In comparison it provides identical functionality,
  * faster overall running time and ordered traversals via its iterators.
@@ -187,28 +187,6 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * Creates a new {@code PriorityQueue} containing the specified initial
-	 * elements ordered according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this queue
-	 * @return a new {@code PriorityQueue} containing the specified initial
-	 *         elements
-	 * @throws ClassCastException
-	 *             if specified elements cannot be compared to one another
-	 *             according to their natural ordering
-	 * @throws NullPointerException
-	 *             if any of the specified elements are {@code null}
-	 */
-	public static <E extends Comparable<? super E>> PriorityQueue<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		PriorityQueue<E> q = create();
-		Collections.addAll(q, elements);
-		return q;
-	}
-
-	/**
 	 * {@inheritDoc} If one was not explicitly provided a <i>natural order</i>
 	 * comparator is returned.
 	 * 
@@ -298,7 +276,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	@Override
 	public boolean remove(Object o) {
-		Preconditions.checkNotNull(o);
+		checkNotNull(o);
 		Node node = search((E) o);
 		if (node == null)
 			return false;
@@ -331,7 +309,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	private Node search(final E e) {
 		Node n = root;
-		while (n != null && e != null) {
+		while (n != null) {
 			int cmp = comparator.compare(e, n.element);
 			if (cmp == 0 && e.equals(n.element))
 				return n;
@@ -343,345 +321,495 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		return null;
 	}
 
-	void insert(final Node node) {
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-INSERT(T, z)
+	 * y = nil[T ]
+	 * x = root[T ]
+	 * while x != nil[T ]
+	 *    do y = x
+	 *       if key[z] < key[x]
+	 *          then x = left[x]
+	 *          else x = right[x]
+	 * p[z] = y
+	 * if y = nil[T ]
+	 *    then root[T] = z
+	 *    else if key[z] < key[y]
+	 *            then left[y] = z
+	 *            else right[y] = z
+	 * left[z] = nil[T ]
+	 * right[z] = nil[T ]
+	 * color[z] = RED
+	 * RB-INSERT-FIXUP(T, z)
+	 */
+	void insert(final Node z) {
 		size++;
 		modCount++;
-		if (root == null)
-			root = node;
-		else {
-			int cmp;
-			Node parent;
-			Node n = root;
-			do {
-				parent = n;
-				cmp = comparator.compare(node.element, n.element);
-				if (cmp < 0)
-					n = n.left;
-				else
-					n = n.right;
-			} while (n != null);
-			node.parent = parent;
-			if (cmp < 0)
-				parent.left = node;
+		Node y = null;
+		Node x = root;
+		while (x != null) {
+			y = x;
+			if (comparator.compare(z.element, x.element) < 0)
+				x = x.left;
 			else
-				parent.right = node;
-			fixAfterInsertion(node);
+				x = x.right;
 		}
-		if (min == null || comparator.compare(node.element, min.element) < 0)
-			min = node;
+		z.parent = y;
+		if (y == null)
+			root = z;
+		else if (comparator.compare(z.element, y.element) < 0)
+			y.left = z;
+		else
+			y.right = z;
+		insertFixUp(z);
+		if (min == null || comparator.compare(z.element, min.element) < 0)
+			min = z;
 	}
 
-	void delete(Node node) {
+	void delete(Node z) {
 		size--;
 		modCount++;
-		if (min == node)
-			min = successor(node);
-		if (node.left != null && node.right != null) {
-			Node successor = successor(node);
-			node.element = successor.element;
-			node = successor;
+		Node x, y;
+		if (min == z)
+			min = successor(z);
+		if (z.left != null && z.right != null) {
+			y = successor(z);
+			z.element = y.element;
+			z = y;
 		}
-		Node n;
-		if (node.left != null)
-			n = node.left;
+		if (z.left != null)
+			x = z.left;
 		else
-			n = node.right;
-		if (n != null) {
-			n.parent = node.parent;
-			if (node.parent == null)
-				root = n;
-			else if (node == node.parent.left)
-				node.parent.left = n;
+			x = z.right;
+		if (x != null) {
+			x.parent = z.parent;
+			if (z.parent == null)
+				root = x;
+			else if (z == z.parent.left)
+				z.parent.left = x;
 			else
-				node.parent.right = n;
-			node.left = node.right = node.parent = null;
-			if (node.color == Color.BLACK)
-				fixAfterDeletion(n);
-		} else if (node.parent == null) {
+				z.parent.right = x;
+			// z.left = z.right = z.parent = null;
+			if (z.color == Color.BLACK)
+				deleteFixUp(x);
+		} else if (z.parent == null)
 			root = null;
-		} else {
-			if (node.color == Color.BLACK)
-				fixAfterDeletion(node);
-			if (node.parent != null) {
-				if (node == node.parent.left)
-					node.parent.left = null;
-				else if (node == node.parent.right)
-					node.parent.right = null;
-				node.parent = null;
+		else {
+			if (z.color == Color.BLACK)
+				deleteFixUp(z);
+			if (z.parent != null) {
+				if (z == z.parent.left)
+					z.parent.left = null;
+				else if (z == z.parent.right)
+					z.parent.right = null;
+				z.parent = null;
 			}
 		}
 	}
 
-	private Node successor(final Node node) {
-		if (node == null)
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * TREE-SUCCESSOR(x)
+	 * if right[x] != NIL
+	 *    then return TREE-MINIMUM(right[x])
+	 * y = p[x]
+	 * while y != NIL and x = right[y]
+	 *    do x = y
+	 *       y = p[y]
+	 * return y
+	 */
+	private Node successor(Node x) {
+		Node y;
+		if (x == null)
 			return null;
-		else if (node.right != null) {
-			Node successor = node.right;
-			while (successor.left != null)
-				successor = successor.left;
-			return successor;
-		} else {
-			Node parent = node.parent;
-			Node child = node;
-			while (parent != null && child == parent.right) {
-				child = parent;
-				parent = parent.parent;
-			}
-			return parent;
+		if (x.right != null) {
+			y = x.right;
+			while (y.left != null)
+				y = y.left;
+			return y;
 		}
+		y = x.parent;
+		while (y != null && x == y.right) {
+			x = y;
+			y = y.parent;
+		}
+		return y;
 	}
 
-	private void rotateLeft(final Node node) {
-		if (node != null) {
-			Node n = node.right;
-			node.right = n.left;
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * LEFT-ROTATE(T, x)
+	 * y = right[x]							Set y.
+	 * right[x] = left[y]					Turn y's left subtree into x's right subtree.
+	 * if left[y] != nil[T ]
+	 *    then p[left[y]] = x
+	 * p[y] = p[x]							Link x's parent to y.
+	 * if p[x] = nil[T ]
+	 *    then root[T ] = y
+	 *    else if x = left[p[x]]
+	 *            then left[p[x]] = y
+	 *            else right[p[x]] = y
+	 * left[y] = x							Put x on y's left.
+	 * p[x] = y
+	 */
+	private void leftRotate(final Node x) {
+		if (x != null) {
+			Node n = x.right;
+			x.right = n.left;
 			if (n.left != null)
-				n.left.parent = node;
-			n.parent = node.parent;
-			if (node.parent == null)
+				n.left.parent = x;
+			n.parent = x.parent;
+			if (x.parent == null)
 				root = n;
-			else if (node.parent.left == node)
-				node.parent.left = n;
+			else if (x.parent.left == x)
+				x.parent.left = n;
 			else
-				node.parent.right = n;
-			n.left = node;
-			node.parent = n;
+				x.parent.right = n;
+			n.left = x;
+			x.parent = n;
 		}
 	}
 
-	private void rotateRight(final Node node) {
-		if (node != null) {
-			Node n = node.left;
-			node.left = n.right;
+	private void rightRotate(final Node x) {
+		if (x != null) {
+			Node n = x.left;
+			x.left = n.right;
 			if (n.right != null)
-				n.right.parent = node;
-			n.parent = node.parent;
-			if (node.parent == null)
+				n.right.parent = x;
+			n.parent = x.parent;
+			if (x.parent == null)
 				root = n;
-			else if (node.parent.right == node)
-				node.parent.right = n;
+			else if (x.parent.right == x)
+				x.parent.right = n;
 			else
-				node.parent.left = n;
-			n.right = node;
-			node.parent = n;
+				x.parent.left = n;
+			n.right = x;
+			x.parent = n;
 		}
 	}
 
-	private void fixAfterInsertion(Node node) {
-		makeRed(node);
-		while (node != null && node != root && isRed(node.parent)) {
-			if (parent(node) == leftUncle(node)) {
-				Node n = rightUncle(node);
-				if (isRed(n)) {
-					makeBlack(parent(node));
-					makeBlack(n);
-					makeRed(grandParent(node));
-					node = grandParent(node);
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-INSERT-FIXUP(T, z)
+	 * while color[p[z]] = RED
+	 *    do if p[z] = left[p[p[z]]]
+	 *          then y = right[p[p[z]]]
+	 *               if color[y] = RED
+	 *                  then color[p[z]] = BLACK					Case 1
+	 *                       color[y] = BLACK						Case 1 
+	 *                       color[p[p[z]]] = RED					Case 1
+	 *                       z = p[p[z]]							Case 1
+	 *                  else if z = right[p[z]]
+	 *                          then z = p[z]						Case 2
+	 *                               LEFT-ROTATE(T, z)				Case 2
+	 *                       color[p[z]] = BLACK					Case 3
+	 *                       color[p[p[z]]] = RED					Case 3
+	 *                       RIGHT-ROTATE(T, p[p[z]])				Case 3
+	 *          else (same as then clause
+	 *                        with right and left exchanged)
+	 * color[root[T]] = BLACK
+	 */
+	private void insertFixUp(Node z) {
+		Node y;
+		setRed(z);
+		while (z != root && isRed(z.parent)) {
+			if (parent(z) == left(parent(parent(z)))) {
+				y = right(parent(parent(z)));
+				if (isRed(y)) {
+					setBlack(parent(z));
+					setBlack(y);
+					setRed(parent(parent(z)));
+					z = parent(parent(z));
 				} else {
-					if (node == rightSibling(node)) {
-						node = parent(node);
-						rotateLeft(node);
+					if (z == right(parent(z))) {
+						z = parent(z);
+						leftRotate(z);
 					}
-					makeBlack(parent(node));
-					makeRed(grandParent(node));
-					rotateRight(grandParent(node));
+					setBlack(parent(z));
+					setRed(parent(parent(z)));
+					rightRotate(parent(parent(z)));
 				}
-			} else {
-				Node n = leftUncle(node);
-				if (isRed(n)) {
-					makeBlack(parent(node));
-					makeBlack(n);
-					makeRed(grandParent(node));
-					node = grandParent(node);
+			} else { // symmetric
+				y = left(parent(parent(z)));
+				if (isRed(y)) {
+					setBlack(parent(z));
+					setBlack(y);
+					setRed(parent(parent(z)));
+					z = parent(parent(z));
 				} else {
-					if (node == leftSibling(node)) {
-						node = parent(node);
-						rotateRight(node);
+					if (z == left(parent(z))) {
+						z = parent(z);
+						rightRotate(z);
 					}
-					makeBlack(parent(node));
-					makeRed(grandParent(node));
-					rotateLeft(grandParent(node));
+					setBlack(parent(z));
+					setRed(parent(parent(z)));
+					leftRotate(parent(parent(z)));
 				}
 			}
 		}
-		makeBlack(root);
+		setBlack(root);
 	}
 
-	private void fixAfterDeletion(Node node) {
-		while (node != root && isBlack(node)) {
-			if (node == leftSibling(node)) {
-				Node n = rightSibling(node);
-				if (isRed(n)) {
-					makeBlack(n);
-					makeRed(parent(node));
-					rotateLeft(parent(node));
-					n = rightSibling(node);
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-DELETE-FIXUP(T, x)
+	 * while x != root[T ] and color[x] = BLACK
+	 *    do if x = left[p[x]]
+	 *          then w = right[p[x]]
+	 *               if color[w] = RED
+	 *                  then color[w] = BLACK								Case 1
+	 *                       color[p[x]] = RED								Case 1
+	 *                       LEFT-ROTATE(T, p[x])							Case 1
+	 *                       w = right[p[x]]								Case 1
+	 *               if color[left[w]] = BLACK and color[right[w]] = BLACK
+	 *                  then color[w] = RED									Case 2
+	 *                       x = p[x]										Case 2
+	 *                  else if color[right[w]] = BLACK
+	 *                          then color[left[w]] = BLACK					Case 3
+	 *                               color[w] = RED							Case 3
+	 *                               RIGHT-ROTATE(T,w)						Case 3
+	 *                               w = right[p[x]]						Case 3
+	 *                       color[w] = color[p[x]]							Case 4
+	 *                       color[p[x]] = BLACK							Case 4
+	 *                       color[right[w]] = BLACK						Case 4
+	 *                       LEFT-ROTATE(T, p[x])							Case 4
+	 *                       x = root[T ]									Case 4
+	 *          else (same as then clause with right and left exchanged)
+	 * color[x] = BLACK
+	 */
+	private void deleteFixUp(Node x) {
+		Node w;
+		while (x != root && isBlack(x)) {
+			if (x == left(parent(x))) {
+				w = right(parent(x));
+				if (isRed(w)) {
+					setBlack(w);
+					setRed(parent(x));
+					leftRotate(parent(x));
+					w = right(parent(x));
 				}
-				if (isBlack(left(n)) && isBlack(right(n))) {
-					makeRed(n);
-					node = parent(node);
+				if (isBlack(left(w)) && isBlack(right(w))) {
+					setRed(w);
+					x = parent(x);
 				} else {
-					if (isBlack(right(n))) {
-						makeBlack(left(n));
-						makeRed(n);
-						rotateRight(n);
-						n = rightSibling(node);
+					if (isBlack(right(w))) {
+						setBlack(left(w));
+						setRed(w);
+						rightRotate(w);
+						w = right(parent(x));
 					}
-					copyColor(n, parent(node));
-					makeBlack(parent(node));
-					makeBlack(right(n));
-					rotateLeft(parent(node));
-					node = root;
+					copyColor(w, parent(x));
+					setBlack(parent(x));
+					setBlack(right(w));
+					leftRotate(parent(x));
+					x = root;
 				}
 			} else {
-				Node n = leftSibling(node);
-				if (isRed(n)) {
-					makeBlack(n);
-					makeRed(parent(node));
-					rotateRight(parent(node));
-					n = leftSibling(node);
+				w = left(parent(x));
+				if (isRed(w)) {
+					setBlack(w);
+					setRed(parent(x));
+					rightRotate(parent(x));
+					w = left(parent(x));
 				}
-				if (isBlack(right(n)) && isBlack(left(n))) {
-					makeRed(n);
-					node = parent(node);
+				if (isBlack(right(w)) && isBlack(left(w))) {
+					setRed(w);
+					x = parent(x);
 				} else {
-					if (isBlack(left(n))) {
-						makeBlack(right(n));
-						makeRed(n);
-						rotateLeft(n);
-						n = leftSibling(node);
+					if (isBlack(left(w))) {
+						setBlack(right(w));
+						setRed(w);
+						leftRotate(w);
+						w = left(parent(x));
 					}
-					copyColor(n, parent(node));
-					makeBlack(parent(node));
-					makeBlack(left(n));
-					rotateRight(parent(node));
-					node = root;
+					copyColor(w, parent(x));
+					setBlack(parent(x));
+					setBlack(left(w));
+					rightRotate(parent(x));
+					x = root;
 				}
 			}
 		}
-		makeBlack(node);
+		setBlack(x);
 	}
 
-	private Node parent(final Node node) {
-		return node == null ? null : node.parent;
+	private Node parent(final Node n) {
+		return n != null ? n.parent : null;
 	}
 
-	private Node left(final Node node) {
-		return node == null ? null : node.left;
+	private Node left(final Node n) {
+		return n != null ? n.left : null;
 	}
 
-	private Node right(final Node node) {
-		return node == null ? null : node.right;
+	private Node right(final Node n) {
+		return n != null ? n.right : null;
 	}
 
-	private Node grandParent(final Node node) {
-		return (node == null || node.parent == null) ? null
-				: node.parent.parent;
+	private boolean isRed(final Node n) {
+		return n != null ? n.color == Color.RED : false;
 	}
 
-	private Node leftSibling(final Node node) {
-		return (node == null || node.parent == null) ? null : node.parent.left;
+	private boolean isBlack(final Node n) {
+		return n != null ? n.color == Color.BLACK : true;
 	}
 
-	private Node rightSibling(final Node node) {
-		return (node == null || node.parent == null) ? null : node.parent.right;
+	private void setRed(final Node n) {
+		if (n != null)
+			n.color = Color.RED;
 	}
 
-	private Node leftUncle(final Node node) {
-		return (node == null || node.parent == null || node.parent.parent == null) ? null
-				: node.parent.parent.left;
+	private void setBlack(final Node n) {
+		if (n != null)
+			n.color = Color.BLACK;
 	}
 
-	private Node rightUncle(final Node node) {
-		return (node == null || node.parent == null || node.parent.parent == null) ? null
-				: node.parent.parent.right;
+	private void copyColor(final Node to, final Node from) {
+		if (to != null)
+			to.color = from != null ? from.color : Color.BLACK;
 	}
 
-	private boolean isRed(final Node node) {
-		return (node == null || node.color == Color.BLACK) ? false : true;
+	/**
+	 * <pre>
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+
+	public void verifyProperties() {
+		verifyProperty1(root);
+		verifyProperty2(root);
+		// Property 3 is implicit
+		verifyProperty4(root);
+		verifyProperty5(root);
 	}
 
-	private boolean isBlack(final Node node) {
-		return (node == null || node.color == Color.BLACK) ? true : false;
+	private void verifyProperty1(Node n) {
+		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
+		if (n == null)
+			return;
+		verifyProperty1(n.left);
+		verifyProperty1(n.right);
 	}
 
-	private void makeRed(final Node node) {
-		if (node != null)
-			node.color = Color.RED;
+	private void verifyProperty2(Node root) {
+		assert getColor(root) == Color.BLACK;
 	}
 
-	private void makeBlack(final Node node) {
-		if (node != null)
-			node.color = Color.BLACK;
+	private void verifyProperty4(Node n) {
+		// System.out.println(getColor(n));
+		if (getColor(n) == Color.RED) {
+			assert getColor(n.left) == Color.BLACK;
+			// System.out.println(getColor(n.left));
+			assert getColor(n.right) == Color.BLACK;
+			// System.out.println(getColor(n.right));
+			assert getColor(n.parent) == Color.BLACK;
+			// System.out.println(getColor(n.parent));
+		}
+		if (n == null)
+			return;
+		verifyProperty4(n.left);
+		verifyProperty4(n.right);
 	}
 
-	private void copyColor(final Node from, final Node to) {
-		if (from != null)
-			from.color = to == null ? Color.BLACK : to.color;
+	private void verifyProperty5(Node root) {
+		verifyProperty5Helper(root, 0, -1);
 	}
 
-	// public void verifyProperties() {
-	// verifyProperty1(root);
-	// verifyProperty2(root);
-	// // Property 3 is implicit
-	// verifyProperty4(root);
-	// verifyProperty5(root);
-	// }
-	//
-	// private void verifyProperty1(Node n) {
-	// assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
-	// if (n == null)
-	// return;
-	// verifyProperty1(n.left);
-	// verifyProperty1(n.right);
-	// }
-	//
-	// private void verifyProperty2(Node root) {
-	// assert getColor(root) == Color.BLACK;
-	// }
-	//
-	// private void verifyProperty4(Node n) {
-	// // System.out.println(getColor(n));
-	// if (getColor(n) == Color.RED) {
-	// assert getColor(n.left) == Color.BLACK;
-	// // System.out.println(getColor(n.left));
-	// assert getColor(n.right) == Color.BLACK;
-	// // System.out.println(getColor(n.right));
-	// assert getColor(n.parent) == Color.BLACK;
-	// // System.out.println(getColor(n.parent));
-	// }
-	// if (n == null)
-	// return;
-	// verifyProperty4(n.left);
-	// verifyProperty4(n.right);
-	// }
-	//
-	// private void verifyProperty5(Node root) {
-	// verifyProperty5Helper(root, 0, -1);
-	// }
-	//
-	// private int verifyProperty5Helper(Node n, int blackCount, int
-	// pathBlackCount) {
-	// if (getColor(n) == Color.BLACK) {
-	// blackCount++;
-	// }
-	// if (n == null) {
-	// if (pathBlackCount == -1) {
-	// pathBlackCount = blackCount;
-	// } else {
-	// assert blackCount == pathBlackCount;
-	// }
-	// return pathBlackCount;
-	// }
-	// pathBlackCount = verifyProperty5Helper(n.left, blackCount,
-	// pathBlackCount);
-	// pathBlackCount = verifyProperty5Helper(n.right, blackCount,
-	// pathBlackCount);
-	// return pathBlackCount;
-	// }
-	//
-	// private Color getColor(final Node p) {
-	// return (p == null ? Color.BLACK : p.color);
-	// }
+	private int verifyProperty5Helper(Node n, int blackCount, int pathBlackCount) {
+		if (getColor(n) == Color.BLACK) {
+			blackCount++;
+		}
+		if (n == null) {
+			if (pathBlackCount == -1) {
+				pathBlackCount = blackCount;
+			} else {
+				assert blackCount == pathBlackCount;
+			}
+			return pathBlackCount;
+		}
+		pathBlackCount = verifyProperty5Helper(n.left, blackCount,
+				pathBlackCount);
+		pathBlackCount = verifyProperty5Helper(n.right, blackCount,
+				pathBlackCount);
+		return pathBlackCount;
+	}
+
+	private Color getColor(final Node n) {
+		return (n == null ? Color.BLACK : n.color);
+	}
 
 }

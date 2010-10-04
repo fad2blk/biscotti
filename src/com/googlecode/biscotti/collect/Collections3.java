@@ -359,6 +359,56 @@ final public class Collections3 {
 	}
 
 	/**
+	 * Creates a new {@code PriorityQueue} containing the specified initial
+	 * elements ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this queue
+	 * @return a new {@code PriorityQueue} containing the specified initial
+	 *         elements
+	 */
+	public static <E extends Comparable<? super E>> PriorityQueue<E> newPriorityQueue(
+			final E... elements) {
+		checkNotNull(elements);
+		PriorityQueue<E> q = PriorityQueue.create();
+		Collections.addAll(q, elements);
+		return q;
+	}
+
+	/**
+	 * Creates a new {@code PriorityDeque} containing the specified initial
+	 * elements ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this deque
+	 * @return a new {@code PriorityDeque} containing the specified initial
+	 *         elements
+	 */
+	public static <E extends Comparable<? super E>> PriorityDeque<E> newPriorityDeque(
+			final E... elements) {
+		checkNotNull(elements);
+		PriorityDeque<E> d = PriorityDeque.create();
+		Collections.addAll(d, elements);
+		return d;
+	}
+
+	/**
+	 * Creates a new {@code TreeList} containing the specified initial elements
+	 * ordered according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this list
+	 * @return a new {@code TreeList} containing the specified initial elements
+	 */
+	public static <E extends Comparable<? super E>> TreeList<E> newTreeList(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeList<E> l = TreeList.create();
+		Collections.addAll(l, elements);
+		return l;
+	}
+
+	/**
 	 * Returns a synchronized (thread-safe) {@code SortedCollection} backed by
 	 * the specified sorted collection. In order to guarantee serial access, it
 	 * is critical that <b>all</b> access to the backing collection is
