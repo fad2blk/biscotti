@@ -97,7 +97,7 @@ import com.google.common.collect.Ordering;
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements maintained by this list
+ * the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
@@ -180,27 +180,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	}
 
 	/**
-	 * Creates a new {@code TreeList} containing the specified initial elements
-	 * ordered according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this list
-	 * @return a new {@code TreeList} containing the specified initial elements
-	 * @throws ClassCastException
-	 *             if specified elements cannot be compared to one another
-	 *             according to their natural ordering
-	 * @throws NullPointerException
-	 *             if any of the specified elements are {@code null}
-	 */
-	public static <E extends Comparable<? super E>> TreeList<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeList<E> l = create();
-		Collections.addAll(l, elements);
-		return l;
-	}
-
-	/**
 	 * {@inheritDoc} If one was not explicitly provided a <i>natural order</i>
 	 * comparator is returned.
 	 * 
@@ -217,34 +196,30 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	@Override
 	public boolean add(E e) {
 		checkNotNull(e);
-		Node newNode = new Node(e);
-		if (root == null)
-			root = newNode;
-		else {
-			int cmp;
-			Node parent;
-			Node t = root;
-			do {
-				parent = t;
-				cmp = comparator.compare(e, t.element);
-				if (cmp < 0)
-					t = t.left;
-				else
-					t = t.right;
-			} while (t != null);
-			newNode.parent = parent;
-			if (cmp < 0)
-				parent.left = newNode;
-			else
-				parent.right = newNode;
-			fixAfterInsertion(newNode);
-			if (max == null || comparator.compare(e, max.element) >= 0)
-				max = newNode;
-			if (min == null || comparator.compare(e, min.element) < 0)
-				min = newNode;
-		}
 		size++;
 		modCount++;
+		Node x = root;
+		Node y = null;
+		Node z = new Node(e);
+		while (x != null) {
+			y = x;
+			if (comparator.compare(z.element, x.element) < 0)
+				x = x.left;
+			else
+				x = x.right;
+		}
+		z.parent = y;
+		if (y == null)
+			root = z;
+		else if (comparator.compare(z.element, y.element) < 0)
+			y.left = z;
+		else
+			y.right = z;
+		insertFixUp(z);
+		if (max == null || comparator.compare(e, max.element) >= 0)
+			max = z;
+		if (min == null || comparator.compare(z.element, min.element) < 0)
+			min = z;
 		return true;
 	}
 
@@ -495,18 +470,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return new SubList(this, fromIndex, size);
 	}
 
-	// not supported
-	private void readObject(java.io.ObjectInputStream ois)
-			throws ClassNotFoundException, java.io.IOException {
-		throw new java.io.NotSerializableException();
-	}
-
-	// not supported
-	private void writeObject(java.io.ObjectOutputStream ois)
-			throws java.io.IOException {
-		throw new java.io.NotSerializableException();
-	}
-
 	private class SubList extends TreeList<E> {
 		private TreeList<E> l;
 		private int offset;
@@ -684,18 +647,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			return size;
 		}
 
-		// not supported by sub views
-		private void readObject(java.io.ObjectInputStream ois)
-				throws ClassNotFoundException, java.io.IOException {
-			throw new java.io.NotSerializableException();
-		}
-
-		// not supported by sub views
-		private void writeObject(java.io.ObjectOutputStream ois)
-				throws java.io.IOException {
-			throw new java.io.NotSerializableException();
-		}
-
 		@Override
 		Node search(final E e) {
 			Node node;
@@ -739,9 +690,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 	Node search(final E e) {
 		Node n = root;
-		while (n != null && e != null) {
+		while (n != null) {
 			int cmp = comparator.compare(e, n.element);
-			if (cmp == 0 && e.equals(n.element))
+			if (cmp == 0)
 				return n;
 			if (cmp < 0)
 				n = n.left;
@@ -751,274 +702,334 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return null;
 	}
 
-	private void delete(Node node) {
+	void delete(Node z) {
 		size--;
 		modCount++;
-		if (max == node)
-			max = predecessor(node);
-		if (min == node)
-			min = successor(node);
-		if (node.left != null && node.right != null) {
-			Node successor = successor(node);
-			node.element = successor.element;
-			node = successor;
+		Node x, y;
+		if (max == z)
+			max = predecessor(z);
+		if (min == z)
+			min = successor(z);
+		if (z.left != null && z.right != null) {
+			y = successor(z);
+			z.element = y.element;
+			z = y;
 		}
-		Node n;
-		if (node.left != null)
-			n = node.left;
+		if (z.left != null)
+			x = z.left;
 		else
-			n = node.right;
-		if (n != null) {
-			n.parent = node.parent;
-			if (node.parent == null)
-				root = n;
-			else if (node == node.parent.left)
-				node.parent.left = n;
+			x = z.right;
+		if (x != null) {
+			x.parent = z.parent;
+			if (z.parent == null)
+				root = x;
+			else if (z == z.parent.left)
+				z.parent.left = x;
 			else
-				node.parent.right = n;
-			node.left = node.right = node.parent = null;
-			if (node.color == Color.BLACK)
-				fixAfterDeletion(n);
-		} else if (node.parent == null) {
+				z.parent.right = x;
+			// z.left = z.right = z.parent = null;
+			if (z.color == Color.BLACK)
+				deleteFixUp(x);
+		} else if (z.parent == null)
 			root = null;
-		} else {
-			if (node.color == Color.BLACK)
-				fixAfterDeletion(node);
-			if (node.parent != null) {
-				if (node == node.parent.left)
-					node.parent.left = null;
-				else if (node == node.parent.right)
-					node.parent.right = null;
-				node.parent = null;
+		else {
+			if (z.color == Color.BLACK)
+				deleteFixUp(z);
+			if (z.parent != null) {
+				if (z == z.parent.left)
+					z.parent.left = null;
+				else if (z == z.parent.right)
+					z.parent.right = null;
+				z.parent = null;
 			}
 		}
 	}
 
-	private Node successor(final Node node) {
-		if (node == null)
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * TREE-SUCCESSOR(x)
+	 * if right[x] != NIL
+	 *    then return TREE-MINIMUM(right[x])
+	 * y = p[x]
+	 * while y != NIL and x = right[y]
+	 *    do x = y
+	 *       y = p[y]
+	 * return y
+	 */
+	private Node successor(Node x) {
+		Node y;
+		if (x == null)
 			return null;
-		else if (node.right != null) {
-			Node successor = node.right;
-			while (successor.left != null)
-				successor = successor.left;
-			return successor;
-		} else {
-			Node parent = node.parent;
-			Node child = node;
-			while (parent != null && child == parent.right) {
-				child = parent;
-				parent = parent.parent;
-			}
-			return parent;
+		if (x.right != null) {
+			y = x.right;
+			while (y.left != null)
+				y = y.left;
+			return y;
 		}
+		y = x.parent;
+		while (y != null && x == y.right) {
+			x = y;
+			y = y.parent;
+		}
+		return y;
 	}
 
-	private Node predecessor(final Node node) {
-		if (node == null)
+	private Node predecessor(Node x) {
+		Node y;
+		if (x == null)
 			return null;
-		else if (node.left != null) {
-			Node predecessor = node.left;
-			while (predecessor.right != null)
-				predecessor = predecessor.right;
-			return predecessor;
-		} else {
-			Node parent = node.parent;
-			Node child = node;
-			while (parent != null && child == parent.left) {
-				child = parent;
-				parent = parent.parent;
-			}
-			return parent;
+		if (x.left != null) {
+			y = x.left;
+			while (y.right != null)
+				y = y.right;
+			return y;
 		}
+		y = x.parent;
+		while (y != null && x == y.left) {
+			x = y;
+			y = y.left;
+		}
+		return y;
 	}
 
-	private void rotateLeft(final Node node) {
-		if (node != null) {
-			Node n = node.right;
-			node.right = n.left;
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * LEFT-ROTATE(T, x)
+	 * y = right[x]							Set y.
+	 * right[x] = left[y]					Turn y's left subtree into x's right subtree.
+	 * if left[y] != nil[T ]
+	 *    then p[left[y]] = x
+	 * p[y] = p[x]							Link x's parent to y.
+	 * if p[x] = nil[T ]
+	 *    then root[T ] = y
+	 *    else if x = left[p[x]]
+	 *            then left[p[x]] = y
+	 *            else right[p[x]] = y
+	 * left[y] = x							Put x on y's left.
+	 * p[x] = y
+	 */
+	private void leftRotate(final Node x) {
+		if (x != null) {
+			Node n = x.right;
+			x.right = n.left;
 			if (n.left != null)
-				n.left.parent = node;
-			n.parent = node.parent;
-			if (node.parent == null)
+				n.left.parent = x;
+			n.parent = x.parent;
+			if (x.parent == null)
 				root = n;
-			else if (node.parent.left == node)
-				node.parent.left = n;
+			else if (x.parent.left == x)
+				x.parent.left = n;
 			else
-				node.parent.right = n;
-			n.left = node;
-			node.parent = n;
+				x.parent.right = n;
+			n.left = x;
+			x.parent = n;
 		}
 	}
 
-	private void rotateRight(final Node node) {
-		if (node != null) {
-			Node n = node.left;
-			node.left = n.right;
+	private void rightRotate(final Node x) {
+		if (x != null) {
+			Node n = x.left;
+			x.left = n.right;
 			if (n.right != null)
-				n.right.parent = node;
-			n.parent = node.parent;
-			if (node.parent == null)
+				n.right.parent = x;
+			n.parent = x.parent;
+			if (x.parent == null)
 				root = n;
-			else if (node.parent.right == node)
-				node.parent.right = n;
+			else if (x.parent.right == x)
+				x.parent.right = n;
 			else
-				node.parent.left = n;
-			n.right = node;
-			node.parent = n;
+				x.parent.left = n;
+			n.right = x;
+			x.parent = n;
 		}
 	}
 
-	private void fixAfterInsertion(Node node) {
-		makeRed(node);
-		while (node != null && node != root && isRed(node.parent)) {
-			if (parent(node) == leftUncle(node)) {
-				Node n = rightUncle(node);
-				if (isRed(n)) {
-					makeBlack(parent(node));
-					makeBlack(n);
-					makeRed(grandParent(node));
-					node = grandParent(node);
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-INSERT-FIXUP(T, z)
+	 * while color[p[z]] = RED
+	 *    do if p[z] = left[p[p[z]]]
+	 *          then y = right[p[p[z]]]
+	 *               if color[y] = RED
+	 *                  then color[p[z]] = BLACK					Case 1
+	 *                       color[y] = BLACK						Case 1 
+	 *                       color[p[p[z]]] = RED					Case 1
+	 *                       z = p[p[z]]							Case 1
+	 *                  else if z = right[p[z]]
+	 *                          then z = p[z]						Case 2
+	 *                               LEFT-ROTATE(T, z)				Case 2
+	 *                       color[p[z]] = BLACK					Case 3
+	 *                       color[p[p[z]]] = RED					Case 3
+	 *                       RIGHT-ROTATE(T, p[p[z]])				Case 3
+	 *          else (same as then clause
+	 *                        with right and left exchanged)
+	 * color[root[T]] = BLACK
+	 */
+	private void insertFixUp(Node z) {
+		Node y;
+		setRed(z);
+		while (z != root && isRed(z.parent)) {
+			if (parent(z) == left(parent(parent(z)))) {
+				y = right(parent(parent(z)));
+				if (isRed(y)) {
+					setBlack(parent(z));
+					setBlack(y);
+					setRed(parent(parent(z)));
+					z = parent(parent(z));
 				} else {
-					if (node == rightSibling(node)) {
-						node = parent(node);
-						rotateLeft(node);
+					if (z == right(parent(z))) {
+						z = parent(z);
+						leftRotate(z);
 					}
-					makeBlack(parent(node));
-					makeRed(grandParent(node));
-					rotateRight(grandParent(node));
+					setBlack(parent(z));
+					setRed(parent(parent(z)));
+					rightRotate(parent(parent(z)));
 				}
-			} else {
-				Node n = leftUncle(node);
-				if (isRed(n)) {
-					makeBlack(parent(node));
-					makeBlack(n);
-					makeRed(grandParent(node));
-					node = grandParent(node);
+			} else { // symmetric
+				y = left(parent(parent(z)));
+				if (isRed(y)) {
+					setBlack(parent(z));
+					setBlack(y);
+					setRed(parent(parent(z)));
+					z = parent(parent(z));
 				} else {
-					if (node == leftSibling(node)) {
-						node = parent(node);
-						rotateRight(node);
+					if (z == left(parent(z))) {
+						z = parent(z);
+						rightRotate(z);
 					}
-					makeBlack(parent(node));
-					makeRed(grandParent(node));
-					rotateLeft(grandParent(node));
+					setBlack(parent(z));
+					setRed(parent(parent(z)));
+					leftRotate(parent(parent(z)));
 				}
 			}
 		}
-		makeBlack(root);
+		setBlack(root);
 	}
 
-	private void fixAfterDeletion(Node node) {
-		while (node != root && isBlack(node)) {
-			if (node == leftSibling(node)) {
-				Node n = rightSibling(node);
-				if (isRed(n)) {
-					makeBlack(n);
-					makeRed(parent(node));
-					rotateLeft(parent(node));
-					n = rightSibling(node);
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-DELETE-FIXUP(T, x)
+	 * while x != root[T ] and color[x] = BLACK
+	 *    do if x = left[p[x]]
+	 *          then w = right[p[x]]
+	 *               if color[w] = RED
+	 *                  then color[w] = BLACK								Case 1
+	 *                       color[p[x]] = RED								Case 1
+	 *                       LEFT-ROTATE(T, p[x])							Case 1
+	 *                       w = right[p[x]]								Case 1
+	 *               if color[left[w]] = BLACK and color[right[w]] = BLACK
+	 *                  then color[w] = RED									Case 2
+	 *                       x = p[x]										Case 2
+	 *                  else if color[right[w]] = BLACK
+	 *                          then color[left[w]] = BLACK					Case 3
+	 *                               color[w] = RED							Case 3
+	 *                               RIGHT-ROTATE(T,w)						Case 3
+	 *                               w = right[p[x]]						Case 3
+	 *                       color[w] = color[p[x]]							Case 4
+	 *                       color[p[x]] = BLACK							Case 4
+	 *                       color[right[w]] = BLACK						Case 4
+	 *                       LEFT-ROTATE(T, p[x])							Case 4
+	 *                       x = root[T ]									Case 4
+	 *          else (same as then clause with right and left exchanged)
+	 * color[x] = BLACK
+	 */
+	private void deleteFixUp(Node x) {
+		Node w;
+		while (x != root && isBlack(x)) {
+			if (x == left(parent(x))) {
+				w = right(parent(x));
+				if (isRed(w)) {
+					setBlack(w);
+					setRed(parent(x));
+					leftRotate(parent(x));
+					w = right(parent(x));
 				}
-				if (isBlack(left(n)) && isBlack(right(n))) {
-					makeRed(n);
-					node = parent(node);
+				if (isBlack(left(w)) && isBlack(right(w))) {
+					setRed(w);
+					x = parent(x);
 				} else {
-					if (isBlack(right(n))) {
-						makeBlack(left(n));
-						makeRed(n);
-						rotateRight(n);
-						n = rightSibling(node);
+					if (isBlack(right(w))) {
+						setBlack(left(w));
+						setRed(w);
+						rightRotate(w);
+						w = right(parent(x));
 					}
-					copyColor(n, parent(node));
-					makeBlack(parent(node));
-					makeBlack(right(n));
-					rotateLeft(parent(node));
-					node = root;
+					copyColor(w, parent(x));
+					setBlack(parent(x));
+					setBlack(right(w));
+					leftRotate(parent(x));
+					x = root;
 				}
 			} else {
-				Node n = leftSibling(node);
-				if (isRed(n)) {
-					makeBlack(n);
-					makeRed(parent(node));
-					rotateRight(parent(node));
-					n = leftSibling(node);
+				w = left(parent(x));
+				if (isRed(w)) {
+					setBlack(w);
+					setRed(parent(x));
+					rightRotate(parent(x));
+					w = left(parent(x));
 				}
-				if (isBlack(right(n)) && isBlack(left(n))) {
-					makeRed(n);
-					node = parent(node);
+				if (isBlack(right(w)) && isBlack(left(w))) {
+					setRed(w);
+					x = parent(x);
 				} else {
-					if (isBlack(left(n))) {
-						makeBlack(right(n));
-						makeRed(n);
-						rotateLeft(n);
-						n = leftSibling(node);
+					if (isBlack(left(w))) {
+						setBlack(right(w));
+						setRed(w);
+						leftRotate(w);
+						w = left(parent(x));
 					}
-					copyColor(n, parent(node));
-					makeBlack(parent(node));
-					makeBlack(left(n));
-					rotateRight(parent(node));
-					node = root;
+					copyColor(w, parent(x));
+					setBlack(parent(x));
+					setBlack(left(w));
+					rightRotate(parent(x));
+					x = root;
 				}
 			}
 		}
-		makeBlack(node);
+		setBlack(x);
 	}
 
-	private Node parent(final Node node) {
-		return node == null ? null : node.parent;
+	private Node parent(final Node n) {
+		return n != null ? n.parent : null;
 	}
 
-	private Node left(final Node node) {
-		return node == null ? null : node.left;
+	private Node left(final Node n) {
+		return n != null ? n.left : null;
 	}
 
-	private Node right(final Node node) {
-		return node == null ? null : node.right;
+	private Node right(final Node n) {
+		return n != null ? n.right : null;
 	}
 
-	private Node grandParent(final Node node) {
-		return (node == null || node.parent == null) ? null
-				: node.parent.parent;
+	private boolean isRed(final Node n) {
+		return n != null ? n.color == Color.RED : false;
 	}
 
-	private Node leftSibling(final Node node) {
-		return (node == null || node.parent == null) ? null : node.parent.left;
+	private boolean isBlack(final Node n) {
+		return n != null ? n.color == Color.BLACK : true;
 	}
 
-	private Node rightSibling(final Node node) {
-		return (node == null || node.parent == null) ? null : node.parent.right;
+	private void setRed(final Node n) {
+		if (n != null)
+			n.color = Color.RED;
 	}
 
-	private Node leftUncle(final Node node) {
-		return (node == null || node.parent == null || node.parent.parent == null) ? null
-				: node.parent.parent.left;
+	private void setBlack(final Node n) {
+		if (n != null)
+			n.color = Color.BLACK;
 	}
 
-	private Node rightUncle(final Node node) {
-		return (node == null || node.parent == null || node.parent.parent == null) ? null
-				: node.parent.parent.right;
-	}
-
-	private boolean isRed(final Node node) {
-		return (node == null || node.color == Color.BLACK) ? false : true;
-	}
-
-	private boolean isBlack(final Node node) {
-		return (node == null || node.color == Color.BLACK) ? true : false;
-	}
-
-	private void makeRed(final Node node) {
-		if (node != null)
-			node.color = Color.RED;
-	}
-
-	private void makeBlack(final Node node) {
-		if (node != null)
-			node.color = Color.BLACK;
-	}
-
-	private void copyColor(final Node from, final Node to) {
-		if (from != null)
-			from.color = to == null ? Color.BLACK : to.color;
+	private void copyColor(final Node to, final Node from) {
+		if (to != null)
+			to.color = from != null ? from.color : Color.BLACK;
 	}
 
 	// private class BoundedListIterator implements ListIterator<E>{

@@ -1,9 +1,6 @@
 package com.googlecode.biscotti.collect;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Deque;
@@ -42,14 +39,16 @@ import com.google.common.base.Preconditions;
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
  * {@code equals} when testing for element equality. The ordering imposed by the
- * comparator is not required to be <i>consistent with equals</i>. For any two
- * elements {@code e1} and {@code e2} such that {@code e1.compareTo(e2) == 0} it
- * is not necessary for {@code e1.equals(e2) == true}. This is allows duplicate
- * elements to have different priority.
+ * comparator is not required to be <i>consistent with equals</i>. Given a
+ * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that
+ * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
+ * different priority.
  * <p>
- * The underlying red-black tree provides the following worst case running time
- * (where <i>n</i> is the size of this queue, and <i>m</i> is the size of the
- * specified collection):
+ * For a deque which does not contain elements with equal priority the
+ * underlying red-black tree provides the following worst case running time
+ * where <i>n</i> is the size of this deque, and <i>m</i> is the size of the
+ * specified collection (elements with equal priority are resolved linearly):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -64,7 +63,7 @@ import com.google.common.base.Preconditions;
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td align="center">
- *       <i>O(m log n)</i>
+ *       <i>O(m lg n)</i>
  *     </td>
  *   </tr>
  *   <tr>
@@ -82,7 +81,7 @@ import com.google.common.base.Preconditions;
  *       {@link #remove(Object) remove(Object)}</br>
  *     </td>
  *     <td align="center">
- *       <i>O(log n)</i>
+ *       <i>O(lg n)</i>
  *     </td>
  *   </tr>
  *   <tr>
@@ -161,7 +160,7 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	 * Creates a new {@code PriorityDeque} containing the elements of the
 	 * specified {@code Iterable}. If the specified iterable is an instance of
 	 * of {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@code SortedCollection} this deque will be
+	 * java.util.PriorityQueue}, or {@link SortedCollection} this deque will be
 	 * ordered according to the same ordering. Otherwise, this priority deque
 	 * will be ordered according to the <i>natural ordering</i> of its elements.
 	 * 
@@ -180,28 +179,6 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 			final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
 		return new PriorityDeque<E>(elements);
-	}
-
-	/**
-	 * Creates a new {@code PriorityDeque} containing the specified initial
-	 * elements ordered according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this deque
-	 * @return a new {@code PriorityDeque} containing the specified initial
-	 *         elements
-	 * @throws ClassCastException
-	 *             if specified elements cannot be compared to one another
-	 *             according to their natural ordering
-	 * @throws NullPointerException
-	 *             if any of the specified elements are {@code null}
-	 */
-	public static <E extends Comparable<? super E>> PriorityDeque<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		PriorityDeque<E> d = create();
-		Collections.addAll(d, elements);
-		return d;
 	}
 
 	/**
@@ -388,36 +365,35 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	}
 
 	@Override
-	void insert(final Node node) {
-		super.insert(node);
-		if (max == null || comparator.compare(node.element, max.element) >= 0)
-			max = node;
+	void insert(final Node z) {
+		super.insert(z);
+		if (max == null || comparator.compare(z.element, max.element) >= 0)
+			max = z;
 	}
 
 	@Override
-	void delete(final Node node) {
-		if (max == node)
-			max = predecessor(node);
-		super.delete(node);
+	void delete(final Node z) {
+		if (max == z)
+			max = predecessor(z);
+		super.delete(z);
 	}
 
-	private Node predecessor(final Node node) {
-		if (node == null)
+	private Node predecessor(Node x) {
+		Node y;
+		if (x == null)
 			return null;
-		else if (node.left != null) {
-			Node predecessor = node.left;
-			while (predecessor.right != null)
-				predecessor = predecessor.right;
-			return predecessor;
-		} else {
-			Node parent = node.parent;
-			Node child = node;
-			while (parent != null && child == parent.left) {
-				child = parent;
-				parent = parent.parent;
-			}
-			return parent;
+		if (x.left != null) {
+			y = x.left;
+			while (y.right != null)
+				y = y.right;
+			return y;
 		}
+		y = x.parent;
+		while (y != null && x == y.left) {
+			x = y;
+			y = y.left;
+		}
+		return y;
 	}
 
 }
