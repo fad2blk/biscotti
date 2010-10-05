@@ -10,7 +10,6 @@ import static com.googlecode.biscotti.base.Preconditions2.checkElementPosition;
 
 import java.util.AbstractList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -41,17 +40,18 @@ import com.google.common.collect.Ordering;
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@link Collections#synchronizedList(List)} method.
+ * list using the {@link Collections3#synchronize(List)} method.
  * <p>
  * <b>Implementation Note:</b> The the ordering maintained by this list must be
- * <i>consistent with equals</i> if this list is to function correctly. This is
- * so because this implementation uses a comparator (whether or not one is
+ * <i>consistent with equals</i> if this it is to function correctly. This is so
+ * because this implementation uses a comparator (whether or not one is
  * explicitly provided) to perform all element comparisons. Two elements which
  * are deemed equal by the comparator's {@code compare(E, E)} method are, from
  * the standpoint of this list, equal.
  * <p>
  * The underlying red-black tree provides the following worst case running time
- * for this list and its views (where <i>n</i> is the size of this list, and
+ * for this list and its views (where <i>n</i> is the size of this list,
+ * <i>k</i> is the highest number of duplicate elements of each other, and
  * <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
@@ -66,7 +66,7 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -84,7 +84,7 @@ import com.google.common.collect.Ordering;
  *       {@link #contains(Object)}</br>
  *       {@link #remove(Object)}</br>
  *     </td>
- *     <td align="center"><i>O(log n)</i></td>
+ *     <td align="center"><i>O(lg(n - k) + k)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -93,11 +93,11 @@ import com.google.common.collect.Ordering;
  *     </td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
- * </table> 
+ * </table>
  * 
  * @author Zhenya Leonov
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 

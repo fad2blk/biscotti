@@ -45,10 +45,10 @@ import com.google.common.base.Preconditions;
  * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
  * different priority.
  * <p>
- * For a deque which does not contain elements with equal priority the
- * underlying red-black tree provides the following worst case running time
- * where <i>n</i> is the size of this deque, and <i>m</i> is the size of the
- * specified collection (elements with equal priority are resolved linearly):
+ * The underlying red-black tree provides the following worst case running time
+ * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
+ * duplicate elements of each other, and <i>m</i> is the size of the specified
+ * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -63,7 +63,7 @@ import com.google.common.base.Preconditions;
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td align="center">
- *       <i>O(m lg n)</i>
+ *       <i>O(m(lg(n - k) + k))</i>
  *     </td>
  *   </tr>
  *   <tr>
@@ -81,7 +81,7 @@ import com.google.common.base.Preconditions;
  *       {@link #remove(Object) remove(Object)}</br>
  *     </td>
  *     <td align="center">
- *       <i>O(lg n)</i>
+ *       <i>O(lg(n - k) + k)</i>
  *     </td>
  *   </tr>
  *   <tr>
