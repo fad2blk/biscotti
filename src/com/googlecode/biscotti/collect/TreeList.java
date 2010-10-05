@@ -40,7 +40,7 @@ import com.google.common.collect.Ordering;
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@link Collections3#synchronize(List)} method.
+ * list using the {@link Collections3#synchronize(SortedList)} method.
  * <p>
  * <b>Implementation Note:</b> The the ordering maintained by this list must be
  * <i>consistent with equals</i> if this it is to function correctly. This is so
