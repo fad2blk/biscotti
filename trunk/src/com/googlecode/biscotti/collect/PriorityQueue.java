@@ -1,6 +1,8 @@
 package com.googlecode.biscotti.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.googlecode.biscotti.collect.PriorityQueue.Color.BLACK;
+import static com.googlecode.biscotti.collect.PriorityQueue.Color.RED;
 
 import java.util.AbstractQueue;
 import java.util.Collection;
@@ -12,7 +14,6 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 
 /**
@@ -55,36 +56,43 @@ import com.google.common.collect.Ordering;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center">Method</th>
- * <th align="center">Running Time</th>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection)}<br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td align="center"><i>O(m lg n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}<br>
- * </td>
- * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
- * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
- * <td align="center"><i>O(lg(n - k) + k)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
- * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
- * {@link #size()}</br></td>
- * <td align="center"><i>O(1)</i></td>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection)}<br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m lg n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}<br>
+ *     </td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #offer(Object) offer(E)}</br>
+ *       {@link #remove(Object)}</br>
+ *     </td>
+ *     <td align="center"><i>O(lg(n - k) + k)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #element() element()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek()}</br> {@link #poll()}</br>
+ *       {@link #remove() remove()}</br>
+ *       {@link #size()}</br>
+ *   </td>
+ *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
  * <p>
@@ -100,9 +108,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E> {
 
 	private int size = 0;
-	private final Node nil = new Node();
-	private static final Color RED = Color.RED;
-	private static final Color BLACK = Color.BLACK;
+	final Node nil = new Node(null);
 	Node min = nil;
 	Node root = nil;
 	int modCount = 0;
@@ -153,7 +159,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> PriorityQueue<E> create(
 			final Comparator<? super E> comparator) {
-		Preconditions.checkNotNull(comparator);
+		checkNotNull(comparator);
 		return new PriorityQueue<E>(comparator);
 	}
 
@@ -178,7 +184,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> PriorityQueue<E> create(
 			final Iterable<? extends E> elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		return new PriorityQueue<E>(elements);
 	}
 
@@ -285,21 +291,18 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		return size;
 	}
 
-	// Red-Black-Tree methods
+	/*
+	 * Red-Black Tree
+	 */
 
-	private static enum Color {
+	static enum Color {
 		BLACK, RED;
 	}
 
 	class Node {
 		E element = null;
 		Node parent, left, right;
-		private Color color = Color.BLACK;
-
-		private Node() {
-			parent = left = right = this;
-
-		}
+		private Color color = BLACK;
 
 		private Node(final E element) {
 			this.element = element;
@@ -347,22 +350,22 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	void insert(final Node z) {
 		size++;
 		modCount++;
-		Node y = nil;
+		Node parent = nil;
 		Node x = root;
 		while (x != nil) {
-			y = x;
+			parent = x;
 			if (comparator.compare(z.element, x.element) < 0)
 				x = x.left;
 			else
 				x = x.right;
 		}
-		z.parent = y;
-		if (y == nil)
+		z.parent = parent;
+		if (parent == nil)
 			root = z;
-		else if (comparator.compare(z.element, y.element) < 0)
-			y.left = z;
+		else if (comparator.compare(z.element, parent.element) < 0)
+			parent.left = z;
 		else
-			y.right = z;
+			parent.right = z;
 		fixAfterInsertion(z);
 		if (min == nil || comparator.compare(z.element, min.element) < 0)
 			min = z;
@@ -398,15 +401,8 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		Node x;
 		if (min == z)
 			min = successor(z);
-		if (z.left == nil || z.right == nil)
-			y = z;
-		else
-			y = successor(z);
-
-		if (y.left != nil)
-			x = y.left;
-		else
-			x = y.right;
+		y = z.left == nil || z.right == nil ? z : successor(z);
+		x = y.left != nil ? y.left : y.right;
 		x.parent = y.parent;
 		if (y.parent == nil)
 			root = x;
@@ -434,16 +430,15 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * return y
 	 */
 	private Node successor(Node x) {
-		Node y;
 		if (x == nil)
 			return nil;
 		if (x.right != nil) {
-			y = x.right;
+			Node y = x.right;
 			while (y.left != nil)
 				y = y.left;
 			return y;
 		}
-		y = x.parent;
+		Node y = x.parent;
 		while (y != nil && x == y.right) {
 			x = y;
 			y = y.parent;
@@ -598,10 +593,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * color[x] = BLACK
 	 */
 	private void fixAfterDeletion(Node x) {
-		Node w;
 		while (x != root && x.color == BLACK) {
 			if (x == x.parent.left) {
-				w = x.parent.right;
+				Node w = x.parent.right;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
@@ -625,7 +619,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 					x = root;
 				}
 			} else {
-				w = x.parent.left;
+				Node w = x.parent.left;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
