@@ -367,7 +367,7 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	@Override
 	void insert(final Node z) {
 		super.insert(z);
-		if (max == null || comparator.compare(z.element, max.element) >= 0)
+		if (max == nil || comparator.compare(z.element, max.element) >= 0)
 			max = z;
 	}
 
@@ -380,16 +380,16 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 
 	private Node predecessor(Node x) {
 		Node y;
-		if (x == null)
-			return null;
-		if (x.left != null) {
+		if (x == nil)
+			return nil;
+		if (x.left != nil) {
 			y = x.left;
-			while (y.right != null)
+			while (y.right != nil)
 				y = y.right;
 			return y;
 		}
 		y = x.parent;
-		while (y != null && x == y.left) {
+		while (y != nil && x == y.left) {
 			x = y;
 			y = y.left;
 		}
