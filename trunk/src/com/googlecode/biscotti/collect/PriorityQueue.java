@@ -55,43 +55,36 @@ import com.google.common.collect.Ordering;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m lg n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object)}</br>
- *     </td>
- *     <td align="center"><i>O(lg(n - k) + k)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br> {@link #poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size()}</br>
- *   </td>
- *   <td align="center"><i>O(1)</i></td>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m lg n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(lg(n - k) + k)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
+ * {@link #size()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
  * <p>
@@ -107,8 +100,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E> {
 
 	private int size = 0;
-	Node min = null;
-	Node root = null;
+	private final Node nil = new Node();
+	private static final Color RED = Color.RED;
+	private static final Color BLACK = Color.BLACK;
+	Node min = nil;
+	Node root = nil;
 	int modCount = 0;
 	Comparator<? super E> comparator;
 
@@ -236,31 +232,31 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
 			private Node next = min;
-			private Node last = null;
+			private Node last = nil;
 			private int expectedModCount = modCount;
 
 			@Override
 			public boolean hasNext() {
-				return next != null;
+				return next != nil;
 			}
 
 			@Override
 			public void remove() {
 				checkForConcurrentModification();
-				if (last == null)
+				if (last == nil)
 					throw new IllegalStateException();
-				if (last.left != null && last.right != null)
+				if (last.left != nil && last.right != nil)
 					next = last;
 				delete(last);
 				expectedModCount = modCount;
-				last = null;
+				last = nil;
 			}
 
 			@Override
 			public E next() {
 				checkForConcurrentModification();
 				Node node = next;
-				if (node == null)
+				if (node == nil)
 					throw new NoSuchElementException();
 				next = successor(node);
 				last = node;
@@ -297,19 +293,23 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	class Node {
 		E element = null;
-		Node left = null;
-		Node right = null;
-		Node parent = null;
+		Node parent, left, right;
 		private Color color = Color.BLACK;
+
+		private Node() {
+			parent = left = right = this;
+
+		}
 
 		private Node(final E element) {
 			this.element = element;
+			parent = left = right = nil;
 		}
 	}
 
 	private Node search(final E e) {
 		Node n = root;
-		while (n != null) {
+		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
 			if (cmp == 0 && e.equals(n.element))
 				return n;
@@ -326,30 +326,30 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * 
 	 * <pre>
 	 * RB-INSERT(T, z)
-	 * y = nil[T ]
-	 * x = root[T ]
-	 * while x != nil[T ]
+	 * y = nil[T]
+	 * x = root[T]
+	 * while x != nil[T]
 	 *    do y = x
 	 *       if key[z] < key[x]
 	 *          then x = left[x]
 	 *          else x = right[x]
 	 * p[z] = y
-	 * if y = nil[T ]
+	 * if y = nil[T]
 	 *    then root[T] = z
 	 *    else if key[z] < key[y]
 	 *            then left[y] = z
 	 *            else right[y] = z
-	 * left[z] = nil[T ]
-	 * right[z] = nil[T ]
+	 * left[z] = nil[T]
+	 * right[z] = nil[T]
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
 	void insert(final Node z) {
 		size++;
 		modCount++;
-		Node y = null;
+		Node y = nil;
 		Node x = root;
-		while (x != null) {
+		while (x != nil) {
 			y = x;
 			if (comparator.compare(z.element, x.element) < 0)
 				x = x.left;
@@ -357,56 +357,67 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 				x = x.right;
 		}
 		z.parent = y;
-		if (y == null)
+		if (y == nil)
 			root = z;
 		else if (comparator.compare(z.element, y.element) < 0)
 			y.left = z;
 		else
 			y.right = z;
-		insertFixUp(z);
-		if (min == null || comparator.compare(z.element, min.element) < 0)
+		fixAfterInsertion(z);
+		if (min == nil || comparator.compare(z.element, min.element) < 0)
 			min = z;
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * if left[z] = nil[T] or right[z] = nil[T]
+	 *    then y = z
+	 *    else y = TREE-SUCCESSOR(z)
+	 * if left[y] != nil[T]
+	 *    then x = left[y]
+	 *    else x = right[y]
+	 * p[x] = p[y]
+	 * if p[y] = nil[T]
+	 *    then root[T] = x
+	 *    else if y = left[p[y]]
+	 *            then left[p[y]] = x
+	 *            else right[p[y]] = x
+	 * if y != z
+	 *    then key[z] = key[y]
+	 *         copy y's satellite data into z
+	 * if color[y] = BLACK
+	 *    then RB-DELETE-FIXUP(T, x)
+	 * return y
+	 */
 	void delete(Node z) {
 		size--;
 		modCount++;
-		Node x, y;
+		Node y;
+		Node x;
 		if (min == z)
 			min = successor(z);
-		if (z.left != null && z.right != null) {
-			y = successor(z);
-			z.element = y.element;
-			z = y;
-		}
-		if (z.left != null)
-			x = z.left;
+		if (z.left == nil || z.right == nil)
+			y = z;
 		else
-			x = z.right;
-		if (x != null) {
-			x.parent = z.parent;
-			if (z.parent == null)
-				root = x;
-			else if (z == z.parent.left)
-				z.parent.left = x;
-			else
-				z.parent.right = x;
-			// z.left = z.right = z.parent = null;
-			if (z.color == Color.BLACK)
-				deleteFixUp(x);
-		} else if (z.parent == null)
-			root = null;
-		else {
-			if (z.color == Color.BLACK)
-				deleteFixUp(z);
-			if (z.parent != null) {
-				if (z == z.parent.left)
-					z.parent.left = null;
-				else if (z == z.parent.right)
-					z.parent.right = null;
-				z.parent = null;
-			}
-		}
+			y = successor(z);
+
+		if (y.left != nil)
+			x = y.left;
+		else
+			x = y.right;
+		x.parent = y.parent;
+		if (y.parent == nil)
+			root = x;
+		else if (y == y.parent.left)
+			y.parent.left = x;
+		else
+			y.parent.right = x;
+		if (y != z)
+			z.element = y.element;
+		if (y.color == Color.BLACK)
+			fixAfterDeletion(x);
 	}
 
 	/**
@@ -424,16 +435,16 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 */
 	private Node successor(Node x) {
 		Node y;
-		if (x == null)
-			return null;
-		if (x.right != null) {
+		if (x == nil)
+			return nil;
+		if (x.right != nil) {
 			y = x.right;
-			while (y.left != null)
+			while (y.left != nil)
 				y = y.left;
 			return y;
 		}
 		y = x.parent;
-		while (y != null && x == y.right) {
+		while (y != nil && x == y.right) {
 			x = y;
 			y = y.parent;
 		}
@@ -447,11 +458,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * LEFT-ROTATE(T, x)
 	 * y = right[x]							Set y.
 	 * right[x] = left[y]					Turn y's left subtree into x's right subtree.
-	 * if left[y] != nil[T ]
+	 * if left[y] != nil[T]
 	 *    then p[left[y]] = x
 	 * p[y] = p[x]							Link x's parent to y.
-	 * if p[x] = nil[T ]
-	 *    then root[T ] = y
+	 * if p[x] = nil[T]
+	 *    then root[T] = y
 	 *    else if x = left[p[x]]
 	 *            then left[p[x]] = y
 	 *            else right[p[x]] = y
@@ -459,13 +470,13 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * p[x] = y
 	 */
 	private void leftRotate(final Node x) {
-		if (x != null) {
+		if (x != nil) {
 			Node n = x.right;
 			x.right = n.left;
-			if (n.left != null)
+			if (n.left != nil)
 				n.left.parent = x;
 			n.parent = x.parent;
-			if (x.parent == null)
+			if (x.parent == nil)
 				root = n;
 			else if (x.parent.left == x)
 				x.parent.left = n;
@@ -477,13 +488,13 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	private void rightRotate(final Node x) {
-		if (x != null) {
+		if (x != nil) {
 			Node n = x.left;
 			x.left = n.right;
-			if (n.right != null)
+			if (n.right != nil)
 				n.right.parent = x;
 			n.parent = x.parent;
-			if (x.parent == null)
+			if (x.parent == nil)
 				root = n;
 			else if (x.parent.right == x)
 				x.parent.right = n;
@@ -517,45 +528,44 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 *                        with right and left exchanged)
 	 * color[root[T]] = BLACK
 	 */
-	private void insertFixUp(Node z) {
-		Node y;
-		setRed(z);
-		while (z != root && isRed(z.parent)) {
-			if (parent(z) == left(parent(parent(z)))) {
-				y = right(parent(parent(z)));
-				if (isRed(y)) {
-					setBlack(parent(z));
-					setBlack(y);
-					setRed(parent(parent(z)));
-					z = parent(parent(z));
+	private void fixAfterInsertion(Node z) {
+		z.color = RED;
+		while (z.parent.color == RED) {
+			if (z.parent == z.parent.parent.left) {
+				Node y = z.parent.parent.right;
+				if (y.color == RED) {
+					z.parent.color = BLACK;
+					y.color = BLACK;
+					z.parent.parent.color = RED;
+					z = z.parent.parent;
 				} else {
-					if (z == right(parent(z))) {
-						z = parent(z);
+					if (z == z.parent.right) {
+						z = z.parent;
 						leftRotate(z);
 					}
-					setBlack(parent(z));
-					setRed(parent(parent(z)));
-					rightRotate(parent(parent(z)));
+					z.parent.color = BLACK;
+					z.parent.parent.color = RED;
+					rightRotate(z.parent.parent);
 				}
-			} else { // symmetric
-				y = left(parent(parent(z)));
-				if (isRed(y)) {
-					setBlack(parent(z));
-					setBlack(y);
-					setRed(parent(parent(z)));
-					z = parent(parent(z));
+			} else {
+				Node y = z.parent.parent.left;
+				if (y.color == RED) {
+					z.parent.color = BLACK;
+					y.color = BLACK;
+					z.parent.parent.color = RED;
+					z = z.parent.parent;
 				} else {
-					if (z == left(parent(z))) {
-						z = parent(z);
+					if (z == z.parent.left) {
+						z = z.parent;
 						rightRotate(z);
 					}
-					setBlack(parent(z));
-					setRed(parent(parent(z)));
-					leftRotate(parent(parent(z)));
+					z.parent.color = BLACK;
+					z.parent.parent.color = RED;
+					leftRotate(z.parent.parent);
 				}
 			}
 		}
-		setBlack(root);
+		root.color = BLACK;
 	}
 
 	/**
@@ -563,7 +573,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * 
 	 * <pre>
 	 * RB-DELETE-FIXUP(T, x)
-	 * while x != root[T ] and color[x] = BLACK
+	 * while x != root[T] and color[x] = BLACK
 	 *    do if x = left[p[x]]
 	 *          then w = right[p[x]]
 	 *               if color[w] = RED
@@ -583,99 +593,64 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 *                       color[p[x]] = BLACK							Case 4
 	 *                       color[right[w]] = BLACK						Case 4
 	 *                       LEFT-ROTATE(T, p[x])							Case 4
-	 *                       x = root[T ]									Case 4
+	 *                       x = root[T]									Case 4
 	 *          else (same as then clause with right and left exchanged)
 	 * color[x] = BLACK
 	 */
-	private void deleteFixUp(Node x) {
+	private void fixAfterDeletion(Node x) {
 		Node w;
-		while (x != root && isBlack(x)) {
-			if (x == left(parent(x))) {
-				w = right(parent(x));
-				if (isRed(w)) {
-					setBlack(w);
-					setRed(parent(x));
-					leftRotate(parent(x));
-					w = right(parent(x));
+		while (x != root && x.color == BLACK) {
+			if (x == x.parent.left) {
+				w = x.parent.right;
+				if (w.color == RED) {
+					w.color = BLACK;
+					x.parent.color = RED;
+					leftRotate(x.parent);
+					w = x.parent.right;
 				}
-				if (isBlack(left(w)) && isBlack(right(w))) {
-					setRed(w);
-					x = parent(x);
+				if (w.left.color == BLACK && w.right.color == BLACK) {
+					w.color = RED;
+					x = x.parent;
 				} else {
-					if (isBlack(right(w))) {
-						setBlack(left(w));
-						setRed(w);
+					if (w.right.color == BLACK) {
+						w.left.color = BLACK;
+						w.color = RED;
 						rightRotate(w);
-						w = right(parent(x));
+						w = x.parent.right;
 					}
-					copyColor(w, parent(x));
-					setBlack(parent(x));
-					setBlack(right(w));
-					leftRotate(parent(x));
+					w.color = x.parent.color;
+					x.parent.color = BLACK;
+					x.right.color = BLACK;
+					leftRotate(x.parent);
 					x = root;
 				}
 			} else {
-				w = left(parent(x));
-				if (isRed(w)) {
-					setBlack(w);
-					setRed(parent(x));
-					rightRotate(parent(x));
-					w = left(parent(x));
+				w = x.parent.left;
+				if (w.color == RED) {
+					w.color = BLACK;
+					x.parent.color = RED;
+					rightRotate(x.parent);
+					w = x.parent.left;
 				}
-				if (isBlack(right(w)) && isBlack(left(w))) {
-					setRed(w);
-					x = parent(x);
+				if (w.left.color == BLACK && w.right.color == BLACK) {
+					w.color = RED;
+					x = x.parent;
 				} else {
-					if (isBlack(left(w))) {
-						setBlack(right(w));
-						setRed(w);
+					if (w.left.color == BLACK) {
+						w.right.color = BLACK;
+						w.color = RED;
 						leftRotate(w);
-						w = left(parent(x));
+						w = x.parent.left;
 					}
-					copyColor(w, parent(x));
-					setBlack(parent(x));
-					setBlack(left(w));
-					rightRotate(parent(x));
+					w.color = x.parent.color;
+					x.parent.color = BLACK;
+					w.left.color = BLACK;
+					rightRotate(x.parent);
 					x = root;
 				}
 			}
 		}
-		setBlack(x);
-	}
-
-	private Node parent(final Node n) {
-		return n != null ? n.parent : null;
-	}
-
-	private Node left(final Node n) {
-		return n != null ? n.left : null;
-	}
-
-	private Node right(final Node n) {
-		return n != null ? n.right : null;
-	}
-
-	private boolean isRed(final Node n) {
-		return n != null ? n.color == Color.RED : false;
-	}
-
-	private boolean isBlack(final Node n) {
-		return n != null ? n.color == Color.BLACK : true;
-	}
-
-	private void setRed(final Node n) {
-		if (n != null)
-			n.color = Color.RED;
-	}
-
-	private void setBlack(final Node n) {
-		if (n != null)
-			n.color = Color.BLACK;
-	}
-
-	private void copyColor(final Node to, final Node from) {
-		if (to != null)
-			to.color = from != null ? from.color : Color.BLACK;
+		x.color = BLACK;
 	}
 
 	/**
@@ -759,7 +734,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 
 	private void verifyProperty1(Node n) {
 		assert getColor(n) == Color.RED || getColor(n) == Color.BLACK;
-		if (n == null)
+		if (n == nil)
 			return;
 		verifyProperty1(n.left);
 		verifyProperty1(n.right);
@@ -779,7 +754,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 			assert getColor(n.parent) == Color.BLACK;
 			// System.out.println(getColor(n.parent));
 		}
-		if (n == null)
+		if (n == nil)
 			return;
 		verifyProperty4(n.left);
 		verifyProperty4(n.right);
@@ -793,7 +768,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		if (getColor(n) == Color.BLACK) {
 			blackCount++;
 		}
-		if (n == null) {
+		if (n == nil) {
 			if (pathBlackCount == -1) {
 				pathBlackCount = blackCount;
 			} else {
@@ -809,7 +784,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	private Color getColor(final Node n) {
-		return (n == null ? Color.BLACK : n.color);
+		return (n == nil ? Color.BLACK : n.color);
 	}
 
 }
