@@ -108,7 +108,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E> {
 
 	private int size = 0;
-	final Node nil = new Node(null);
+	final Node nil = new Node();
 	Node min = nil;
 	Node root = nil;
 	int modCount = 0;
@@ -304,6 +304,10 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		Node parent, left, right;
 		private Color color = BLACK;
 
+		private Node() {
+			parent = left = right = this;
+		}
+
 		private Node(final E element) {
 			this.element = element;
 			parent = left = right = nil;
@@ -397,12 +401,19 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	void delete(Node z) {
 		size--;
 		modCount++;
-		Node y;
-		Node x;
+		Node x, y;
 		if (min == z)
 			min = successor(z);
-		y = z.left == nil || z.right == nil ? z : successor(z);
-		x = y.left != nil ? y.left : y.right;
+		//y = z.left == nil || z.right == nil ? z : successor(z);
+		//x = y.left != nil ? y.left : y.right;
+		if(z.left == nil || z.right == nil)
+			y = z;
+		else
+			y = successor(z);
+		if(y.left != nil)
+			x = y.left;
+		else
+			x = y.right;
 		x.parent = y.parent;
 		if (y.parent == nil)
 			root = x;
