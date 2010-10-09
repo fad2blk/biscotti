@@ -379,6 +379,7 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 * Introduction to Algorithms (CLR) Second Edition
 	 * 
 	 * <pre>
+	 * RB-DELETE-FIXUP(T, z)
 	 * if left[z] = nil[T] or right[z] = nil[T]
 	 *    then y = z
 	 *    else y = TREE-SUCCESSOR(z)
