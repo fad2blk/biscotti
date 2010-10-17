@@ -132,11 +132,11 @@ final public class Preconditions2 {
 			Comparator<? super T> comparator) {
 		if (comparator.compare(element, fromElement) < 0)
 			throw new IllegalArgumentException(format(
-					"element (%s) must not be less than start element (%s)",
+					"element (%s) must not be less than first element (%s)",
 					element, fromElement));
 		if (comparator.compare(element, toElement) > 0)
 			throw new IllegalArgumentException(format(
-					"element (%s) must not be greater than end element(%s)",
+					"element (%s) must not be greater than last element (%s)",
 					element, toElement));
 		return element;
 	}
