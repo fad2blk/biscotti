@@ -98,15 +98,15 @@ import com.google.common.collect.Ordering;
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements maintained by this list
+ * the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 	private int size = 0;
-	private final static Node<Object> NULL = new Node<Object>();
-	private Node<E> max = (Node<E>) NULL;
-	private Node<E> min = (Node<E>) NULL;
-	private Node<E> root = (Node<E>) NULL;
+	private final Node nil = new Node();
+	private Node max = nil;
+	private Node min = nil;
+	private Node root = nil;
 	private Comparator<? super E> comparator;
 
 	private TreeList(final Comparator<? super E> comparator) {
@@ -200,10 +200,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		checkNotNull(e);
 		size++;
 		modCount++;
-		Node<E> x = root;
-		Node<E> parent = (Node<E>) NULL;
-		Node<E> newNode = new Node<E>(e);
-		while (x != NULL) {
+		Node x = root;
+		Node parent = nil;
+		Node newNode = new Node(e);
+		while (x != nil) {
 			parent = x;
 			if (comparator.compare(newNode.element, x.element) < 0)
 				x = x.left;
@@ -211,16 +211,16 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 				x = x.right;
 		}
 		newNode.parent = parent;
-		if (parent == NULL)
+		if (parent == nil)
 			root = newNode;
 		else if (comparator.compare(newNode.element, parent.element) < 0)
 			parent.left = newNode;
 		else
 			parent.right = newNode;
 		fixAfterInsertion(newNode);
-		if (max == NULL || comparator.compare(e, max.element) >= 0)
+		if (max == nil || comparator.compare(e, max.element) >= 0)
 			max = newNode;
-		if (min == NULL || comparator.compare(e, min.element) < 0)
+		if (min == nil || comparator.compare(e, min.element) < 0)
 			min = newNode;
 		return true;
 	}
@@ -292,20 +292,16 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and {@code
+	 * set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
-		return new BoundedListIterator<E>(this);
-	}
-
-	public ListIterator<E> listIterator2() {
 		return new ListIterator<E>() {
 			int index = 0;
-			Node<E> next = min;
-			Node<E> prev = (Node<E>) NULL;
-			Node<E> last = (Node<E>) NULL;
+			Node next = min;
+			Node prev = nil;
+			Node last = nil;
 			int expectedModCount = modCount;
 
 			@Override
@@ -328,7 +324,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 				checkForConcurrentModification();
 				if (index == size())
 					throw new NoSuchElementException();
-				Node<E> node = prev = next;
+				Node node = prev = next;
 				index++;
 				next = successor(node);
 				last = node;
@@ -345,7 +341,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 				checkForConcurrentModification();
 				if (index == 0)
 					throw new NoSuchElementException();
-				Node<E> node = next = prev;
+				Node node = next = prev;
 				index--;
 				prev = predecessor(node);
 				last = node;
@@ -360,13 +356,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			@Override
 			public void remove() {
 				checkForConcurrentModification();
-				checkState(last != NULL);
-				if (last.left != NULL && last.right != NULL)
+				checkState(last != nil);
+				if (last.left != nil && last.right != nil)
 					next = last;
 				delete(last);
 				index--;
 				expectedModCount = modCount;
-				last = (Node<E>) NULL;
+				last = nil;
 			}
 
 			@Override
@@ -384,8 +380,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and {@code
+	 * set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
@@ -444,7 +440,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 	@Override
 	public TreeList<E> subList(int fromIndex, int toIndex) {
-		checkPositionIndexes(fromIndex, toIndex, size);
+		checkPositionIndexes(fromIndex, toIndex, size());
 		return new SubList(this, fromIndex, toIndex);
 	}
 
@@ -479,9 +475,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		private TreeList<E> l;
 		private int offset;
 		private int size;
-		private Node<E> minimum;
-		private Node<E> maximum;
-		private int modCount;
+		private Node min;
+		private Node max;
 
 		private void checkForConcurrentModification() {
 			if (modCount != l.modCount)
@@ -490,29 +485,30 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		public SubList(TreeList<E> l, int fromIndex, int toIndex) {
 			super(l.comparator);
+			//checkPositionIndexes(fromIndex, toIndex, l.size);
 			this.l = l;
 			offset = fromIndex;
 			modCount = l.modCount;
 			this.size = toIndex - fromIndex;
-			minimum = l.min;
+			min = l.min;
 
 			int i = 0;
 			for (; i < fromIndex; i++)
-				minimum = successor(minimum);
-			maximum = minimum;
+				min = successor(min);
+			max = min;
 			for (; i < toIndex - 1; i++)
-				maximum = successor(maximum);
+				max = successor(max);
 		}
 
 		@Override
 		public boolean add(E e) {
-			checkElementPosition(e, minimum.element, maximum.element,
+			checkElementPosition(e, min.element, max.element,
 					comparator);
 			l.add(e);
 			modCount = l.modCount;
 			size++;
-			if (comparator.compare(maximum.element, e) == 0)
-				maximum = successor(maximum);
+			if (comparator.compare(max.element, e) == 0)
+				max = successor(max);
 			return true;
 		}
 
@@ -541,14 +537,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		@Override
 		public ListIterator<E> listIterator() {
-			return new BoundedListIterator<E>(this);
-			//return listIterator(0);
+			return listIterator(0);
 		}
 
-		@Override
+		@Override		
 		public ListIterator<E> listIterator(final int index) {
-			checkForConcurrentModification();
-			checkPositionIndex(index, size);
+				checkForConcurrentModification();
+				checkPositionIndex(index, size);
 			return new ListIterator<E>() {
 				private ListIterator<E> i = l.listIterator(index + offset);
 
@@ -611,13 +606,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		public boolean remove(Object o) {
 			checkForConcurrentModification();
 			checkNotNull(o);
-			Node<E> node = search((E) o);
+			Node node = search((E) o);
 			if (node == null)
 				return false;
-			if (node == maximum)
-				maximum = predecessor(maximum);
-			if (node == minimum)
-				minimum = successor(minimum);
+			if (node == max)
+				max = predecessor(max);
+			if (node == min)
+				min = successor(min);
 			l.delete(node);
 			modCount = l.modCount;
 			size--;
@@ -629,9 +624,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			checkForConcurrentModification();
 			checkElementIndex(index, size);
 			if (index == 0)
-				minimum = successor(minimum);
+				min = successor(min);
 			if (index == size - 1)
-				maximum = predecessor(maximum);
+				max = predecessor(max);
 			E e = l.remove(index + offset);
 			modCount = l.modCount;
 			size--;
@@ -650,37 +645,29 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 
 		@Override
-		Node<E> search(final E e) {
-			Node<E> node;
-			int compareMin = comparator.compare(e, minimum.element);
-			int compareMax = comparator.compare(e, maximum.element);
-			if (compareMin < 0 || compareMax > 0)
+		Node search(final E e) {
+			int i = comparator.compare(e, min.element);
+			int j = comparator.compare(e, max.element);
+			if (i < 0 || j > 0)
 				return null;
-			if (compareMin == 0) {
-				for (node = minimum; comparator.compare(e, node.element) == 0; node = successor(node))
-					if (e.equals(node.element))
-						return node;
-				return null;
-			}
-			if (compareMax == 0) {
-				for (node = maximum; comparator.compare(e, node.element) == 0; node = predecessor(node))
-					if (e.equals(node.element))
-						return node;
-				return null;
-			}
-			return l.search(e);
+			if (i == 0)
+				return min;
+			else if (j == 0)
+				return max;
+			else
+				return l.search(e);
 		}
 	}
 
-	// Red-Black-Tree methods
+	// Red-Black-Tree
 
 	static enum Color {
 		BLACK, RED;
 	}
 
-	static class Node<E> {
-		E element = null;
-		Node<E> parent, left, right;
+	private class Node {
+		private E element = null;
+		private Node parent, left, right;
 		private Color color = BLACK;
 
 		private Node() {
@@ -689,13 +676,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		private Node(final E element) {
 			this.element = element;
-			parent = left = right = (Node<E>) NULL;
+			parent = left = right = nil;
 		}
 	}
 
-	Node<E> search(final E e) {
-		Node<E> n = root;
-		while (n != NULL) {
+	Node search(final E e) {
+		Node n = root;
+		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
 			if (cmp == 0)
 				return n;
@@ -707,18 +694,18 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return null;
 	}
 
-	void delete(Node<E> z) {
+	private void delete(Node z) {
 		size--;
 		modCount++;
-		Node<E> x, y;
+		Node x, y;
 		if (max == z)
 			max = predecessor(z);
 		if (min == z)
 			min = successor(z);
-		y = z.left == NULL || z.right == NULL ? z : successor(z);
-		x = y.left != NULL ? y.left : y.right;
+		y = z.left == nil || z.right == nil ? z : successor(z);
+		x = y.left != nil ? y.left : y.right;
 		x.parent = y.parent;
-		if (y.parent == NULL)
+		if (y.parent == nil)
 			root = x;
 		else if (y == y.parent.left)
 			y.parent.left = x;
@@ -730,48 +717,48 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			fixAfterDeletion(x);
 	}
 
-	private static <E> Node<E> successor(Node<E> x) {
-		if (x == NULL)
-			return (Node<E>) NULL;
-		if (x.right != NULL) {
-			Node<E> y = x.right;
-			while (y.left != NULL)
+	private Node successor(Node x) {
+		if (x == nil)
+			return nil;
+		if (x.right != nil) {
+			Node y = x.right;
+			while (y.left != nil)
 				y = y.left;
 			return y;
 		}
-		Node<E> y = x.parent;
-		while (y != NULL && x == y.right) {
+		Node y = x.parent;
+		while (y != nil && x == y.right) {
 			x = y;
 			y = y.parent;
 		}
 		return y;
 	}
 
-	private static <E> Node<E> predecessor(Node<E> x) {
-		if (x == NULL)
-			return (Node<E>) NULL;
-		if (x.left != NULL) {
-			Node<E> y = x.left;
-			while (y.right != NULL)
+	private Node predecessor(Node x) {
+		if (x == nil)
+			return nil;
+		if (x.left != nil) {
+			Node y = x.left;
+			while (y.right != nil)
 				y = y.right;
 			return y;
 		}
-		Node<E> y = x.parent;
-		while (y != NULL && x == y.left) {
+		Node y = x.parent;
+		while (y != nil && x == y.left) {
 			x = y;
 			y = y.left;
 		}
 		return y;
 	}
 
-	private void leftRotate(final Node<E> x) {
-		if (x != NULL) {
-			Node<E> n = x.right;
+	private void leftRotate(final Node x) {
+		if (x != nil) {
+			Node n = x.right;
 			x.right = n.left;
-			if (n.left != NULL)
+			if (n.left != nil)
 				n.left.parent = x;
 			n.parent = x.parent;
-			if (x.parent == NULL)
+			if (x.parent == nil)
 				root = n;
 			else if (x.parent.left == x)
 				x.parent.left = n;
@@ -782,14 +769,14 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 	}
 
-	private void rightRotate(final Node<E> x) {
-		if (x != NULL) {
-			Node<E> n = x.left;
+	private void rightRotate(final Node x) {
+		if (x != nil) {
+			Node n = x.left;
 			x.left = n.right;
-			if (n.right != NULL)
+			if (n.right != nil)
 				n.right.parent = x;
 			n.parent = x.parent;
-			if (x.parent == NULL)
+			if (x.parent == nil)
 				root = n;
 			else if (x.parent.right == x)
 				x.parent.right = n;
@@ -800,11 +787,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 	}
 
-	private void fixAfterInsertion(Node<E> z) {
+	private void fixAfterInsertion(Node z) {
 		z.color = RED;
 		while (z.parent.color == RED) {
 			if (z.parent == z.parent.parent.left) {
-				Node<E> y = z.parent.parent.right;
+				Node y = z.parent.parent.right;
 				if (y.color == RED) {
 					z.parent.color = BLACK;
 					y.color = BLACK;
@@ -820,7 +807,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 					rightRotate(z.parent.parent);
 				}
 			} else {
-				Node<E> y = z.parent.parent.left;
+				Node y = z.parent.parent.left;
 				if (y.color == RED) {
 					z.parent.color = BLACK;
 					y.color = BLACK;
@@ -840,10 +827,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		root.color = BLACK;
 	}
 
-	private void fixAfterDeletion(Node<E> x) {
+	private void fixAfterDeletion(Node x) {
 		while (x != root && x.color == BLACK) {
 			if (x == x.parent.left) {
-				Node<E> w = x.parent.right;
+				Node w = x.parent.right;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
@@ -867,7 +854,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 					x = root;
 				}
 			} else {
-				Node<E> w = x.parent.left;
+				Node w = x.parent.left;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
@@ -894,92 +881,4 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 		x.color = BLACK;
 	}
-
-	private static class BoundedListIterator<E> implements ListIterator<E> {
-
-		int index = 0;
-		Node<E> next;
-		Node<E> prev = (Node<E>) NULL;
-		Node<E> last = (Node<E>) NULL;
-		TreeList<E> l;
-		int expectedModCount;
-
-		private BoundedListIterator(TreeList<E> l) {
-			this.next = l.min;
-			this.l = l;
-			expectedModCount = l.modCount;
-		}
-
-		@Override
-		public void add(E e) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return index < l.size();
-		}
-
-		@Override
-		public boolean hasPrevious() {
-			return index > 0;
-		}
-
-		@Override
-		public E next() {
-			checkForConcurrentModification();
-			if (index == l.size())
-				throw new NoSuchElementException();
-			Node<E> node = prev = next;
-			index++;
-			next = successor(node);
-			last = node;
-			return node.element;
-		}
-
-		@Override
-		public int nextIndex() {
-			return index;
-		}
-
-		@Override
-		public E previous() {
-			checkForConcurrentModification();
-			if (index == 0)
-				throw new NoSuchElementException();
-			Node<E> node = next = prev;
-			index--;
-			prev = predecessor(node);
-			last = node;
-			return node.element;
-		}
-
-		@Override
-		public int previousIndex() {
-			return index - 1;
-		}
-
-		@Override
-		public void remove() {
-			checkForConcurrentModification();
-			checkState(last != NULL);
-			if (last.left != NULL && last.right != NULL)
-				next = last;
-			l.delete(last);
-			index--;
-			expectedModCount = l.modCount;
-			last = (Node<E>) NULL;
-		}
-
-		@Override
-		public void set(E e) {
-			throw new UnsupportedOperationException();
-		}
-
-		private void checkForConcurrentModification() {
-			if (expectedModCount != l.modCount)
-				throw new ConcurrentModificationException();
-		}
-	}
-
 }
