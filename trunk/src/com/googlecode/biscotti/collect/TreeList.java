@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
+import com.googlecode.biscotti.collect.PriorityQueue.Color;
+import com.googlecode.biscotti.collect.PriorityQueue.Node;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -694,16 +696,20 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return null;
 	}
 
-	private void delete(Node z) {
+	void delete(Node z) {
 		size--;
 		modCount++;
 		Node x, y;
-		if (max == z)
-			max = predecessor(z);
 		if (min == z)
 			min = successor(z);
-		y = z.left == nil || z.right == nil ? z : successor(z);
-		x = y.left != nil ? y.left : y.right;
+		if(z.left == nil || z.right == nil)
+			y = z;
+		else
+			y = successor(z);
+		if(y.left != nil)
+			x = y.left;
+		else
+			x = y.right;
 		x.parent = y.parent;
 		if (y.parent == nil)
 			root = x;

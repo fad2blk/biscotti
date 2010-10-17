@@ -405,8 +405,6 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		Node x, y;
 		if (min == z)
 			min = successor(z);
-		//y = z.left == nil || z.right == nil ? z : successor(z);
-		//x = y.left != nil ? y.left : y.right;
 		if(z.left == nil || z.right == nil)
 			y = z;
 		else
