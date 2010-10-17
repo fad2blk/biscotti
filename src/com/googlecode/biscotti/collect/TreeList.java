@@ -20,8 +20,6 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
-import com.googlecode.biscotti.collect.PriorityQueue.Color;
-import com.googlecode.biscotti.collect.PriorityQueue.Node;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -477,8 +475,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		private TreeList<E> l;
 		private int offset;
 		private int size;
-		private Node min;
-		private Node max;
 
 		private void checkForConcurrentModification() {
 			if (modCount != l.modCount)
@@ -490,7 +486,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			this.l = l;
 			offset = fromIndex;
 			modCount = l.modCount;
-			this.size = toIndex - fromIndex;
+			size = toIndex - fromIndex;
 			min = l.min;
 			int i = 0;
 			for (; i < fromIndex; i++)
