@@ -487,13 +487,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		public SubList(TreeList<E> l, int fromIndex, int toIndex) {
 			super(l.comparator);
-			//checkPositionIndexes(fromIndex, toIndex, l.size);
 			this.l = l;
 			offset = fromIndex;
 			modCount = l.modCount;
 			this.size = toIndex - fromIndex;
 			min = l.min;
-
 			int i = 0;
 			for (; i < fromIndex; i++)
 				min = successor(min);
