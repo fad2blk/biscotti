@@ -35,9 +35,7 @@ import com.google.common.base.Preconditions;
  */
 public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 		BoundedQueue<E> {
-
-	private static final long serialVersionUID = 1L;
-
+	
 	private int maxSize;
 
 	private PriorityBoundedQueue(final int maxSize,
@@ -158,4 +156,5 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	public int remainingCapacity() {
 		return maxSize - size();
 	}
+	
 }
