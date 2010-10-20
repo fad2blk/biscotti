@@ -109,25 +109,12 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable{
 
 	private static final long serialVersionUID = 1L;
-	private int size = 0;
-	final Node nil = new Node();
-	Node min = nil;
-	Node root = nil;
-	int modCount = 0;
-	Comparator<? super E> comparator;
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException{
-		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
-		clone.root = nil;
-		clone.min = nil;
-		clone.size = 0;
-		clone.modCount = 0;
-		clone.addAll(this);
-		return clone;
-	}
-	
-    
+	transient private int size = 0;
+	transient Node nil = new Node();
+	transient Node min = nil;
+	transient Node root = nil;
+	transient int modCount = 0;
+	Comparator<? super E> comparator; 
     
 	TreeQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -302,6 +289,34 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public int size() {
 		return size;
+	}
+	
+	@Override
+	public TreeQueue<E> clone() throws CloneNotSupportedException{
+		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
+		clone.root = nil;
+		clone.min = nil;
+		clone.size = 0;
+		clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream oos)
+			throws java.io.IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(size);
+		for (E e : this)
+			oos.writeObject(e);
+	}
+	
+	private void readObject(java.io.ObjectInputStream ois)
+			throws java.io.IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		min = root = nil = new Node();
+		int size = ois.readInt();
+		for (int i = 0; i < size; i++)
+			add((E) ois.readObject());
 	}
 
 	/*
