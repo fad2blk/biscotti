@@ -7,6 +7,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,9 +22,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.Test;
-
-import com.googlecode.biscotti.collect.SortedCollection;
-import com.googlecode.biscotti.collect.TreeQueue;
 
 public class TreeQueueTest {
 
@@ -130,8 +131,8 @@ public class TreeQueueTest {
 
 	@Test
 	public void test_iterator_removeEquals() {
-		TreeQueue<String> integerQueue = TreeQueue.create(
-				new MockComparatorStringByLength());
+		TreeQueue<String> integerQueue = TreeQueue
+				.create(new MockComparatorStringByLength());
 		String[] array = { "ONE", "TWO", "THREE", "FOUR", "FIVE" };
 		for (int i = 0; i < array.length; i++) {
 			integerQueue.offer(array[i]);
@@ -190,10 +191,10 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_Constructor() {
-//		TreeQueue<Object> queue = TreeQueue.create();
-//		assertNotNull(queue);
-//		assertEquals(0, queue.size());
-//		assertNull(queue.comparator());
+		// TreeQueue<Object> queue = TreeQueue.create();
+		// assertNotNull(queue);
+		// assertEquals(0, queue.size());
+		// assertNull(queue.comparator());
 	}
 
 	/**
@@ -201,9 +202,9 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_ConstructorI() {
-//		TreeQueue queue = TreeQueue.create();
-//		assertNotNull(queue);
-//		assertEquals(0, queue.size());
+		// TreeQueue queue = TreeQueue.create();
+		// assertNotNull(queue);
+		// assertEquals(0, queue.size());
 	}
 
 	/**
@@ -211,17 +212,17 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_ConstructorILjava_util_Comparator() {
-//		TreeQueue<Object> queue = TreeQueue.create<Object>(100,
-//				(Comparator<Object>) null);
-//		assertNotNull(queue);
-//		assertEquals(0, queue.size());
-//		assertNull(queue.comparator());
-//
-//		MockComparator<Object> comparator = new MockComparator<Object>();
-//		queue = new TreeQueue<Object>(100, comparator);
-//		assertNotNull(queue);
-//		assertEquals(0, queue.size());
-//		assertEquals(comparator, queue.comparator());
+		// TreeQueue<Object> queue = TreeQueue.create<Object>(100,
+		// (Comparator<Object>) null);
+		// assertNotNull(queue);
+		// assertEquals(0, queue.size());
+		// assertNull(queue.comparator());
+		//
+		// MockComparator<Object> comparator = new MockComparator<Object>();
+		// queue = new TreeQueue<Object>(100, comparator);
+		// assertNotNull(queue);
+		// assertEquals(0, queue.size());
+		// assertEquals(comparator, queue.comparator());
 	}
 
 	/**
@@ -229,19 +230,19 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_ConstructorILjava_util_Comparator_illegalCapacity() {
-//		try {
-//			new TreeQueue<Object>(0, new MockComparator<Object>());
-//			fail("should throw IllegalArgumentException");
-//		} catch (IllegalArgumentException e) {
-//			// expected
-//		}
-//
-//		try {
-//			new TreeQueue<Object>(-1, new MockComparator<Object>());
-//	`		fail("should throw IllegalArgumentException");
-//		} catch (IllegalArgumentException e) {
-//			// expected
-//		}
+		// try {
+		// new TreeQueue<Object>(0, new MockComparator<Object>());
+		// fail("should throw IllegalArgumentException");
+		// } catch (IllegalArgumentException e) {
+		// // expected
+		// }
+		//
+		// try {
+		// new TreeQueue<Object>(-1, new MockComparator<Object>());
+		// ` fail("should throw IllegalArgumentException");
+		// } catch (IllegalArgumentException e) {
+		// // expected
+		// }
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class TreeQueueTest {
 		List<Integer> list = Arrays.asList(array);
 		TreeQueue<Integer> integerQueue = TreeQueue.create(list);
 		assertEquals(array.length, integerQueue.size());
-		//assertNull(integerQueue.comparator());
+		// assertNull(integerQueue.comparator());
 		Arrays.sort(array);
 		for (int i = 0; i < array.length; i++) {
 			assertEquals(array[i], integerQueue.poll());
@@ -316,8 +317,8 @@ public class TreeQueueTest {
 	@Test
 	public void test_ConstructorLjava_util_Colleciton_from_priorityqueue() {
 		String[] array = { "AAAAA", "AA", "AAAA", "AAAAAAAA" };
-		TreeQueue<String> queue = TreeQueue.create(
-				new MockComparatorStringByLength());
+		TreeQueue<String> queue = TreeQueue
+				.create(new MockComparatorStringByLength());
 		for (int i = 0; i < array.length; i++) {
 			queue.offer(array[i]);
 		}
@@ -418,8 +419,8 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_offerLjava_lang_Object() {
-		TreeQueue<String> queue = TreeQueue.create(
-				new MockComparatorStringByLength());
+		TreeQueue<String> queue = TreeQueue
+				.create(new MockComparatorStringByLength());
 		String[] array = { "AAAAA", "AA", "AAAA", "AAAAAAAA" };
 		for (int i = 0; i < array.length; i++) {
 			queue.offer(array[i]);
@@ -618,8 +619,8 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_remove_Ljava_lang_Object_using_comparator() {
-		TreeQueue<String> queue = TreeQueue.create(
-				new MockComparatorStringByLength());
+		TreeQueue<String> queue = TreeQueue
+				.create(new MockComparatorStringByLength());
 		String[] array = { "AAAAA", "AA", "AAAA", "AAAAAAAA" };
 		for (int i = 0; i < array.length; i++) {
 			queue.offer(array[i]);
@@ -638,8 +639,8 @@ public class TreeQueueTest {
 		List<Integer> list = Arrays.asList(array);
 		TreeQueue<Integer> integerQueue = TreeQueue.create(list);
 		assertFalse(integerQueue.remove(111));
-		//assertFalse(integerQueue.remove(null));
-		//assertFalse(integerQueue.remove(""));
+		// assertFalse(integerQueue.remove(null));
+		// assertFalse(integerQueue.remove(""));
 	}
 
 	/**
@@ -651,7 +652,7 @@ public class TreeQueueTest {
 		Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
 		List<Integer> list = Arrays.asList(array);
 		TreeQueue<Integer> integerQueue = TreeQueue.create(list);
-		//assertFalse(integerQueue.remove(null));
+		// assertFalse(integerQueue.remove(null));
 	}
 
 	/**
@@ -663,7 +664,7 @@ public class TreeQueueTest {
 		Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
 		List<Integer> list = Arrays.asList(array);
 		TreeQueue<Integer> integerQueue = TreeQueue.create(list);
-		//assertFalse(integerQueue.remove(new Float(1.3F)));
+		// assertFalse(integerQueue.remove(new Float(1.3F)));
 
 		// although argument element type is not compatible with those in queue,
 		// but comparator supports it.
@@ -674,7 +675,7 @@ public class TreeQueueTest {
 
 		TreeQueue queue = TreeQueue.create();
 		Object o = new Object();
-//		queue.offer(o);
+		// queue.offer(o);
 	}
 
 	/**
@@ -693,16 +694,36 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_Serialization() throws Exception {
-//		Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-//		List<Integer> list = Arrays.asList(array);
-//		TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
-//		TreeQueue<Integer> destIntegerQueue = (TreeQueue<Integer>) SerializationTester
-//				.getDeserilizedObject(srcIntegerQueue);
-//		Arrays.sort(array);
-//		for (int i = 0; i < array.length; i++) {
-//			assertEquals(array[i], destIntegerQueue.poll());
-//		}
-//		assertEquals(0, destIntegerQueue.size());
+
+		TreeQueue<Integer> out = Collections3.newTreeQueue(1, 2, 3);
+		byte[] bytes;
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(out);
+		oos.close();
+
+		bytes = baos.toByteArray();
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
+				bytes));
+
+		TreeQueue<Integer> in = (TreeQueue<Integer>) ois.readObject();
+
+		ois.close();
+		
+		
+
+		// Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+		// List<Integer> list = Arrays.asList(array);
+		// TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
+		// TreeQueue<Integer> destIntegerQueue = (TreeQueue<Integer>)
+		// SerializationTester
+		// .getDeserilizedObject(srcIntegerQueue);
+		// Arrays.sort(array);
+		// for (int i = 0; i < array.length; i++) {
+		// assertEquals(array[i], destIntegerQueue.poll());
+		// }
+		// assertEquals(0, destIntegerQueue.size());
 	}
 
 	/**
@@ -710,16 +731,17 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_Serialization_casting() throws Exception {
-//		Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-//		List<Integer> list = Arrays.asList(array);
-//		TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
-//		TreeQueue<String> destStringQueue = (TreeQueue<String>) SerializationTester
-//				.getDeserilizedObject(srcIntegerQueue);
-//		// will not incur class cast exception.
-//		Object o = destStringQueue.peek();
-//		Arrays.sort(array);
-//		Integer I = (Integer) o;
-//		assertEquals(array[0], I);
+		// Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+		// List<Integer> list = Arrays.asList(array);
+		// TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
+		// TreeQueue<String> destStringQueue = (TreeQueue<String>)
+		// SerializationTester
+		// .getDeserilizedObject(srcIntegerQueue);
+		// // will not incur class cast exception.
+		// Object o = destStringQueue.peek();
+		// Arrays.sort(array);
+		// Integer I = (Integer) o;
+		// assertEquals(array[0], I);
 	}
 
 	/**
@@ -727,18 +749,66 @@ public class TreeQueueTest {
 	 */
 	@Test
 	public void test_SerializationCompatibility_cast() throws Exception {
-//		Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-//		List<Integer> list = Arrays.asList(array);
-//		TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
-//		TreeQueue<String> destStringQueue = (TreeQueue<String>) SerializationTester
-//				.readObject(srcIntegerQueue, SERIALIZATION_FILE_NAME);
-//
-//		// will not incur class cast exception.
-//		Object o = destStringQueue.peek();
-//		Arrays.sort(array);
-//		Integer I = (Integer) o;
-//		assertEquals(array[0], I);
+		// Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+		// List<Integer> list = Arrays.asList(array);
+		// TreeQueue<Integer> srcIntegerQueue = TreeQueue.create(list);
+		// TreeQueue<String> destStringQueue = (TreeQueue<String>)
+		// SerializationTester
+		// .readObject(srcIntegerQueue, SERIALIZATION_FILE_NAME);
+		//
+		// // will not incur class cast exception.
+		// Object o = destStringQueue.peek();
+		// Arrays.sort(array);
+		// Integer I = (Integer) o;
+		// assertEquals(array[0], I);
 	}
+
+	// @Test
+	// public void testSerialization() throws Exception {
+	// TreeQueue<Integer> out = Collections3.newTreeQueue(5, 4, 3, 0, 1, 1, -2,
+	// 1);
+	//
+	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	// ObjectOutputStream oos = new ObjectOutputStream(baos);
+	// oos.writeObject(out);
+	// oos.close();
+	// baos.close();
+	//
+	// byte[] bytes = baos.toByteArray();
+	//
+	// ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+	// ObjectInputStream ois = new ObjectInputStream(bais);
+	// TreeQueue<Integer> in = (TreeQueue<Integer>) ois.readObject();
+	// ois.close();
+	// bais.close();
+	//
+	// assertEquals(out.size(), in.size());
+	// assertEquals(out.comparator, in.comparator);
+	//
+	//
+	//
+	//
+	// //ByteArrayInputStream bais = new ByteArrayInputStream(oos);
+	//
+	//
+	// // 140 FileOutputStream fos = null;
+	// // 150 ObjectOutputStream out = null;
+	// // 160 try
+	// // 170 {
+	// // 180 fos = new FileOutputStream(filename);
+	// // 190 out = new ObjectOutputStream(fos);
+	// // 200 out.writeObject(time);
+	// // 210 out.close();
+	// // 220 }
+	// // 230 catch(IOException ex)
+	// // 240 {
+	// // 250 ex.printStackTrace();
+	// // 260 }
+	// // 270 }
+	// // 280 }
+	//
+	//
+	// }
 
 	private static class MockComparator<E> implements Comparator<E> {
 
