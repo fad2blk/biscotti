@@ -104,7 +104,7 @@ import com.google.common.base.Preconditions;
  */
 final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
-	private Node max = null;
+	private Node max = nil;
 
 	private TreeDeque(final Comparator<? super E> comparator) {
 		super(comparator);
