@@ -187,7 +187,7 @@ final public class Collections3 {
 	/**
 	 * Creates a new {@code ConcurrentSkipListSet} containing the elements of
 	 * the specified iterable. If the iterable is an instance of a
-	 * {@link SortedSet}, {@link PriorityQueue java.util.PriorityQueue}, or
+	 * {@link SortedSet}, {@link TreeQueue java.util.TreeQueue}, or
 	 * {@link SortedCollection}, this set will be ordered according to the same
 	 * ordering. Otherwise, this set will be ordered according to the <i>natural
 	 * ordering</i> of its elements.
@@ -255,7 +255,7 @@ final public class Collections3 {
 	// /**
 	// * Creates a new {@code TreeSet} containing the elements of the specified
 	// * iterable. If the iterable is an instance of a {@link SortedSet},
-	// * {@link PriorityQueue java.util.PriorityQueue}, or
+	// * {@link TreeQueue java.util.TreeQueue}, or
 	// * {@link SortedCollection}, this set will be ordered according to the
 	// same
 	// * ordering. Otherwise, this set will be ordered according to the
@@ -275,8 +275,8 @@ final public class Collections3 {
 	// Comparator<? super E> c = null;
 	// if (elements instanceof SortedSet<?>)
 	// c = ((SortedSet) elements).comparator();
-	// else if (elements instanceof java.util.PriorityQueue<?>)
-	// c = ((java.util.PriorityQueue) elements).comparator();
+	// else if (elements instanceof java.util.TreeQueue<?>)
+	// c = ((java.util.TreeQueue) elements).comparator();
 	// else if (elements instanceof SortedCollection<?>)
 	// c = ((SortedCollection) elements).comparator();
 	// TreeSet<E> treeSet = c == null ? new TreeSet<E>() : new TreeSet<E>(c);
@@ -359,18 +359,17 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new {@code PriorityQueue} containing the specified initial
-	 * elements ordered according to their <i>natural ordering</i>.
+	 * Creates a new {@code TreeQueue} containing the specified initial elements
+	 * ordered according to their <i>natural ordering</i>.
 	 * 
 	 * @param elements
 	 *            the initial elements to be stored in this queue
-	 * @return a new {@code PriorityQueue} containing the specified initial
-	 *         elements
+	 * @return a new {@code TreeQueue} containing the specified initial elements
 	 */
-	public static <E extends Comparable<? super E>> PriorityQueue<E> newPriorityQueue(
+	public static <E extends Comparable<? super E>> TreeQueue<E> newTreeQueue(
 			final E... elements) {
 		checkNotNull(elements);
-		PriorityQueue<E> q = PriorityQueue.create();
+		TreeQueue<E> q = TreeQueue.create();
 		Collections.addAll(q, elements);
 		return q;
 	}
@@ -384,10 +383,10 @@ final public class Collections3 {
 	 * @return a new {@code PriorityDeque} containing the specified initial
 	 *         elements
 	 */
-	public static <E extends Comparable<? super E>> PriorityDeque<E> newPriorityDeque(
+	public static <E extends Comparable<? super E>> TreeDeque<E> newPriorityDeque(
 			final E... elements) {
 		checkNotNull(elements);
-		PriorityDeque<E> d = PriorityDeque.create();
+		TreeDeque<E> d = TreeDeque.create();
 		Collections.addAll(d, elements);
 		return d;
 	}
@@ -584,8 +583,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i>
-	 * {@code LinkedHashMap}.
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
+	 * LinkedHashMap}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -599,8 +598,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i>
-	 * {@code LinkedHashMap} with the same mappings as the provided {@code Map}.
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
+	 * LinkedHashMap} with the same mappings as the provided {@code Map}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -622,8 +621,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i>
-	 * {@code LinkedHashMap} with the specified initial capacity.
+	 * Creates a new <i>access-order/least-recently-used</i> {@code
+	 * LinkedHashMap} with the specified initial capacity.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -1058,15 +1057,15 @@ final public class Collections3 {
 
 		public SortedSet<E> headSet(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(
-						sortedSet.headSet(toElement), mutex);
+				return new SynchronizedSortedSet<E>(sortedSet
+						.headSet(toElement), mutex);
 			}
 		}
 
 		public SortedSet<E> tailSet(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(
-						sortedSet.tailSet(fromElement), mutex);
+				return new SynchronizedSortedSet<E>(sortedSet
+						.tailSet(fromElement), mutex);
 			}
 		}
 
@@ -1168,8 +1167,8 @@ final public class Collections3 {
 		public Set<Map.Entry<K, V>> entrySet() {
 			synchronized (mutex) {
 				if (entrySet == null)
-					entrySet = new SynchronizedSet<Map.Entry<K, V>>(
-							m.entrySet(), mutex);
+					entrySet = new SynchronizedSet<Map.Entry<K, V>>(m
+							.entrySet(), mutex);
 				return entrySet;
 			}
 		}
@@ -1349,8 +1348,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> headList(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(
-						sortedList.headList(toElement), mutex);
+				return new SynchronizedSortedList<E>(sortedList
+						.headList(toElement), mutex);
 			}
 		}
 
@@ -1373,8 +1372,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> tailList(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(
-						sortedList.tailList(fromElement), mutex);
+				return new SynchronizedSortedList<E>(sortedList
+						.tailList(fromElement), mutex);
 			}
 		}
 	}
@@ -1463,8 +1462,8 @@ final public class Collections3 {
 	 * allows modules to provide users with "read-only" access to internal
 	 * sorted lists. Query operations on the returned list "read through" to the
 	 * specified list, and attempts to modify the returned sorted list, whether
-	 * direct or via its iterator, result in an
-	 * {@code UnsupportedOperationException}.
+	 * direct or via its iterator, result in an {@code
+	 * UnsupportedOperationException}.
 	 * <p>
 	 * The returned list will be serializable if the specified list is
 	 * serializable.
@@ -1593,8 +1592,8 @@ final public class Collections3 {
 	 * allows modules to provide users with "read-only" access to internal
 	 * bounded maps. Query operations on the returned map "read through" to the
 	 * specified map, and attempts to modify the returned bounded map, whether
-	 * direct or via its collection views, result in an
-	 * {@code nsupportedOperationException}.
+	 * direct or via its collection views, result in an {@code
+	 * nsupportedOperationException}.
 	 * <p>
 	 * The returned map will be serializable if the specified map is
 	 * serializable.
