@@ -1,9 +1,10 @@
 package com.googlecode.biscotti.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.googlecode.biscotti.collect.PriorityQueue.Color.BLACK;
-import static com.googlecode.biscotti.collect.PriorityQueue.Color.RED;
+import static com.googlecode.biscotti.collect.TreeQueue.Color.BLACK;
+import static com.googlecode.biscotti.collect.TreeQueue.Color.RED;
 
+import java.io.Serializable;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Comparator;
@@ -42,13 +43,13 @@ import com.google.common.collect.Ordering;
  * method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and
- * {@code equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and {@code
+ * equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that
- * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
- * different priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that {@code
+ * e1.equals(e2) == true}. This is allows duplicate elements to have different
+ * priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, <i>k</i> is the highest number of
@@ -96,32 +97,46 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
- * This queue uses the same ordering rules as {@link java.util.PriorityQueue
- * java.util.PriorityQueue}. In comparison it provides identical functionality,
+ * This queue uses the same ordering rules as {@link java.util.TreeQueue
+ * java.util.TreeQueue}. In comparison it provides identical functionality,
  * faster overall running time and ordered traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements held in this queue
  */
-public class PriorityQueue<E> extends AbstractQueue<E> implements
-		SortedCollection<E> {
+public class TreeQueue<E> extends AbstractQueue<E> implements
+		SortedCollection<E>, Cloneable, Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private int size = 0;
 	final Node nil = new Node();
 	Node min = nil;
 	Node root = nil;
 	int modCount = 0;
 	Comparator<? super E> comparator;
-
-	PriorityQueue(final Comparator<? super E> comparator) {
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
+		clone.root = nil;
+		clone.min = nil;
+		clone.size = 0;
+		clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
+	}
+	
+    
+    
+	TreeQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
 			this.comparator = comparator;
 		else
 			this.comparator = (Comparator<? super E>) Ordering.natural();
 	}
 
-	PriorityQueue(final Iterable<? extends E> elements) {
+	TreeQueue(final Iterable<? extends E> elements) {
 		Comparator<? super E> comparator = null;
 		if (elements instanceof SortedSet<?>)
 			comparator = ((SortedSet) elements).comparator();
@@ -138,43 +153,42 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * Creates a new {@code PriorityQueue} that orders its elements according to
+	 * Creates a new {@code TreeQueue} that orders its elements according to
 	 * their <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code PriorityQueue} that orders its elements according to
+	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> PriorityQueue<E> create() {
-		return new PriorityQueue<E>((Comparator<? super E>) null);
+	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
+		return new TreeQueue<E>((Comparator<? super E>) null);
 	}
 
 	/**
-	 * Creates a new {@code PriorityQueue} that orders its elements according to
-	 * the specified comparator.
+	 * Creates a new {@code TreeQueue} that orders its elements according to the
+	 * specified comparator.
 	 * 
 	 * @param comparator
 	 *            the comparator that will be used to order this priority queue
-	 * @return a new {@code PriorityQueue} that orders its elements according to
+	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> PriorityQueue<E> create(
-			final Comparator<? super E> comparator) {
+	public static <E> TreeQueue<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new PriorityQueue<E>(comparator);
+		return new TreeQueue<E>(comparator);
 	}
 
 	/**
-	 * Creates a new {@code PriorityQueue} containing the elements of the
-	 * specified {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
-	 * ordered according to the same ordering. Otherwise, this priority queue
-	 * will be ordered according to the <i>natural ordering</i> of its elements.
+	 * Creates a new {@code TreeQueue} containing the elements of the specified
+	 * {@code Iterable}. If the specified iterable is an instance of
+	 * {@link SortedSet}, {@link java.util.TreeQueue java.util.TreeQueue}, or
+	 * {@code SortedCollection} this queue will be ordered according to the same
+	 * ordering. Otherwise, this priority queue will be ordered according to the
+	 * <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
-	 * @return a new {@code PriorityQueue} containing the elements of the
-	 *         specified iterable
+	 * @return a new {@code TreeQueue} containing the elements of the specified
+	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
 	 *             one another according to the priority queue's ordering
@@ -182,10 +196,9 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> PriorityQueue<E> create(
-			final Iterable<? extends E> elements) {
+	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new PriorityQueue<E>(elements);
+		return new TreeQueue<E>(elements);
 	}
 
 	/**
@@ -405,11 +418,11 @@ public class PriorityQueue<E> extends AbstractQueue<E> implements
 		Node x, y;
 		if (min == z)
 			min = successor(z);
-		if(z.left == nil || z.right == nil)
+		if (z.left == nil || z.right == nil)
 			y = z;
 		else
 			y = successor(z);
-		if(y.left != nil)
+		if (y.left != nil)
 			x = y.left;
 		else
 			x = y.right;

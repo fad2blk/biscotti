@@ -7,8 +7,8 @@ import java.util.SortedSet;
 import com.google.common.base.Preconditions;
 
 /**
- * An implementation of {@link BoundedQueue} backed by a {@link PriorityQueue}.
- * The elements of this queue are ordered according to their <i>natural
+ * An implementation of {@link BoundedQueue} backed by a {@link TreeQueue}. The
+ * elements of this queue are ordered according to their <i>natural
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
  * Inserting {@code null} elements is prohibited. Attempting to insert
  * non-comparable elements will result in a {@code ClassCastException}.
@@ -17,77 +17,75 @@ import com.google.common.base.Preconditions;
  * <i>least</i> element with respect to the specified ordering. Elements with
  * equal priority are ordered according to their insertion order.
  * <p>
- * When the queue is full the {@code add(E)}, {@code offer(E)}, and
- * {@code addAll(Collection)}, operations behave according to the following
- * policy: if the element to be added is greater than the element with the
- * <i>lowest</i> priority, the <i>lowest</i> element is removed and the new
- * element is added; else the new element is rejected.
+ * When the queue is full the {@code add(E)}, {@code offer(E)}, and {@code
+ * addAll(Collection)}, operations behave according to the following policy: if
+ * the element to be added is greater than the element with the <i>lowest</i>
+ * priority, the <i>lowest</i> element is removed and the new element is added;
+ * else the new element is rejected.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
  * queue using the {@link Collections3#synchronize(BoundedQueue)} method.
  * <p>
- * Refer to {@link PriorityQueue} for details of the underlying implementation.
+ * Refer to {@link TreeQueue} for details of the underlying implementation.
  * 
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements held in this queue
  */
-public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
+public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		BoundedQueue<E> {
-	
+
 	private int maxSize;
 
-	private PriorityBoundedQueue(final int maxSize,
-			final Comparator<? super E> c) {
+	private TreeBoundedQueue(final int maxSize, final Comparator<? super E> c) {
 		super(c);
 		this.maxSize = maxSize;
 	}
 
-	private PriorityBoundedQueue(final Iterable<? extends E> elements) {
+	private TreeBoundedQueue(final Iterable<? extends E> elements) {
 		super(elements);
 		this.maxSize = size();
 	}
 
 	/**
-	 * Creates a new {@code PriorityBoundedQueue} having the specified maximum
-	 * size.
+	 * Creates a new {@code TreeBoundedQueue} having the specified maximum size.
 	 * 
 	 * @param maxSize
 	 *            the maximum size (the bound) of this queue
-	 * @return returns a new {@code PriorityBoundedQueue} having the specified
+	 * @return returns a new {@code TreeBoundedQueue} having the specified
 	 *         maximum size
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E> PriorityBoundedQueue<E> create(final int maxSize) {
+	public static <E> TreeBoundedQueue<E> create(final int maxSize) {
 		Preconditions.checkArgument(maxSize > 0);
-		return new PriorityBoundedQueue<E>(maxSize, null);
+		return new TreeBoundedQueue<E>(maxSize, null);
 	}
 
 	/**
-	 * Creates a new empty {@code PriorityBoundedQueue} having the specified
-	 * maximum size and comparator.
+	 * Creates a new empty {@code TreeBoundedQueue} having the specified maximum
+	 * size and comparator.
 	 * 
 	 * @param maxSize
 	 *            the maximum size (the bound) of this queue
 	 * @param comparator
 	 *            the comparator that will be used to order this priority queue,
 	 *            or {@code null} for {@link Comparable natural ordering}
-	 * @return returns a new {@code PriorityBoundedQueue} having the specified
+	 * @return returns a new {@code TreeBoundedQueue} having the specified
 	 *         maximum size
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E> PriorityBoundedQueue<E> create(final int maxSize,
+	public static <E> TreeBoundedQueue<E> create(final int maxSize,
 			final Comparator<? super E> comparator) {
 		Preconditions.checkArgument(maxSize > 0);
 		Preconditions.checkNotNull(comparator);
-		return new PriorityBoundedQueue<E>(maxSize, comparator);
+		return new TreeBoundedQueue<E>(maxSize, comparator);
 	}
 
 	/**
-	 * Creates a new {@code PriorityBoundedQueue} containing the elements of and
+	 * Creates a new {@code TreeBoundedQueue} containing the elements of and
 	 * having the maximum size equal to the number of elements in the specified
 	 * {@code Iterable}. If the specified iterable is a collection and is an
 	 * instance of a {@link SortedSet} or is another {@code PriorityQueue}
@@ -97,7 +95,7 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
-	 * @return a new {@code PriorityBoundedQueue} containing the elements of the
+	 * @return a new {@code TreeBoundedQueue} containing the elements of the
 	 *         specified iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
@@ -106,10 +104,10 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> PriorityBoundedQueue<E> create(
+	public static <E> TreeBoundedQueue<E> create(
 			final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
-		return new PriorityBoundedQueue<E>(elements);
+		return new TreeBoundedQueue<E>(elements);
 	}
 
 	/**
@@ -156,5 +154,5 @@ public final class PriorityBoundedQueue<E> extends PriorityQueue<E> implements
 	public int remainingCapacity() {
 		return maxSize - size();
 	}
-	
+
 }

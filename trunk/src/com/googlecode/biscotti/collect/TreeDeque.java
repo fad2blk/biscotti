@@ -18,8 +18,8 @@ import com.google.common.base.Preconditions;
  * Inserting {@code null} elements will fail cleanly and safely leaving this
  * deque unmodified. Querying for {@code null} elements is allowed. Attempting
  * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
- * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
+ * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)}, {@code
+ * offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
  * the specified ordering. Elements with equal priority are ordered according to
@@ -37,13 +37,13 @@ import com.google.common.base.Preconditions;
  * deque using the {@link Collections3#synchronize(Deque)} method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and
- * {@code equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and {@code
+ * equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that
- * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
- * different priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that {@code
+ * e1.equals(e2) == true}. This is allows duplicate elements to have different
+ * priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
@@ -51,61 +51,46 @@ import com.google.common.base.Preconditions;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center">
- *       <i>O(m(lg(n - k) + k))</i>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *       <td align="center"><i>O(n)</i>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object) contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object) remove(Object)}</br>
- *     </td>
- *     <td align="center">
- *       <i>O(lg(n - k) + k)</i>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek() peek()}</br>
- *       {@link #poll() poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size() size()}<br>
- *       {@link #getFirst() getFirst()}</br>
- *       {@link #getLast() getLast()}</br>
- *       {@link #peekFirst() peekFirst()}</br>
- *       {@link #peekLast() peekLast()}</br>
- *       {@link #pollFirst() pollFirst()}</br>
- *       {@link #pollLast() pollLast()}</br>
- *       {@link #pop() pop()}</br>
- *       {@link #removeFirst() removeFirst()}</br>
- *       {@link #removeLast() removeLast()}</br>
- *     </td>
- *     <td align="center">
- *       <i>O(1)</i>
- *     </td>
- *   </tr>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center">
+ * <i>O(m(lg(n - k) + k))</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object) contains(Object)}
+ * </br> {@link #offer(Object) offer(E)}</br> {@link #remove(Object)
+ * remove(Object)}</br></td>
+ * <td align="center">
+ * <i>O(lg(n - k) + k)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek() peek()}</br> {@link #poll() poll()}</br> {@link #remove()
+ * remove()}</br> {@link #size() size()}<br>
+ * {@link #getFirst() getFirst()}</br> {@link #getLast() getLast()}</br>
+ * {@link #peekFirst() peekFirst()}</br> {@link #peekLast() peekLast()}</br>
+ * {@link #pollFirst() pollFirst()}</br> {@link #pollLast() pollLast()}</br>
+ * {@link #pop() pop()}</br> {@link #removeFirst() removeFirst()}</br>
+ * {@link #removeLast() removeLast()}</br></td>
+ * <td align="center">
+ * <i>O(1)</i></td>
+ * </tr>
  * </table>
  * <p>
  * Note: This deque uses the same ordering rules as
@@ -117,57 +102,55 @@ import com.google.common.base.Preconditions;
  * @param <E>
  *            the type of elements held in this deque
  */
-final public class PriorityDeque<E> extends PriorityQueue<E> implements
-		Deque<E> {
+final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
 	private Node max = null;
 
-	private PriorityDeque(final Comparator<? super E> comparator) {
+	private TreeDeque(final Comparator<? super E> comparator) {
 		super(comparator);
 	}
 
-	private PriorityDeque(final Iterable<? extends E> elements) {
+	private TreeDeque(final Iterable<? extends E> elements) {
 		super(elements);
 	}
 
 	/**
-	 * Creates a new {@code PriorityDeque} that orders its elements according to
+	 * Creates a new {@code TreeDeque} that orders its elements according to
 	 * their <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code PriorityDeque} that orders its elements according to
+	 * @return a new {@code TreeDeque} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> PriorityDeque<E> create() {
-		return new PriorityDeque<E>((Comparator<? super E>) null);
+	public static <E extends Comparable<? super E>> TreeDeque<E> create() {
+		return new TreeDeque<E>((Comparator<? super E>) null);
 	}
 
 	/**
-	 * Creates a new {@code PriorityDeque} that orders its elements according to
-	 * the specified comparator.
+	 * Creates a new {@code TreeDeque} that orders its elements according to the
+	 * specified comparator.
 	 * 
 	 * @param comparator
 	 *            the comparator that will be used to order this priority deque
-	 * @return a new {@code PriorityDeque} that orders its elements according to
+	 * @return a new {@code TreeDeque} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> PriorityDeque<E> create(
-			final Comparator<? super E> comparator) {
+	public static <E> TreeDeque<E> create(final Comparator<? super E> comparator) {
 		Preconditions.checkNotNull(comparator);
-		return new PriorityDeque<E>(comparator);
+		return new TreeDeque<E>(comparator);
 	}
 
 	/**
-	 * Creates a new {@code PriorityDeque} containing the elements of the
-	 * specified {@code Iterable}. If the specified iterable is an instance of
-	 * of {@link SortedSet}, {@link java.util.PriorityQueue
+	 * Creates a new {@code TreeDeque} containing the elements of the specified
+	 * {@code Iterable}. If the specified iterable is an instance of of
+	 * {@link SortedSet}, {@link java.util.PriorityQueue
 	 * java.util.PriorityQueue}, or {@link SortedCollection} this deque will be
 	 * ordered according to the same ordering. Otherwise, this priority deque
 	 * will be ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the deque
-	 * @return a new {@code PriorityDeque} containing the elements of the
-	 *         specified iterable
+	 * @return a new {@code TreeDeque} containing the elements of the specified
+	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
 	 *             one another according to the priority deque's ordering
@@ -175,10 +158,9 @@ final public class PriorityDeque<E> extends PriorityQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> PriorityDeque<E> create(
-			final Iterable<? extends E> elements) {
+	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
 		Preconditions.checkNotNull(elements);
-		return new PriorityDeque<E>(elements);
+		return new TreeDeque<E>(elements);
 	}
 
 	/**
