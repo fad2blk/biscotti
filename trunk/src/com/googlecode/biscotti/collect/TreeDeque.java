@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.base.Preconditions;
+import com.googlecode.biscotti.collect.TreeQueue.Node;
 
 /**
  * An unbounded priority {@link Deque} based on a modified <a
@@ -104,6 +105,7 @@ import com.google.common.base.Preconditions;
  */
 final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
+	private static final long serialVersionUID = 1L;
 	private Node max = nil;
 
 	private TreeDeque(final Comparator<? super E> comparator) {
@@ -344,6 +346,33 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 */
 	public boolean removeLastOccurrence(Object o) {
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Returns a shallow copy of this {@code TreeDeque}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this deque
+	 */
+	@Override
+	public TreeDeque<E> clone() throws CloneNotSupportedException{
+		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
+		clone.size = 0;
+		clone.min = nil;
+		clone.max = nil;
+		clone.root = nil;
+		clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
+	}
+
+	private void readObject(java.io.ObjectInputStream ois)
+			throws java.io.IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		max = min = root = nil = new Node();
+		int size = ois.readInt();
+		for (int i = 0; i < size; i++)
+			add((E) ois.readObject());
 	}
 
 	@Override
