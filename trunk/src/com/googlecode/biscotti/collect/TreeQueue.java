@@ -106,16 +106,16 @@ import com.google.common.collect.Ordering;
  *            the type of elements held in this queue
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
-		SortedCollection<E>, Cloneable, Serializable{
+		SortedCollection<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	transient private int size = 0;
+	transient int size = 0;
 	transient Node nil = new Node();
 	transient Node min = nil;
 	transient Node root = nil;
 	transient int modCount = 0;
-	Comparator<? super E> comparator; 
-    
+	Comparator<? super E> comparator;
+
 	TreeQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
 			this.comparator = comparator;
@@ -290,9 +290,15 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	public int size() {
 		return size;
 	}
-	
+
+	/**
+	 * Returns a shallow copy of this {@code TreeQueue}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this queue
+	 */
 	@Override
-	public TreeQueue<E> clone() throws CloneNotSupportedException{
+	public TreeQueue<E> clone() throws CloneNotSupportedException {
 		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
 		clone.root = nil;
 		clone.min = nil;
@@ -301,7 +307,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		clone.addAll(this);
 		return clone;
 	}
-	
+
 	private void writeObject(java.io.ObjectOutputStream oos)
 			throws java.io.IOException {
 		oos.defaultWriteObject();
@@ -309,7 +315,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		for (E e : this)
 			oos.writeObject(e);
 	}
-	
+
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
@@ -332,7 +338,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		Node parent, left, right;
 		private Color color = BLACK;
 
-		private Node() {
+		Node() {
 			parent = left = right = this;
 		}
 
