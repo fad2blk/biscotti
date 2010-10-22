@@ -7,10 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,10 +14,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.Test;
+
+import com.google.common.collect.Iterables;
 
 public class TreeQueueTest {
 
@@ -688,29 +687,42 @@ public class TreeQueueTest {
 		SortedCollection queue = TreeQueue.create(comparator);
 		assertEquals(comparator, queue.comparator());
 	}
+	
+	/**
+	 * @tests serialization/deserialization.
+	 */
+	@Test
+	public void test_Serialization2() throws Exception {
 
+		java.util.PriorityQueue<Integer> out = new java.util.PriorityQueue<Integer>(Arrays.asList(1, 2, 3));
+		byte[] bytes2 = SerializationUtil.serialize(out);
+//		Object o = SerializationUtil.serialize(bytes2);
+		//PriorityQueue<Integer> in = (PriorityQueue<Integer>) o;
+		java.util.PriorityQueue<Integer> in = (java.util.PriorityQueue<Integer>) SerializationUtil.deserialize(bytes2);
+//		
+		assertEquals(in.size(), out.size());
+		assertTrue(Iterables.elementsEqual(in, out));
+//		
+		//assertFalse(in.peek() == in.poll());
+		assertTrue(in.poll().equals(out.peek()));
+		assertFalse(Iterables.elementsEqual(in, out));
+	}
 	/**
 	 * @tests serialization/deserialization.
 	 */
 	@Test
 	public void test_Serialization() throws Exception {
 
-		TreeQueue<Integer> out = Collections3.newTreeQueue(1, 2, 3);
-		byte[] bytes;
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(out);
-		oos.close();
-
-		bytes = baos.toByteArray();
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-				bytes));
-
-		TreeQueue<Integer> in = (TreeQueue<Integer>) ois.readObject();
-
-		ois.close();
+		TreeQueue<Integer> out = Collections3.newTreeQueue(5, 4, 3);
+		byte[] bytes = SerializationUtil.serialize(out);
+		TreeQueue<Integer> in = (TreeQueue<Integer>) SerializationUtil.deserialize(bytes);
 		
+		assertEquals(in.size(), out.size());
+		assertTrue(Iterables.elementsEqual(in, out));
+		
+		//assertFalse(in.peek() == in.poll());
+		assertTrue(in.poll().equals(out.peek()));
+		assertFalse(Iterables.elementsEqual(in, out));
 		
 
 		// Integer[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
