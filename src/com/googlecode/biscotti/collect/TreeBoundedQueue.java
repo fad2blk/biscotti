@@ -36,6 +36,7 @@ import com.google.common.base.Preconditions;
 public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		BoundedQueue<E> {
 
+	private static final long serialVersionUID = 1L;
 	private int maxSize;
 
 	private TreeBoundedQueue(final int maxSize, final Comparator<? super E> c) {
