@@ -100,7 +100,7 @@ public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 	}
 
 	/**
-	 * Copies all of the mappings from the specified map to this map, removal
+	 * Copies all of the mappings from the specified map to this map, removing
 	 * stale entries (according to their access order) as necessary to prevent
 	 * the map from overflowing. The effect of this call is equivalent to that
 	 * of calling {@code put(K, V)} on this map once for each mapping in the
