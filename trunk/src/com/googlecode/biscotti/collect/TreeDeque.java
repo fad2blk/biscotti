@@ -193,7 +193,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	public Iterator<E> descendingIterator() {
 		return new Iterator<E>() {
 			private Node next = max;
-			private Node last = null;
+			private Node last = nil;
 			private int expectedModCount = modCount;
 
 			@Override
@@ -206,18 +206,18 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 				checkForConcurrentModification();
 				if (last == null)
 					throw new IllegalStateException();
-				if (last.left != null && last.right != null)
+				if (last.left != nil && last.right != nil)
 					next = last;
 				delete(last);
 				expectedModCount = modCount;
-				last = null;
+				last = nil;
 			}
 
 			@Override
 			public E next() {
 				checkForConcurrentModification();
 				Node node = next;
-				if (node == null)
+				if (node == nil)
 					throw new NoSuchElementException();
 				next = predecessor(node);
 				last = node;
@@ -357,11 +357,8 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	@Override
 	public TreeDeque<E> clone() throws CloneNotSupportedException{
 		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
-		clone.size = 0;
-		clone.min = nil;
-		clone.max = nil;
-		clone.root = nil;
-		clone.modCount = 0;
+		clone.size = clone.modCount = 0;
+		clone.min = clone.max = clone.root = nil;
 		clone.addAll(this);
 		return clone;
 	}
@@ -369,7 +366,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		max = min = root = nil = new Node();
+		max = min = nil;
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
@@ -392,7 +389,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	private Node predecessor(Node x) {
 		Node y;
 		if (x == nil)
-			return nil;
+			return  nil;
 		if (x.left != nil) {
 			y = x.left;
 			while (y.right != nil)
