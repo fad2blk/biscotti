@@ -10,6 +10,8 @@ import static com.googlecode.biscotti.base.Preconditions2.checkElementPosition;
 import static com.googlecode.biscotti.collect.TreeList.Color.BLACK;
 import static com.googlecode.biscotti.collect.TreeList.Color.RED;
 
+import java.io.NotSerializableException;
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -55,6 +57,8 @@ import com.google.common.collect.Ordering;
  * <i>k</i> is the highest number of duplicate elements of each other, and
  * <i>m</i> is the size of the specified collection):
  * <p>
+ * 
+ * <pre>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center">Method</th>
@@ -95,18 +99,22 @@ import com.google.common.collect.Ordering;
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
  * </table>
+ * </pre>
  * 
  * @author Zhenya Leonov
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
-public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
+public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
+		Cloneable, Serializable {
 
-	private int size = 0;
-	private final Node nil = new Node();
-	private Node max = nil;
-	private Node min = nil;
-	private Node root = nil;
+	private static final long serialVersionUID = 1L;
+	private transient int size = 0;
+	private transient Node nil = new Node();
+	private transient Node min = nil;
+	private transient Node max = nil;
+	private transient Node root = nil;
+	private transient int modCount = 0;
 	private Comparator<? super E> comparator;
 
 	private TreeList(final Comparator<? super E> comparator) {
@@ -198,30 +206,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 	@Override
 	public boolean add(E e) {
 		checkNotNull(e);
-		size++;
-		modCount++;
-		Node x = root;
-		Node parent = nil;
 		Node newNode = new Node(e);
-		while (x != nil) {
-			parent = x;
-			if (comparator.compare(newNode.element, x.element) < 0)
-				x = x.left;
-			else
-				x = x.right;
-		}
-		newNode.parent = parent;
-		if (parent == nil)
-			root = newNode;
-		else if (comparator.compare(newNode.element, parent.element) < 0)
-			parent.left = newNode;
-		else
-			parent.right = newNode;
-		fixAfterInsertion(newNode);
-		if (max == nil || comparator.compare(e, max.element) >= 0)
-			max = newNode;
-		if (min == nil || comparator.compare(e, min.element) < 0)
-			min = newNode;
+		insert(newNode);
 		return true;
 	}
 
@@ -471,6 +457,38 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return new SubList(this, fromIndex, size);
 	}
 
+	/**
+	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this list
+	 */
+	@Override
+	public TreeList<E> clone() throws CloneNotSupportedException {
+		TreeList<E> clone = (TreeList<E>) super.clone();
+		clone.root = clone.min = clone.max = clone.nil = new Node();
+		clone.size = clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
+	}
+
+	private void writeObject(java.io.ObjectOutputStream oos)
+			throws java.io.IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(size);
+		for (E e : this)
+			oos.writeObject(e);
+	}
+
+	private void readObject(java.io.ObjectInputStream ois)
+			throws java.io.IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		min = max = root = nil = new Node();
+		int size = ois.readInt();
+		for (int i = 0; i < size; i++)
+			add((E) ois.readObject());
+	}
+
 	private class SubList extends TreeList<E> {
 		private TreeList<E> l;
 		private int offset;
@@ -498,8 +516,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 
 		@Override
 		public boolean add(E e) {
-			checkElementPosition(e, min.element, max.element,
-					comparator);
+			checkElementPosition(e, min.element, max.element, comparator);
 			l.add(e);
 			modCount = l.modCount;
 			size++;
@@ -536,10 +553,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			return listIterator(0);
 		}
 
-		@Override		
+		@Override
 		public ListIterator<E> listIterator(final int index) {
-				checkForConcurrentModification();
-				checkPositionIndex(index, size);
+			checkForConcurrentModification();
+			checkPositionIndex(index, size);
 			return new ListIterator<E>() {
 				private ListIterator<E> i = l.listIterator(index + offset);
 
@@ -641,6 +658,23 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 
 		@Override
+		public TreeList<E> clone() throws CloneNotSupportedException {
+			throw new CloneNotSupportedException();
+		}
+
+		private void writeObject(java.io.ObjectOutputStream oos)
+				throws NotSerializableException {
+			throw new NotSerializableException();
+		}
+
+		private void readObject(java.io.ObjectInputStream ois)
+				throws NotSerializableException {
+			throw new NotSerializableException();
+		}
+
+		// Red-Black-Tree
+
+		@Override
 		Node search(final E e) {
 			int i = comparator.compare(e, min.element);
 			int j = comparator.compare(e, max.element);
@@ -690,17 +724,92 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return null;
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-INSERT(T, z)
+	 * y = nil[T]
+	 * x = root[T]
+	 * while x != nil[T]
+	 *    do y = x
+	 *       if key[z] < key[x]
+	 *          then x = left[x]
+	 *          else x = right[x]
+	 * p[z] = y
+	 * if y = nil[T]
+	 *    then root[T] = z
+	 *    else if key[z] < key[y]
+	 *            then left[y] = z
+	 *            else right[y] = z
+	 * left[z] = nil[T]
+	 * right[z] = nil[T]
+	 * color[z] = RED
+	 * RB-INSERT-FIXUP(T, z)
+	 */
+	private void insert(Node z) {
+		size++;
+		modCount++;
+		Node x = root;
+		Node y = nil;
+		while (x != nil) {
+			y = x;
+			if (comparator.compare(z.element, x.element) < 0)
+				x = x.left;
+			else
+				x = x.right;
+		}
+		z.parent = y;
+		if (y == nil)
+			root = z;
+		else if (comparator.compare(z.element, y.element) < 0)
+			y.left = z;
+		else
+			y.right = z;
+		fixAfterInsertion(z);
+		if (max == nil || comparator.compare(z.element, max.element) >= 0)
+			max = z;
+		if (min == nil || comparator.compare(z.element, min.element) < 0)
+			min = z;
+	}
+
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-DELETE-FIXUP(T, z)
+	 * if left[z] = nil[T] or right[z] = nil[T]
+	 *    then y = z
+	 *    else y = TREE-SUCCESSOR(z)
+	 * if left[y] != nil[T]
+	 *    then x = left[y]
+	 *    else x = right[y]
+	 * p[x] = p[y]
+	 * if p[y] = nil[T]
+	 *    then root[T] = x
+	 *    else if y = left[p[y]]
+	 *            then left[p[y]] = x
+	 *            else right[p[y]] = x
+	 * if y != z
+	 *    then key[z] = key[y]
+	 *         copy y's satellite data into z
+	 * if color[y] = BLACK
+	 *    then RB-DELETE-FIXUP(T, x)
+	 * return y
+	 */
 	void delete(Node z) {
 		size--;
 		modCount++;
 		Node x, y;
 		if (min == z)
 			min = successor(z);
-		if(z.left == nil || z.right == nil)
+		if (max == z)
+			max = predecessor(z);
+		if (z.left == nil || z.right == nil)
 			y = z;
 		else
 			y = successor(z);
-		if(y.left != nil)
+		if (y.left != nil)
 			x = y.left;
 		else
 			x = y.right;
@@ -717,6 +826,19 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 			fixAfterDeletion(x);
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * TREE-SUCCESSOR(x)
+	 * if right[x] != NIL
+	 *    then return TREE-MINIMUM(right[x])
+	 * y = p[x]
+	 * while y != NIL and x = right[y]
+	 *    do x = y
+	 *       y = p[y]
+	 * return y
+	 */
 	private Node successor(Node x) {
 		if (x == nil)
 			return nil;
@@ -751,6 +873,24 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		return y;
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * LEFT-ROTATE(T, x)
+	 * y = right[x]							Set y.
+	 * right[x] = left[y]					Turn y's left subtree into x's right subtree.
+	 * if left[y] != nil[T]
+	 *    then p[left[y]] = x
+	 * p[y] = p[x]							Link x's parent to y.
+	 * if p[x] = nil[T]
+	 *    then root[T] = y
+	 *    else if x = left[p[x]]
+	 *            then left[p[x]] = y
+	 *            else right[p[x]] = y
+	 * left[y] = x							Put x on y's left.
+	 * p[x] = y
+	 */
 	private void leftRotate(final Node x) {
 		if (x != nil) {
 			Node n = x.right;
@@ -787,6 +927,29 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-INSERT-FIXUP(T, z)
+	 * while color[p[z]] = RED
+	 *    do if p[z] = left[p[p[z]]]
+	 *          then y = right[p[p[z]]]
+	 *               if color[y] = RED
+	 *                  then color[p[z]] = BLACK					Case 1
+	 *                       color[y] = BLACK						Case 1 
+	 *                       color[p[p[z]]] = RED					Case 1
+	 *                       z = p[p[z]]							Case 1
+	 *                  else if z = right[p[z]]
+	 *                          then z = p[z]						Case 2
+	 *                               LEFT-ROTATE(T, z)				Case 2
+	 *                       color[p[z]] = BLACK					Case 3
+	 *                       color[p[p[z]]] = RED					Case 3
+	 *                       RIGHT-ROTATE(T, p[p[z]])				Case 3
+	 *          else (same as then clause
+	 *                        with right and left exchanged)
+	 * color[root[T]] = BLACK
+	 */
 	private void fixAfterInsertion(Node z) {
 		z.color = RED;
 		while (z.parent.color == RED) {
@@ -827,6 +990,35 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		root.color = BLACK;
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-DELETE-FIXUP(T, x)
+	 * while x != root[T] and color[x] = BLACK
+	 *    do if x = left[p[x]]
+	 *          then w = right[p[x]]
+	 *               if color[w] = RED
+	 *                  then color[w] = BLACK								Case 1
+	 *                       color[p[x]] = RED								Case 1
+	 *                       LEFT-ROTATE(T, p[x])							Case 1
+	 *                       w = right[p[x]]								Case 1
+	 *               if color[left[w]] = BLACK and color[right[w]] = BLACK
+	 *                  then color[w] = RED									Case 2
+	 *                       x = p[x]										Case 2
+	 *                  else if color[right[w]] = BLACK
+	 *                          then color[left[w]] = BLACK					Case 3
+	 *                               color[w] = RED							Case 3
+	 *                               RIGHT-ROTATE(T,w)						Case 3
+	 *                               w = right[p[x]]						Case 3
+	 *                       color[w] = color[p[x]]							Case 4
+	 *                       color[p[x]] = BLACK							Case 4
+	 *                       color[right[w]] = BLACK						Case 4
+	 *                       LEFT-ROTATE(T, p[x])							Case 4
+	 *                       x = root[T]									Case 4
+	 *          else (same as then clause with right and left exchanged)
+	 * color[x] = BLACK
+	 */
 	private void fixAfterDeletion(Node x) {
 		while (x != root && x.color == BLACK) {
 			if (x == x.parent.left) {
@@ -881,4 +1073,5 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E> {
 		}
 		x.color = BLACK;
 	}
+
 }
