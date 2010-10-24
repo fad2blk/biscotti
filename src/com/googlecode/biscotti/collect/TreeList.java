@@ -37,9 +37,9 @@ import com.google.common.collect.Ordering;
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
  * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a {@code
- * ConcurrentModificationException}. Further, the list iterator does not support
- * the {@code add(E)} and {@code set(E)} operations.
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}. Further, the list iterator does not
+ * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
@@ -57,49 +57,38 @@ import com.google.common.collect.Ordering;
  * <i>k</i> is the highest number of duplicate elements of each other, and
  * <i>m</i> is the size of the specified collection):
  * <p>
- * 
- * <pre>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}</br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}</br>
- *       {@link #indexOf(Object)}</br>
- *       {@link #lastIndexOf(Object)}</br>
- *       {@link #get(int)}</br>
- *       {@link #remove(int)}</br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
- *       {@link #remove(Object)}</br>
- *     </td>
- *     <td align="center"><i>O(lg(n - k) + k)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #size()}</br>
- *     </td>
- *     <td align="center"><i>O(1)</i></td>
- *   </tr>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}</br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}</br> {@link #indexOf(Object)}</br>
+ * {@link #lastIndexOf(Object)}</br> {@link #get(int)}</br> {@link #remove(int)}
+ * </br></td>
+ * <td align="center"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(lg(n - k) + k)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #isEmpty() isEmpty()}</br> {@link #size()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
  * </table>
- * </pre>
  * 
  * @author Zhenya Leonov
  * @param <E>
@@ -278,8 +267,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
@@ -366,8 +355,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
@@ -466,8 +455,12 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {
 		TreeList<E> clone = (TreeList<E>) super.clone();
-		clone.root = clone.min = clone.max = clone.nil = new Node();
-		clone.size = clone.modCount = 0;
+		clone.nil = new Node();
+		clone.min = nil;
+		clone.max = nil;
+		clone.root = nil;
+		clone.size = 0;
+		clone.modCount = 0;
 		clone.addAll(this);
 		return clone;
 	}
@@ -483,7 +476,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		min = max = root = nil = new Node();
+		nil = new Node();
+		min = nil;
+		max = nil;
+		root = nil;
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
@@ -502,10 +498,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		public SubList(TreeList<E> l, int fromIndex, int toIndex) {
 			super(l.comparator);
 			this.l = l;
+			min = l.min;
 			offset = fromIndex;
 			modCount = l.modCount;
 			size = toIndex - fromIndex;
-			min = l.min;
 			int i = 0;
 			for (; i < fromIndex; i++)
 				min = successor(min);
@@ -701,12 +697,16 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		private Color color = BLACK;
 
 		private Node() {
-			parent = left = right = this;
+			parent = this;
+			right = this;
+			left = this;
 		}
 
 		private Node(final E element) {
 			this.element = element;
-			parent = left = right = nil;
+			parent = nil;
+			right = nil;
+			left = nil;
 		}
 	}
 
