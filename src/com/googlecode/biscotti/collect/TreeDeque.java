@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.base.Preconditions;
-import com.googlecode.biscotti.collect.TreeQueue.Node;
 
 /**
  * An unbounded priority {@link Deque} based on a modified <a
@@ -19,8 +18,8 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * Inserting {@code null} elements will fail cleanly and safely leaving this
  * deque unmodified. Querying for {@code null} elements is allowed. Attempting
  * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)}, {@code
- * offerLast(E)}, and {@code push(E)} operations are not supported.
+ * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
+ * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
  * the specified ordering. Elements with equal priority are ordered according to
@@ -38,13 +37,13 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * deque using the {@link Collections3#synchronize(Deque)} method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that {@code
- * e1.equals(e2) == true}. This is allows duplicate elements to have different
- * priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that
+ * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
+ * different priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
@@ -52,46 +51,57 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center">Method</th>
- * <th align="center">Running Time</th>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection) addAll(Collection)}<br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td align="center">
- * <i>O(m(lg(n - k) + k))</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}<br>
- * </td>
- * <td align="center"><i>O(n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #contains(Object) contains(Object)}
- * </br> {@link #offer(Object) offer(E)}</br> {@link #remove(Object)
- * remove(Object)}</br></td>
- * <td align="center">
- * <i>O(lg(n - k) + k)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
- * {@link #peek() peek()}</br> {@link #poll() poll()}</br> {@link #remove()
- * remove()}</br> {@link #size() size()}<br>
- * {@link #getFirst() getFirst()}</br> {@link #getLast() getLast()}</br>
- * {@link #peekFirst() peekFirst()}</br> {@link #peekLast() peekLast()}</br>
- * {@link #pollFirst() pollFirst()}</br> {@link #pollLast() pollLast()}</br>
- * {@link #pop() pop()}</br> {@link #removeFirst() removeFirst()}</br>
- * {@link #removeLast() removeLast()}</br></td>
- * <td align="center">
- * <i>O(1)</i></td>
- * </tr>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}<br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center">
+ *       <i>O(m(lg(n - k) + k))</i>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}<br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object) contains(Object)}</br>
+ *       {@link #offer(Object) offer(E)}</br>
+ *       {@link #remove(Object) remove(Object)}</br>
+ *     </td>
+ *     <td align="center">
+ *       <i>O(lg(n - k) + k)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #element() element()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek() peek()}</br>
+ *       {@link #poll() poll()}</br>
+ *       {@link #remove() remove()}</br>
+ *       {@link #size() size()}<br>
+ *       {@link #getFirst() getFirst()}</br>
+ *       {@link #getLast() getLast()}</br>
+ *       {@link #peekFirst() peekFirst()}</br>
+ *       {@link #peekLast() peekLast()}</br>
+ *       {@link #pollFirst() pollFirst()}</br>
+ *       {@link #pollLast() pollLast()}</br>
+ *       {@link #pop() pop()}</br>
+ *       {@link #removeFirst() removeFirst()}</br>
+ *       {@link #removeLast() removeLast()}</br>
+ *     </td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * <p>
  * Note: This deque uses the same ordering rules as
@@ -132,7 +142,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 * specified comparator.
 	 * 
 	 * @param comparator
-	 *            the comparator that will be used to order this priority deque
+	 *            the comparator that will be used to order this deque
 	 * @return a new {@code TreeDeque} that orders its elements according to
 	 *         {@code comparator}
 	 */
@@ -146,8 +156,8 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 * {@code Iterable}. If the specified iterable is an instance of of
 	 * {@link SortedSet}, {@link java.util.PriorityQueue
 	 * java.util.PriorityQueue}, or {@link SortedCollection} this deque will be
-	 * ordered according to the same ordering. Otherwise, this priority deque
-	 * will be ordered according to the <i>natural ordering</i> of its elements.
+	 * ordered according to the same ordering. Otherwise, this deque will be
+	 * ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the deque
@@ -155,7 +165,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
-	 *             one another according to the priority deque's ordering
+	 *             one another according to the this deque's ordering
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
@@ -347,26 +357,28 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	public boolean removeLastOccurrence(Object o) {
 		throw new UnsupportedOperationException();
 	}
-	
-	/**
-	 * Returns a shallow copy of this {@code TreeDeque}. The elements themselves
-	 * are not cloned.
-	 * 
-	 * @return a shallow copy of this deque
-	 */
-	@Override
-	public TreeDeque<E> clone() throws CloneNotSupportedException{
-		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
-		clone.size = clone.modCount = 0;
-		clone.min = clone.max = clone.root = nil;
-		clone.addAll(this);
-		return clone;
-	}
+
+	// /**
+	// * Returns a shallow copy of this {@code TreeDeque}. The elements
+	// themselves
+	// * are not cloned.
+	// *
+	// * @return a shallow copy of this deque
+	// */
+	// @Override
+	// public TreeDeque<E> clone() throws CloneNotSupportedException{
+	// TreeDeque<E> clone = (TreeDeque<E>) super.clone();
+	// clone.size = clone.modCount = 0;
+	// clone.min = clone.max = clone.root = nil;
+	// clone.addAll(this);
+	// return clone;
+	// }
 
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		max = min = nil;
+		max = nil;
+		min = nil;
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
@@ -389,7 +401,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	private Node predecessor(Node x) {
 		Node y;
 		if (x == nil)
-			return  nil;
+			return nil;
 		if (x.left != nil) {
 			y = x.left;
 			while (y.right != nil)
