@@ -43,13 +43,13 @@ import com.google.common.collect.Ordering;
  * method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and {@code
- * equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and
+ * {@code equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that {@code
- * e1.equals(e2) == true}. This is allows duplicate elements to have different
- * priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that
+ * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
+ * different priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, <i>k</i> is the highest number of
@@ -96,7 +96,7 @@ import com.google.common.collect.Ordering;
  *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
- * <p>
+ * <p> 
  * This queue uses the same ordering rules as {@link java.util.TreeQueue
  * java.util.TreeQueue}. In comparison it provides identical functionality,
  * faster overall running time and ordered traversals via its iterators.
@@ -155,7 +155,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * specified comparator.
 	 * 
 	 * @param comparator
-	 *            the comparator that will be used to order this priority queue
+	 *            the comparator that will be used to order this queue
 	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
@@ -169,7 +169,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link java.util.TreeQueue java.util.TreeQueue}, or
 	 * {@code SortedCollection} this queue will be ordered according to the same
-	 * ordering. Otherwise, this priority queue will be ordered according to the
+	 * ordering. Otherwise, this queue will be ordered according to the
 	 * <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
@@ -178,7 +178,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
-	 *             one another according to the priority queue's ordering
+	 *             one another according to this queue's ordering
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
@@ -229,10 +229,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * Returns an iterator over the elements in this queue in priority order
+	 * Returns an iterator over the elements of this queue in priority order
 	 * from first (head) to last (tail).
 	 * 
-	 * @return an iterator over the elements in this queue in priority order
+	 * @return an iterator over the elements of this queue in priority order
 	 */
 	@Override
 	public Iterator<E> iterator() {
@@ -300,8 +300,11 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public TreeQueue<E> clone() throws CloneNotSupportedException {
 		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
-		clone.root = clone.min = clone.nil = new Node();
-		clone.size = clone.modCount = 0;
+		clone.nil = new Node();
+		clone.modCount = 0;
+		clone.root = nil;
+		clone.min = nil;
+		clone.size = 0;
 		clone.addAll(this);
 		return clone;
 	}
@@ -317,7 +320,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		min = root = nil = new Node();
+		nil = new Node();
+		root = nil;
+		min = nil;
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
@@ -337,12 +342,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		private Color color = BLACK;
 
 		private Node() {
-			parent = left = right = this;
+			left = this;
+			right = this;
+			parent = this;
 		}
 
 		private Node(final E element) {
 			this.element = element;
-			parent = left = right = nil;
+			parent = nil;
+			right = nil;
+			left = nil;
 		}
 	}
 
@@ -386,22 +395,22 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	void insert(final Node z) {
 		size++;
 		modCount++;
-		Node parent = nil;
+		Node y = nil;
 		Node x = root;
 		while (x != nil) {
-			parent = x;
+			y = x;
 			if (comparator.compare(z.element, x.element) < 0)
 				x = x.left;
 			else
 				x = x.right;
 		}
-		z.parent = parent;
-		if (parent == nil)
+		z.parent = y;
+		if (y == nil)
 			root = z;
-		else if (comparator.compare(z.element, parent.element) < 0)
-			parent.left = z;
+		else if (comparator.compare(z.element, y.element) < 0)
+			y.left = z;
 		else
-			parent.right = z;
+			y.right = z;
 		fixAfterInsertion(z);
 		if (min == nil || comparator.compare(z.element, min.element) < 0)
 			min = z;
