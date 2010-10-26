@@ -1,5 +1,6 @@
 package com.googlecode.biscotti.collect;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,8 +14,8 @@ import com.google.common.collect.Lists;
  * elements in <i>first-in-first-out</i> (FIFO) manner; it considers the
  * <i>eldest</i> element to be the least recently inserted element. To prevent
  * this queue from exceeding its capacity restrictions the eldest element is
- * removed as needed when calling {@code add(E)}, {@code offer(E)}, and
- * {@code addAll(Collection)} methods. Elements may be {@code null}.
+ * removed as needed when calling {@code add(E)}, {@code offer(E)}, and {@code
+ * addAll(Collection)} methods. Elements may be {@code null}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
@@ -26,9 +27,10 @@ import com.google.common.collect.Lists;
  * @see LinkedList
  */
 public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
-		BoundedQueue<E> {
+		BoundedQueue<E>, Cloneable, Serializable {
 
-	private final Queue<E> queue;
+	private static final long serialVersionUID = 1L;
+	private LinkedList<E> queue;
 	private final int maxSize;
 
 	private LinkedBoundedQueue(final int maxSize) {
@@ -37,7 +39,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 		this.maxSize = maxSize;
 	}
 
-	private LinkedBoundedQueue(final Queue<E> queue, final int maxSize) {
+	private LinkedBoundedQueue(final LinkedList<E> queue, final int maxSize) {
 		this.queue = queue;
 		this.maxSize = maxSize;
 	}
@@ -132,6 +134,19 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	@Override
 	public int remainingCapacity() {
 		return maxSize - size();
+	}
+
+	/**
+	 * Returns a shallow copy of this {@code LinkedBoundedQueue}. The elements
+	 * themselves are not cloned.
+	 * 
+	 * @return a shallow copy of this queue
+	 */
+	@Override
+	public LinkedBoundedQueue<E> clone() throws CloneNotSupportedException {
+		LinkedBoundedQueue<E> clone = (LinkedBoundedQueue<E>) super.clone();
+		clone.queue = (LinkedList<E>) queue.clone();
+		return clone;
 	}
 
 }

@@ -463,7 +463,6 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {
 		TreeList<E> clone = (TreeList<E>) super.clone();
-		clone.nil = new Node();
 		clone.min = nil;
 		clone.max = nil;
 		clone.root = nil;
@@ -485,9 +484,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		nil = new Node();
+		root = nil;
 		min = nil;
 		max = nil;
-		root = nil;
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
