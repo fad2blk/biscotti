@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-final public class Serialization {
+final public class ObjectSerializer {
 
 	public static byte[] writeObject(Object o) throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

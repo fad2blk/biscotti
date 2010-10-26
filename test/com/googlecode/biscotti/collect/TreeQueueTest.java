@@ -695,10 +695,10 @@ public class TreeQueueTest {
 	public void test_Serialization2() throws Exception {
 
 		java.util.PriorityQueue<Integer> out = new java.util.PriorityQueue<Integer>(Arrays.asList(1, 2, 3));
-		byte[] bytes2 = Serialization.writeObject(out);
+		byte[] bytes2 = ObjectSerializer.writeObject(out);
 //		Object o = SerializationUtil.serialize(bytes2);
 		//PriorityQueue<Integer> in = (PriorityQueue<Integer>) o;
-		java.util.PriorityQueue<Integer> in = (java.util.PriorityQueue<Integer>) Serialization.readObject(bytes2);
+		java.util.PriorityQueue<Integer> in = (java.util.PriorityQueue<Integer>) ObjectSerializer.readObject(bytes2);
 //		
 		assertEquals(in.size(), out.size());
 		assertTrue(Iterables.elementsEqual(in, out));
@@ -714,8 +714,8 @@ public class TreeQueueTest {
 	public void test_Serialization() throws Exception {
 
 		TreeQueue<Integer> out = Collections3.newTreeQueue(5, 4, 3);
-		byte[] bytes = Serialization.writeObject(out);
-		TreeQueue<Integer> in = (TreeQueue<Integer>) Serialization.readObject(bytes);
+		byte[] bytes = ObjectSerializer.writeObject(out);
+		TreeQueue<Integer> in = (TreeQueue<Integer>) ObjectSerializer.readObject(bytes);
 		
 		assertEquals(in.size(), out.size());
 		assertTrue(Iterables.elementsEqual(in, out));
