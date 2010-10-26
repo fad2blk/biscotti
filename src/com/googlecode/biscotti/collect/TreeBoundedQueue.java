@@ -71,8 +71,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 * @param maxSize
 	 *            the maximum size (the bound) of this queue
 	 * @param comparator
-	 *            the comparator that will be used to order this priority queue,
-	 *            or {@code null} for {@link Comparable natural ordering}
+	 *            the comparator that will be used to order this queue
 	 * @return returns a new {@code TreeBoundedQueue} having the specified
 	 *         maximum size
 	 * @throws IllegalArgumentException

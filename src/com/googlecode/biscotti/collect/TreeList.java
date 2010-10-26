@@ -153,7 +153,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * specified comparator.
 	 * 
 	 * @param comparator
-	 *            the comparator that will be used to order this priority list
+	 *            the comparator that will be used to order this list
 	 * @return a new {@code TreeList} that orders its elements according to
 	 *         {@code comparator}
 	 */
