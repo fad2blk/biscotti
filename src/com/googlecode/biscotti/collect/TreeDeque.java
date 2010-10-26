@@ -18,8 +18,8 @@ import com.google.common.base.Preconditions;
  * Inserting {@code null} elements will fail cleanly and safely leaving this
  * deque unmodified. Querying for {@code null} elements is allowed. Attempting
  * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
- * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
+ * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)}, {@code
+ * offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
  * the specified ordering. Elements with equal priority are ordered according to
@@ -37,13 +37,13 @@ import com.google.common.base.Preconditions;
  * deque using the {@link Collections3#synchronize(Deque)} method.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to maintain priority order, and
- * {@code equals} when testing for element equality. The ordering imposed by the
+ * not one is explicitly provided) to maintain priority order, and {@code
+ * equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that
- * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
- * different priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessary true that {@code
+ * e1.equals(e2) == true}. This is allows duplicate elements to have different
+ * priority.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
@@ -358,25 +358,29 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		throw new UnsupportedOperationException();
 	}
 
-	// /**
-	// * Returns a shallow copy of this {@code TreeDeque}. The elements
-	// themselves
-	// * are not cloned.
-	// *
-	// * @return a shallow copy of this deque
-	// */
-	// @Override
-	// public TreeDeque<E> clone() throws CloneNotSupportedException{
-	// TreeDeque<E> clone = (TreeDeque<E>) super.clone();
-	// clone.size = clone.modCount = 0;
-	// clone.min = clone.max = clone.root = nil;
-	// clone.addAll(this);
-	// return clone;
-	// }
+	/**
+	 * Returns a shallow copy of this {@code TreeDeque}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this deque
+	 */
+	@Override
+	public TreeDeque<E> clone() throws CloneNotSupportedException {
+		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
+		clone.modCount = 0;
+		clone.root = nil;
+		clone.min = nil;
+		clone.max = nil;
+		clone.size = 0;
+		clone.addAll(this);
+		return clone;
+	}
 
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
+		nil = new Node();
+		root = nil;
 		max = nil;
 		min = nil;
 		int size = ois.readInt();

@@ -300,7 +300,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public TreeQueue<E> clone() throws CloneNotSupportedException {
 		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
-		clone.nil = new Node();
+		//clone.nil = new Node();
 		clone.modCount = 0;
 		clone.root = nil;
 		clone.min = nil;
@@ -341,7 +341,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		Node parent, left, right;
 		private Color color = BLACK;
 
-		private Node() {
+		Node() {
 			left = this;
 			right = this;
 			parent = this;
