@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
 		BoundedMap<K, V> {
 
+	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
 	private LRUMap(final int maxSize, final int initialCapacity,
