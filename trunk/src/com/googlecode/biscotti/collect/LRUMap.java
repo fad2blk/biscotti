@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 /**
- * A {@link LinkedHashMap} implementation of {@link BoundedMap} which evicts
+ * A {@link LinkedHashMap} implementation of {@link BoundedMap} which removes
  * stale mappings in <i>least-recently-accessed</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
