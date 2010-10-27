@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
+import com.googlecode.biscotti.collect.TreeQueue.Node;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -463,6 +464,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {
 		TreeList<E> clone = (TreeList<E>) super.clone();
+		clone.nil = new Node();
 		clone.min = nil;
 		clone.max = nil;
 		clone.root = nil;
