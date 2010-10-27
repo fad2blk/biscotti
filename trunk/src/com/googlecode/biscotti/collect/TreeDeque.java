@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.base.Preconditions;
+import com.googlecode.biscotti.collect.TreeQueue.Node;
 
 /**
  * An unbounded priority {@link Deque} based on a modified <a
@@ -367,6 +368,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	@Override
 	public TreeDeque<E> clone() throws CloneNotSupportedException {
 		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
+		clone.nil = new Node();
 		clone.modCount = 0;
 		clone.root = nil;
 		clone.min = nil;
