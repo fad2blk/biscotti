@@ -1826,94 +1826,60 @@ final public class Collections3 {
 		}
 	}
 
-	static class UnmodifiableCollection<E> implements Collection<E>,
-			Serializable {
+	static class UnmodifiableCollection<E> extends ForwardingCollection<E>
+			implements Collection<E>, Serializable {
 
-		// serialVersionUID from JDK 6
 		private static final long serialVersionUID = 1820017752578914078L;
-
 		final Collection<? extends E> c;
 
 		UnmodifiableCollection(Collection<? extends E> c) {
-			checkNotNull(c);
-			this.c = c;
+			this.c = checkNotNull(c);
 		}
 
-		public int size() {
-			return c.size();
-		}
-
-		public boolean isEmpty() {
-			return c.isEmpty();
-		}
-
-		public boolean contains(Object o) {
-			return c.contains(o);
-		}
-
-		public Object[] toArray() {
-			return c.toArray();
-		}
-
-		public <T> T[] toArray(T[] a) {
-			return c.toArray(a);
-		}
-
-		public String toString() {
-			return c.toString();
-		}
-
+		@Override
 		public Iterator<E> iterator() {
-			return new Iterator<E>() {
-				Iterator<? extends E> i = c.iterator();
-
-				public boolean hasNext() {
-					return i.hasNext();
-				}
-
-				public E next() {
-					return i.next();
-				}
-
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
+			return Iterators.unmodifiableIterator(delegate().iterator());
 		}
 
+		@Override
 		public boolean add(E e) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean remove(Object o) {
 			throw new UnsupportedOperationException();
 		}
 
-		public boolean containsAll(Collection<?> coll) {
-			return c.containsAll(coll);
-		}
-
+		@Override
 		public boolean addAll(Collection<? extends E> coll) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean removeAll(Collection<?> coll) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean retainAll(Collection<?> coll) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void clear() {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		protected Collection<E> delegate() {
+			return (Collection<E>) c;
 		}
 	}
 
 	static class UnmodifiableSet<E> extends UnmodifiableCollection<E> implements
 			Set<E>, Serializable {
 
-		// serialVersionUID from JDK 6
 		private static final long serialVersionUID = -9215047833775013803L;
 
 		UnmodifiableSet(Set<? extends E> s) {
@@ -1930,5 +1896,5 @@ final public class Collections3 {
 			return c.hashCode();
 		}
 	}
-
+	
 }
