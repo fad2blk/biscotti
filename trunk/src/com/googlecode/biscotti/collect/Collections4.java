@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
@@ -26,6 +27,90 @@ import com.google.common.collect.Iterators;
  * @author Zhenya Leonov
  */
 final public class Collections4 {
+
+	/**
+	 * Returns an unmodifiable view of the specified {@code SortedCollection}.
+	 * This method allows modules to provide users with "read-only" access to
+	 * internal sorted collections. Query operations on the returned collection
+	 * "read through" to the specified collection. Attempts to modify the
+	 * returned sorted collection, whether direct, via its iterator, result in
+	 * an {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned sorted collection will be serializable if the specified
+	 * collection is serializable.
+	 * 
+	 * @param sc
+	 *            the sorted collection for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified sorted collection
+	 */
+	public static <E> SortedCollection<E> unmodifiable(SortedCollection<E> sc) {
+		return new UnmodifiableSortedCollection<E>(sc);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified {@code SortedList}. This
+	 * method allows modules to provide users with "read-only" access to
+	 * internal sorted lists. Query operations on the returned list
+	 * "read through" to the specified list. Attempts to modify the returned
+	 * sorted list, whether direct, via its iterators, or via its {@code
+	 * subList}, {@code headList}, or {@code tailList} views, result in an
+	 * {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned sorted list will be serializable if the specified list is
+	 * serializable.
+	 * 
+	 * @param sl
+	 *            the sorted list for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified sorted list
+	 */
+	public static <E> SortedList<E> unmodifiable(SortedList<E> sl) {
+		return new UnmodifiableSortedList<E>(sl);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified {@code NavigableSet}. This
+	 * method allows modules to provide users with "read-only" access to
+	 * internal navigable sets. Query operations on the returned set
+	 * "read through" to the specified set. Attempts to modify the returned
+	 * navigable set, whether direct, via its iterator, or via its {@code
+	 * subSet}, {@code headSet}, or {@code tailSet} views, result in an {@code
+	 * UnsupportedOperationException}.
+	 * <p>
+	 * The returned navigable set will be serializable if the specified set is
+	 * serializable.
+	 * 
+	 * @param ns
+	 *            the navigable set for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified navigable set
+	 */
+	public static <E> NavigableSet<E> unmodifiable(NavigableSet<E> ns) {
+		return new UnmodifiableNavigableSet<E>(ns);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified {@code NavigableMap}. This
+	 * method allows modules to provide users with "read-only" access to
+	 * internal navigable maps. Query operations on the returned map
+	 * "read through" to the specified map. Attempts to modify the returned
+	 * navigable map, whether direct, via its collection views, or via its
+	 * {@code subMap}, {@code headMap}, or {@code tailMap} views, result in an
+	 * {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned navigable map will be serializable if the specified map is
+	 * serializable.
+	 * 
+	 * @param nm
+	 *            the navigable map for which an unmodifiable view is to be
+	 *            returned
+	 * @return an unmodifiable view of the specified navigable map
+	 */
+	public static <K, V> NavigableMap<K, V> unmodifiable(
+			NavigableMap<K, ? extends V> nm) {
+		return new UnmodifiableNavigableMap<K, V>(nm);
+	}
 
 	/**
 	 * @serial include
@@ -84,6 +169,109 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
+	private static class UnmodifiableSortedCollection<E> extends
+			UnmodifiableCollection<E> implements SortedCollection<E>,
+			Serializable {
+
+		private static final long serialVersionUID = 1L;
+		private final SortedCollection<E> sc;
+
+		private UnmodifiableSortedCollection(final SortedCollection<E> sc) {
+			super(sc);
+			this.sc = sc;
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			return sc.comparator();
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class UnmodifiableSortedList<E> extends
+			UnmodifiableSortedCollection<E> implements SortedList<E>,
+			Serializable {
+
+		private static final long serialVersionUID = 1L;
+		private final SortedList<E> sl;
+
+		private UnmodifiableSortedList(final SortedList<E> sl) {
+			super(sl);
+			this.sl = checkNotNull(sl);
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement) {
+			return new UnmodifiableSortedList<E>(sl.headList(toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, E toElement) {
+			return new UnmodifiableSortedList<E>(sl.subList(fromElement,
+					toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			return new UnmodifiableSortedList<E>(sl.subList(fromIndex, toIndex));
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement) {
+			return new UnmodifiableSortedList<E>(sl.tailList(fromElement));
+		}
+
+		@Override
+		public void add(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return Iterators2.unmodifiable(sl.listIterator());
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			return Iterators2.unmodifiable(sl.listIterator(index));
+		}
+
+		@Override
+		public E remove(int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E set(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E get(int index) {
+			return sl.get(index);
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			return sl.indexOf(o);
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			return sl.lastIndexOf(o);
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
 	private static class UnmodifiableSet<E> extends UnmodifiableCollection<E>
 			implements Set<E>, Serializable {
 
@@ -112,10 +300,12 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = -4929149591599911165L;
 		private final SortedSet<E> ss;
+		private transient E first = null;
+		private transient E last = null;
 
-		private UnmodifiableSortedSet(SortedSet<E> s) {
-			super(s);
-			ss = s;
+		private UnmodifiableSortedSet(SortedSet<E> ss) {
+			super(ss);
+			this.ss = ss;
 		}
 
 		@Override
@@ -141,12 +331,16 @@ final public class Collections4 {
 
 		@Override
 		public E first() {
-			return ss.first();
+			if (first == null)
+				first = ss.first();
+			return first;
 		}
 
 		@Override
 		public E last() {
-			return ss.last();
+			if (last == null)
+				last = ss.last();
+			return last;
 		}
 	}
 
@@ -158,6 +352,7 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = 1L;
 		private final NavigableSet<E> ns;
+		private transient NavigableSet<E> descendingSet = null;
 
 		private UnmodifiableNavigableSet(NavigableSet<E> ns) {
 			super(ns);
@@ -176,7 +371,10 @@ final public class Collections4 {
 
 		@Override
 		public NavigableSet<E> descendingSet() {
-			return new UnmodifiableNavigableSet<E>(ns.descendingSet());
+			if (descendingSet == null)
+				descendingSet = new UnmodifiableNavigableSet<E>(ns
+						.descendingSet());
+			return descendingSet;
 		}
 
 		@Override
@@ -202,12 +400,12 @@ final public class Collections4 {
 
 		@Override
 		public E pollFirst() {
-			return ns.pollFirst();
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public E pollLast() {
-			return ns.pollLast();
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -252,9 +450,8 @@ final public class Collections4 {
 			if (entrySet == null) {
 				ImmutableSet.Builder<Entry<K, V>> builder = ImmutableSet
 						.builder();
-				for (Entry<K, V> e : delegate().entrySet()) {
-					builder.add(new SimpleImmutableEntry<K, V>(e));
-				}
+				for (Entry<K, V> entry : delegate().entrySet())
+					builder.add(new SimpleImmutableEntry<K, V>(entry));
 				return builder.build();
 			}
 			return entrySet;
@@ -316,13 +513,12 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = -8806743815996713206L;
 		private final SortedMap<K, ? extends V> sm;
-
 		private transient K firstKey = null;
 		private transient K lastKey = null;
-		
-		private UnmodifiableSortedMap(SortedMap<K, ? extends V> m) {
-			super(m);
-			sm = m;
+
+		private UnmodifiableSortedMap(SortedMap<K, ? extends V> sm) {
+			super(sm);
+			this.sm = sm;
 		}
 
 		@Override
@@ -347,14 +543,14 @@ final public class Collections4 {
 
 		@Override
 		public K firstKey() {
-			if( firstKey == null )
+			if (firstKey == null)
 				firstKey = sm.firstKey();
 			return firstKey;
 		}
 
 		@Override
 		public K lastKey() {
-			if( lastKey == null )
+			if (lastKey == null)
 				lastKey = sm.lastKey();
 			return lastKey;
 		}
@@ -369,15 +565,15 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = 1L;
 		private final NavigableMap<K, ? extends V> nm;
-
 		private transient Entry<K, V> lastEntry = null;
 		private transient Entry<K, V> firstEntry = null;
 		private transient NavigableMap<K, V> descendingMap = null;
 		private transient NavigableSet<K> descendingKeySet = null;
-		
-		private UnmodifiableNavigableMap(final NavigableMap<K, ? extends V> m) {
-			super(m);
-			nm = m;
+		private transient NavigableSet<K> navigableKeySet = null;
+
+		private UnmodifiableNavigableMap(final NavigableMap<K, ? extends V> nm) {
+			super(nm);
+			this.nm = nm;
 		}
 
 		@Override
@@ -392,15 +588,17 @@ final public class Collections4 {
 
 		@Override
 		public NavigableSet<K> descendingKeySet() {
-			if( descendingKeySet == null )
-				descendingKeySet = new UnmodifiableNavigableSet<K>(nm.descendingKeySet());
+			if (descendingKeySet == null)
+				descendingKeySet = new UnmodifiableNavigableSet<K>(nm
+						.descendingKeySet());
 			return descendingKeySet;
 		}
 
 		@Override
 		public NavigableMap<K, V> descendingMap() {
-			if( descendingMap == null )
-				descendingMap = new UnmodifiableNavigableMap<K, V>(nm.descendingMap());
+			if (descendingMap == null)
+				descendingMap = new UnmodifiableNavigableMap<K, V>(nm
+						.descendingMap());
 			return descendingMap;
 		}
 
@@ -456,17 +654,20 @@ final public class Collections4 {
 
 		@Override
 		public NavigableSet<K> navigableKeySet() {
-			return new UnmodifiableNavigableSet<K>(nm.navigableKeySet());
+			if (navigableKeySet == null)
+				navigableKeySet = new UnmodifiableNavigableSet<K>(nm
+						.navigableKeySet());
+			return navigableKeySet;
 		}
 
 		@Override
 		public Entry<K, V> pollFirstEntry() {
-			return new SimpleImmutableEntry<K, V>(nm.pollFirstEntry());
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public Entry<K, V> pollLastEntry() {
-			return new SimpleImmutableEntry<K, V>(nm.pollLastEntry());
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
