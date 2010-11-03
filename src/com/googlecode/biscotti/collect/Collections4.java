@@ -3,6 +3,7 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
@@ -11,12 +12,10 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
-import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.AbstractMap.SimpleImmutableEntry;
 
 import com.google.common.collect.ForwardingCollection;
 import com.google.common.collect.ForwardingMap;
