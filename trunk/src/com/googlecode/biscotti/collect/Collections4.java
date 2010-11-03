@@ -5,11 +5,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -29,6 +32,42 @@ import com.google.common.collect.Iterators;
 final public class Collections4 {
 
 	/**
+	 * Returns an unmodifiable view of the specified {@code Queue}. This method
+	 * allows modules to provide users with "read-only" access to internal
+	 * queues. Query operations on the returned queue "read through" to the
+	 * specified queue. Attempts to modify the returned queue, whether direct,
+	 * via its iterator, result in an {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned queue will be serializable if the specified queue is
+	 * serializable.
+	 * 
+	 * @param q
+	 *            the queue for which an unmodifiable view is to be returned
+	 * @return an unmodifiable view of the specified queue
+	 */
+	public static <E> Queue<E> unmodifiable(final Queue<? extends E> q) {
+		return new UnmodifiableQueue<E>(q);
+	}
+
+	/**
+	 * Returns an unmodifiable view of the specified {@code Deque}. This method
+	 * allows modules to provide users with "read-only" access to internal
+	 * deques. Query operations on the returned deque "read through" to the
+	 * specified deque. Attempts to modify the returned deque, whether direct,
+	 * via its iterators, result in an {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned deque will be serializable if the specified deque is
+	 * serializable.
+	 * 
+	 * @param d
+	 *            the deque for which an unmodifiable view is to be returned
+	 * @return an unmodifiable view of the specified deque
+	 */
+	public static <E> Deque<E> unmodifiable(final Deque<? extends E> d) {
+		return new UnmodifiableDeque<E>(d);
+	}
+
+	/**
 	 * Returns an unmodifiable view of the specified {@code SortedCollection}.
 	 * This method allows modules to provide users with "read-only" access to
 	 * internal sorted collections. Query operations on the returned collection
@@ -44,7 +83,8 @@ final public class Collections4 {
 	 *            returned
 	 * @return an unmodifiable view of the specified sorted collection
 	 */
-	public static <E> SortedCollection<E> unmodifiable(SortedCollection<E> sc) {
+	public static <E> SortedCollection<E> unmodifiable(
+			final SortedCollection<E> sc) {
 		return new UnmodifiableSortedCollection<E>(sc);
 	}
 
@@ -65,7 +105,7 @@ final public class Collections4 {
 	 *            returned
 	 * @return an unmodifiable view of the specified sorted list
 	 */
-	public static <E> SortedList<E> unmodifiable(SortedList<E> sl) {
+	public static <E> SortedList<E> unmodifiable(final SortedList<E> sl) {
 		return new UnmodifiableSortedList<E>(sl);
 	}
 
@@ -86,7 +126,7 @@ final public class Collections4 {
 	 *            returned
 	 * @return an unmodifiable view of the specified navigable set
 	 */
-	public static <E> NavigableSet<E> unmodifiable(NavigableSet<E> ns) {
+	public static <E> NavigableSet<E> unmodifiable(final NavigableSet<E> ns) {
 		return new UnmodifiableNavigableSet<E>(ns);
 	}
 
@@ -108,7 +148,7 @@ final public class Collections4 {
 	 * @return an unmodifiable view of the specified navigable map
 	 */
 	public static <K, V> NavigableMap<K, V> unmodifiable(
-			NavigableMap<K, ? extends V> nm) {
+			final NavigableMap<K, ? extends V> nm) {
 		return new UnmodifiableNavigableMap<K, V>(nm);
 	}
 
@@ -199,7 +239,7 @@ final public class Collections4 {
 
 		private UnmodifiableSortedList(final SortedList<E> sl) {
 			super(sl);
-			this.sl = checkNotNull(sl);
+			this.sl = sl;
 		}
 
 		@Override
@@ -272,6 +312,148 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
+	private static class UnmodifiableQueue<E> extends UnmodifiableCollection<E>
+			implements Queue<E>, Serializable {
+
+		private static final long serialVersionUID = 1L;
+		private final Queue<? extends E> q;
+
+		private UnmodifiableQueue(final Queue<? extends E> q) {
+			super(q);
+			this.q = q;
+		}
+
+		@Override
+		public E element() {
+			return q.element();
+		}
+
+		@Override
+		public boolean offer(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E peek() {
+			return q.peek();
+		}
+
+		@Override
+		public E poll() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E remove() {
+			throw new UnsupportedOperationException();
+		}
+
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class UnmodifiableDeque<E> extends UnmodifiableQueue<E>
+			implements Deque<E>, Serializable {
+
+		private static final long serialVersionUID = 1L;
+		private final Deque<E> d;
+
+		private UnmodifiableDeque(final Deque<? extends E> d) {
+			super(d);
+			this.d = (Deque<E>) d;
+		}
+
+		@Override
+		public void addFirst(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void addLast(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Iterator<E> descendingIterator() {
+			return Iterators.unmodifiableIterator(d.descendingIterator());
+		}
+
+		@Override
+		public E getFirst() {
+			return d.getFirst();
+		}
+
+		@Override
+		public E getLast() {
+			return d.getLast();
+		}
+
+		@Override
+		public boolean offerFirst(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean offerLast(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E peekFirst() {
+			return d.peekFirst();
+		}
+
+		@Override
+		public E peekLast() {
+			return d.peekLast();
+		}
+
+		@Override
+		public E pollFirst() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E pollLast() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E pop() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void push(E e) {
+			throw new UnsupportedOperationException();
+
+		}
+
+		@Override
+		public E removeFirst() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeFirstOccurrence(Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E removeLast() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeLastOccurrence(Object o) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
 	private static class UnmodifiableSet<E> extends UnmodifiableCollection<E>
 			implements Set<E>, Serializable {
 
@@ -300,8 +482,6 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = -4929149591599911165L;
 		private final SortedSet<E> ss;
-		private transient E first = null;
-		private transient E last = null;
 
 		private UnmodifiableSortedSet(SortedSet<E> ss) {
 			super(ss);
@@ -331,16 +511,12 @@ final public class Collections4 {
 
 		@Override
 		public E first() {
-			if (first == null)
-				first = ss.first();
-			return first;
+			return ss.first();
 		}
 
 		@Override
 		public E last() {
-			if (last == null)
-				last = ss.last();
-			return last;
+			return ss.last();
 		}
 	}
 
@@ -513,8 +689,6 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = -8806743815996713206L;
 		private final SortedMap<K, ? extends V> sm;
-		private transient K firstKey = null;
-		private transient K lastKey = null;
 
 		private UnmodifiableSortedMap(SortedMap<K, ? extends V> sm) {
 			super(sm);
@@ -543,16 +717,12 @@ final public class Collections4 {
 
 		@Override
 		public K firstKey() {
-			if (firstKey == null)
-				firstKey = sm.firstKey();
-			return firstKey;
+			return sm.firstKey();
 		}
 
 		@Override
 		public K lastKey() {
-			if (lastKey == null)
-				lastKey = sm.lastKey();
-			return lastKey;
+			return sm.lastKey();
 		}
 	}
 
