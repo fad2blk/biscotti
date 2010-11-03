@@ -96,10 +96,11 @@ import com.google.common.collect.Ordering;
  *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
- * <p> 
- * This queue uses the same ordering rules as {@link java.util.TreeQueue
- * java.util.TreeQueue}. In comparison it provides identical functionality,
- * faster overall running time and ordered traversals via its iterators.
+ * <p>
+ * Note: This queue uses the same ordering rules as
+ * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
+ * provides identical functionality, faster overall running time and ordered
+ * traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
