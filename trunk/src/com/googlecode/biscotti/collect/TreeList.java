@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
-import static com.googlecode.biscotti.base.Preconditions2.checkElementPosition;
 import static com.googlecode.biscotti.collect.TreeList.Color.BLACK;
 import static com.googlecode.biscotti.collect.TreeList.Color.RED;
 
