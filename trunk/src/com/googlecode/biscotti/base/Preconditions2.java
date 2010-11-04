@@ -14,14 +14,17 @@ import com.google.common.collect.Ordering;
  */
 final public class Preconditions2 {
 
+	private Preconditions2() {
+	};
+
 	/**
 	 * Ensures that an argument passed as a parameter to the calling method is
 	 * not {@code null}.
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object)
-	 * Preconditions.checkNotNull(T)} this method throws an
-	 * {@code IllegalArgumentException} instead of a
-	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
+	 * Preconditions.checkNotNull(T)} this method throws an {@code
+	 * IllegalArgumentException} instead of a {@code NullPointerException} if
+	 * the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -40,9 +43,9 @@ final public class Preconditions2 {
 	 * not {@code null}.
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object, Object)
-	 * Preconditions.checkNotNull(T, Object)} this method throws an
-	 * {@code IllegalArgumentException} instead of a
-	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
+	 * Preconditions.checkNotNull(T, Object)} this method throws an {@code
+	 * IllegalArgumentException} instead of a {@code NullPointerException} if
+	 * the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -65,8 +68,8 @@ final public class Preconditions2 {
 	 * <p>
 	 * Unlike {@link Preconditions#checkNotNull(Object, String, Object...)
 	 * Preconditions.checkNotNull(T, String, Object...)} this method throws an
-	 * {@code IllegalArgumentException} instead of a
-	 * {@code NullPointerException} if the {@code arg} parameter is {@code null}.
+	 * {@code IllegalArgumentException} instead of a {@code
+	 * NullPointerException} if the {@code arg} parameter is {@code null}.
 	 * 
 	 * @param arg
 	 *            the argument passed to the calling method
@@ -74,8 +77,8 @@ final public class Preconditions2 {
 	 *            a template for the exception message should the check fail.
 	 *            The message is formed by replacing each {@code %s} placeholder
 	 *            in the template with an argument. These are matched by
-	 *            position - the first {@code %s} gets
-	 *            {@code errorMessageArgs[0]}, etc. Unmatched arguments will be
+	 *            position - the first {@code %s} gets {@code
+	 *            errorMessageArgs[0]}, etc. Unmatched arguments will be
 	 *            appended to the formatted message in square braces. Unmatched
 	 *            placeholders will be left as-is.
 	 * @param messages
@@ -132,11 +135,11 @@ final public class Preconditions2 {
 			Comparator<? super T> comparator) {
 		if (comparator.compare(element, fromElement) < 0)
 			throw new IllegalArgumentException(format(
-					"element (%s) must not be less than first element (%s)",
-					element, fromElement));
-		if (comparator.compare(element, toElement) > 0)
+					"element (%s) must not be less than (%s)", element,
+					fromElement));
+		if (comparator.compare(element, toElement) >= 0)
 			throw new IllegalArgumentException(format(
-					"element (%s) must not be greater than last element (%s)",
+					"element (%s) must not be greater or equal than (%s)",
 					element, toElement));
 		return element;
 	}
