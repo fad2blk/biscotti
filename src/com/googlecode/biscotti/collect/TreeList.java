@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
-import com.googlecode.biscotti.collect.TreeQueue.Node;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -38,9 +37,9 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
  * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a
- * {@code ConcurrentModificationException}. Further, the list iterator does not
- * support the {@code add(E)} and {@code set(E)} operations.
+ * except through the iterator's own remove method, will result in a {@code
+ * ConcurrentModificationException}. Further, the list iterator does not support
+ * the {@code add(E)} and {@code set(E)} operations.
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
@@ -58,6 +57,8 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * <i>k</i> is the highest number of duplicate elements of each other, and
  * <i>m</i> is the size of the specified collection):
  * <p>
+ * 
+ * <pre>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center">Method</th>
@@ -101,7 +102,7 @@ import com.googlecode.biscotti.collect.TreeQueue.Node;
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements maintained by this list
+ * the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		Cloneable, Serializable {
@@ -276,8 +277,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and {@code
+	 * set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
@@ -364,8 +365,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and {@code
+	 * set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
@@ -419,13 +420,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		int toIndex = 0;
 		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
 			toIndex++;
-		return new SubList(this, 0, toIndex);
+		return new SubList(this, 0, toIndex, null, toElement);
 	}
 
 	@Override
 	public TreeList<E> subList(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size());
-		return new SubList(this, fromIndex, toIndex);
+		return new SubList(this, fromIndex, toIndex, null, null);
 	}
 
 	@Override
@@ -441,7 +442,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		int toIndex = fromIndex + 1;
 		while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
 			toIndex++;
-		return new SubList(this, fromIndex, toIndex);
+		return new SubList(this, fromIndex, toIndex, fromElement, toElement);
 	}
 
 	@Override
@@ -452,7 +453,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		while (itor.hasNext()
 				&& comparator.compare(itor.next(), fromElement) < 0)
 			fromIndex++;
-		return new SubList(this, fromIndex, size);
+		return new SubList(this, fromIndex, size, fromElement, null);
 	}
 
 	/**
@@ -495,8 +496,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	}
 
 	private class SubList extends TreeList<E> {
-		private TreeList<E> l;
-		private int offset;
+		private final TreeList<E> l;
+		private final int offset;
+		private final E fromElement;
+		private final E toElement;
 		private int size;
 
 		private void checkForConcurrentModification() {
@@ -504,7 +507,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				throw new ConcurrentModificationException();
 		}
 
-		public SubList(TreeList<E> l, int fromIndex, int toIndex) {
+		public SubList(TreeList<E> l, int fromIndex, int toIndex,
+				E fromElement, E toElement) {
 			super(l.comparator);
 			this.l = l;
 			min = l.min;
@@ -517,15 +521,25 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			max = min;
 			for (; i < toIndex - 1; i++)
 				max = successor(max);
+			if (fromElement != null)
+				this.fromElement = fromElement;
+			else
+				this.fromElement = min.element;
+			if (toElement != null)
+				this.toElement = toElement;
+			else
+				this.toElement = max.element;
 		}
 
 		@Override
 		public boolean add(E e) {
-			checkElementPosition(e, min.element, max.element, comparator);
+			if (comparator.compare(e, fromElement) < 0
+					|| comparator.compare(e, toElement) >= 0)
+				throw new IllegalArgumentException("element out of range");
 			l.add(e);
 			modCount = l.modCount;
 			size++;
-			if (comparator.compare(max.element, e) == 0)
+			if (comparator.compare(max.element, e) <= 0)
 				max = successor(max);
 			return true;
 		}
