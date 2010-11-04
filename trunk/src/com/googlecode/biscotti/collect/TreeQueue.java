@@ -303,8 +303,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		TreeQueue<E> clone = (TreeQueue<E>) super.clone();
 		clone.nil = new Node();
 		clone.modCount = 0;
-		clone.root = nil;
-		clone.min = nil;
+		clone.root = clone.nil;
+		clone.min = clone.nil;
 		clone.size = 0;
 		clone.addAll(this);
 		return clone;

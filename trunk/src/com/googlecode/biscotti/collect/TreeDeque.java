@@ -370,9 +370,9 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
 		clone.nil = new Node();
 		clone.modCount = 0;
-		clone.root = nil;
-		clone.min = nil;
-		clone.max = nil;
+		clone.root = clone.nil;
+		clone.min = clone.nil;
+		clone.max = clone.nil;
 		clone.size = 0;
 		clone.addAll(this);
 		return clone;

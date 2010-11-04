@@ -466,9 +466,9 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	public TreeList<E> clone() throws CloneNotSupportedException {
 		TreeList<E> clone = (TreeList<E>) super.clone();
 		clone.nil = new Node();
-		clone.min = nil;
-		clone.max = nil;
-		clone.root = nil;
+		clone.min = clone.nil;
+		clone.max = clone.nil;
+		clone.root = clone.nil;
 		clone.size = 0;
 		clone.modCount = 0;
 		clone.addAll(this);
