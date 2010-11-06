@@ -1,26 +1,37 @@
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.google.common.collect.ForwardingCollection;
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Static utility methods which operate on or return {@link Collection}s and
@@ -29,6 +40,288 @@ import com.google.common.collect.Iterators;
  * @author Zhenya Leonov
  */
 final public class Collections4 {
+
+	private Collections4() {
+	}
+
+	/**
+	 * Creates a {@code LinkedList} containing the specified initial elements.
+	 * 
+	 * @param elements
+	 *            the elements this list should contain
+	 * @return a {@code LinkedList} containing the specified initial elements
+	 */
+	public static <E> LinkedList<E> newLinkedList(final E... elements) {
+		checkNotNull(elements);
+		LinkedList<E> linkedList = Lists.newLinkedList();
+		Collections.addAll(linkedList, elements);
+		return linkedList;
+	}
+
+	/**
+	 * Creates an empty {@code ArrayDeque} with an initial capacity sufficient
+	 * to hold 16 elements.
+	 * 
+	 * @return an empty {@code ArrayDeque} with an initial capacity sufficient
+	 *         to hold 16 elements
+	 */
+	public static <E> ArrayDeque<E> newArrayDeque() {
+		return new ArrayDeque<E>();
+	}
+
+	/**
+	 * Creates an empty {@code ArrayDeque} with an initial capacity sufficient
+	 * to hold the specified number of elements.
+	 * 
+	 * @param numElements
+	 *            lower bound on initial capacity of the deque
+	 * @return an empty {@code ArrayDeque} with an initial capacity sufficient
+	 *         to hold the specified number of elements
+	 */
+	public static <E> ArrayDeque<E> newArrayDequeWithInitialCapacity(
+			final int numElements) {
+		return new ArrayDeque<E>(numElements);
+	}
+
+	/**
+	 * Creates an {@code ArrayDeque} containing the specified initial elements.
+	 * 
+	 * @param elements
+	 *            the elements this deque should contain
+	 * @return an {@code ArrayDeque} containing the specified initial elements
+	 */
+	public static <E> ArrayDeque<E> newArrayDeque(final E... elements) {
+		checkNotNull(elements);
+		ArrayDeque<E> arrayDeque = new ArrayDeque<E>(elements.length);
+		Collections.addAll(arrayDeque, elements);
+		return arrayDeque;
+	}
+
+	/**
+	 * Creates an {@code ArrayDeque} containing the elements of the specified
+	 * iterable.
+	 * 
+	 * @param elements
+	 *            the iterable whose elements are to be placed into the deque
+	 * @return an {@code ArrayDeque} containing the elements of the specified
+	 *         iterable.
+	 */
+	public static <E> ArrayDeque<E> newArrayDeque(
+			final Iterable<? extends E> elements) {
+		checkNotNull(elements);
+		if (elements instanceof Collection<?>)
+			return new ArrayDeque<E>((Collection<? extends E>) elements);
+		else
+			return newArrayDeque(elements.iterator());
+	}
+
+	/**
+	 * Creates an {@code ArrayDeque} containing the elements returned by the
+	 * specified iterator.
+	 * 
+	 * @param elements
+	 *            the iterator whose elements are to be placed into the deque
+	 * @return an {@code ArrayDeque} containing the elements returned by the
+	 *         specified iterator
+	 */
+	public static <E> ArrayDeque<E> newArrayDeque(
+			final Iterator<? extends E> elements) {
+		checkNotNull(elements);
+		ArrayDeque<E> arrayDeque = new ArrayDeque<E>();
+		Iterators.addAll(arrayDeque, elements);
+		return arrayDeque;
+	}
+
+	/**
+	 * Creates a {@code TreeMap} containing the same mappings as the specified
+	 * map, sorted according to the <i>natural ordering</i> of its keys.
+	 * 
+	 * @param map
+	 *            the map whose mappings are to be placed in this map
+	 * @return a {@code TreeMap} containing the same mappings as the specified
+	 *         map, sorted according to the <i>natural ordering</i> of its keys
+	 */
+	public static <K extends Comparable<? super K>, V> TreeMap<K, V> newTreeMap(
+			Map<? extends K, ? extends V> map) {
+		return new TreeMap<K, V>(map);
+	}
+
+	/**
+	 * Creates a {@code TreeMap} containing the same mappings and using the same
+	 * ordering as the specified navigable map.
+	 * 
+	 * @param map
+	 *            m the navigable map whose mappings are to be placed in this
+	 *            map, and whose comparator is to be used to sort this map
+	 * @return a {@code TreeMap} containing the same mappings and using the same
+	 *         ordering as the specified navigable map
+	 */
+	public static <K extends Comparable<? super K>, V> TreeMap<K, V> newTreeMap(
+			NavigableMap<K, ? extends V> map) {
+		return new TreeMap<K, V>(map);
+	}
+
+	/**
+	 * Creates a {@code TreeSet} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the elements this tree set should contain
+	 * @return a {@code TreeSet} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeSet<E> treeSet = Sets.newTreeSet();
+		Collections.addAll(treeSet, elements);
+		return treeSet;
+	}
+
+	/**
+	 * Creates a {@code TreeSet} containing the elements returned by the
+	 * specified iterator, sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the iterator whose elements are to be placed into this set
+	 * @return a {@code TreeSet} containing the elements returned by the
+	 *         specified iterator, sorted according to their <i>natural
+	 *         ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
+			final Iterator<? extends E> elements) {
+		checkNotNull(elements);
+		TreeSet<E> treeSet = Sets.newTreeSet();
+		Iterators.addAll(treeSet, elements);
+		return treeSet;
+	}
+
+	/**
+	 * Creates a {@code TreeSet} containing the elements of the specified
+	 * iterable. If the iterable is an instance of a {@link NavigableSet},
+	 * {@link PriorityQueue java.util.PriorityQueue}, or
+	 * {@link SortedCollection}, this set will be sorted according to the same
+	 * ordering. Otherwise, this set will be sorted according to the <i>natural
+	 * ordering</i> of its elements.
+	 * 
+	 * @param elements
+	 *            the iterable whose elements are to be placed into this set
+	 * @return a {@code TreeSet} containing the elements of the specified
+	 *         iterable
+	 */
+	public static <E> TreeSet<E> newTreeSet(final Iterable<? extends E> elements) {
+		checkNotNull(elements);
+		Comparator<? super E> c = null;
+
+		if (elements instanceof NavigableSet<?>)
+			c = ((NavigableSet) elements).comparator();
+		else if (elements instanceof java.util.PriorityQueue<?>)
+			c = ((java.util.PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			c = ((SortedCollection) elements).comparator();
+		TreeSet<E> treeSet = c == null ? new TreeSet<E>() : new TreeSet<E>(c);
+		Iterables.addAll(treeSet, elements);
+		return treeSet;
+	}
+
+	/**
+	 * Creates a {@code TreeQueue} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this queue
+	 * @return a {@code TreeQueue} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeQueue<E> newTreeQueue(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeQueue<E> q = TreeQueue.create();
+		Collections.addAll(q, elements);
+		return q;
+	}
+
+	/**
+	 * Creates a {@code TreeQueue} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this deque
+	 * @return a {@code TreeQueue} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeDeque<E> newTreeDeque(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeDeque<E> d = TreeDeque.create();
+		Collections.addAll(d, elements);
+		return d;
+	}
+
+	/**
+	 * Creates a {@code TreeList} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this list
+	 * @return a {@code TreeList} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeList<E> newTreeList(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeList<E> l = TreeList.create();
+		Collections.addAll(l, elements);
+		return l;
+	}
+
+	/**
+	 * Creates an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * their <i>access-order</i>.
+	 * 
+	 * @return an empty <i>LinkedHashMap</i> which orders its keys according to
+	 *         their <i>access-order</i>
+	 * @see LinkedHashMap
+	 */
+	public static <K, V> Map<K, V> newAccessOrderMap() {
+		return new LinkedHashMap<K, V>(16, .75F, true);
+	}
+
+	/**
+	 * Creates a <i>LinkedHashMap</i> which orders its keys according to their
+	 * <i>access-order</i>, containing the same mappings as the specified map.
+	 * 
+	 * @param m
+	 *            the map whose mappings this map should contain
+	 * @return a <i>LinkedHashMap</i> which orders its keys according to their
+	 *         <i>access-order</i>, containing the same mappings as the
+	 *         specified map
+	 * @see LinkedHashMap
+	 */
+	public static <K, V> Map<K, V> newAccessOrderMap(
+			final Map<? extends K, ? extends V> m) {
+		checkNotNull(m);
+		Map<K, V> map = new LinkedHashMap<K, V>(Math.max(m.size(), 16), .75F,
+				true);
+		map.putAll(m);
+		return map;
+	}
+
+	/**
+	 * Creates an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * their <i>access-order</i>, having the specified initial capacity.
+	 * 
+	 * @param initialCapacity
+	 *            the initial capacity
+	 * @return an empty <i>LinkedHashMap</i> which orders its keys according to
+	 *         their <i>access-order</i>, having the specified initial capacity
+	 * @see LinkedHashMap
+	 */
+	public static <K, V> Map<K, V> newAccessOrderMapWithInitialCapacity(
+			final int initialCapacity) {
+		checkArgument(initialCapacity >= 0);
+		return new LinkedHashMap<K, V>(initialCapacity, .75F, true);
+	}
 
 	/**
 	 * Returns an unmodifiable view of the specified {@code Queue}. This method
@@ -92,9 +385,9 @@ final public class Collections4 {
 	 * method allows modules to provide users with "read-only" access to
 	 * internal sorted lists. Query operations on the returned list
 	 * "read through" to the specified list. Attempts to modify the returned
-	 * sorted list, whether direct, via its iterators, or via its {@code
-	 * subList}, {@code headList}, or {@code tailList} views, result in an
-	 * {@code UnsupportedOperationException}.
+	 * sorted list, whether direct, via its iterators, or via its
+	 * {@code subList}, {@code headList}, or {@code tailList} views, result in
+	 * an {@code UnsupportedOperationException}.
 	 * <p>
 	 * The returned sorted list will be serializable if the specified list is
 	 * serializable.
@@ -113,9 +406,9 @@ final public class Collections4 {
 	 * method allows modules to provide users with "read-only" access to
 	 * internal navigable sets. Query operations on the returned set
 	 * "read through" to the specified set. Attempts to modify the returned
-	 * navigable set, whether direct, via its iterator, or via its {@code
-	 * subSet}, {@code headSet}, or {@code tailSet} views, result in an {@code
-	 * UnsupportedOperationException}.
+	 * navigable set, whether direct, via its iterator, or via its
+	 * {@code subSet}, {@code headSet}, or {@code tailSet} views, result in an
+	 * {@code UnsupportedOperationException}.
 	 * <p>
 	 * The returned navigable set will be serializable if the specified set is
 	 * serializable.
@@ -547,8 +840,8 @@ final public class Collections4 {
 		@Override
 		public NavigableSet<E> descendingSet() {
 			if (descendingSet == null)
-				descendingSet = new UnmodifiableNavigableSet<E>(ns
-						.descendingSet());
+				descendingSet = new UnmodifiableNavigableSet<E>(
+						ns.descendingSet());
 			return descendingSet;
 		}
 
@@ -758,16 +1051,16 @@ final public class Collections4 {
 		@Override
 		public NavigableSet<K> descendingKeySet() {
 			if (descendingKeySet == null)
-				descendingKeySet = new UnmodifiableNavigableSet<K>(nm
-						.descendingKeySet());
+				descendingKeySet = new UnmodifiableNavigableSet<K>(
+						nm.descendingKeySet());
 			return descendingKeySet;
 		}
 
 		@Override
 		public NavigableMap<K, V> descendingMap() {
 			if (descendingMap == null)
-				descendingMap = new UnmodifiableNavigableMap<K, V>(nm
-						.descendingMap());
+				descendingMap = new UnmodifiableNavigableMap<K, V>(
+						nm.descendingMap());
 			return descendingMap;
 		}
 
@@ -824,8 +1117,8 @@ final public class Collections4 {
 		@Override
 		public NavigableSet<K> navigableKeySet() {
 			if (navigableKeySet == null)
-				navigableKeySet = new UnmodifiableNavigableSet<K>(nm
-						.navigableKeySet());
+				navigableKeySet = new UnmodifiableNavigableSet<K>(
+						nm.navigableKeySet());
 			return navigableKeySet;
 		}
 
