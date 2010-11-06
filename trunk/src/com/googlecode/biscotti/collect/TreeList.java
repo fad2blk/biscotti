@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
@@ -36,9 +37,9 @@ import com.google.common.collect.Ordering;
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
  * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a {@code
- * ConcurrentModificationException}. Further, the list iterator does not support
- * the {@code add(E)} and {@code set(E)} operations.
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}. Further, the list iterator does not
+ * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally, considering "wrapping" the
@@ -56,8 +57,6 @@ import com.google.common.collect.Ordering;
  * <i>k</i> is the highest number of duplicate elements of each other, and
  * <i>m</i> is the size of the specified collection):
  * <p>
- * 
- * <pre>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center">Method</th>
@@ -101,7 +100,7 @@ import com.google.common.collect.Ordering;
  * 
  * @author Zhenya Leonov
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		Cloneable, Serializable {
@@ -124,8 +123,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 	private TreeList(final Iterable<? extends E> elements) {
 		Comparator<? super E> comparator = null;
-		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+		if (elements instanceof NavigableSet<?>)
+			comparator = ((NavigableSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
@@ -276,8 +275,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator() {
@@ -364,8 +363,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and {@code
-	 * set(E)} operations.
+	 * The returned iterator does not support the {@code add(E)} and
+	 * {@code set(E)} operations.
 	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
