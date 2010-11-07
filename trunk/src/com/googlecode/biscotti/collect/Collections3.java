@@ -41,9 +41,9 @@ import com.google.common.collect.Sets;
  * 
  * @author Zhenya Leonov
  */
-final public class Collections4 {
+final public class Collections3 {
 
-	private Collections4() {
+	private Collections3() {
 	}
 
 	/**
