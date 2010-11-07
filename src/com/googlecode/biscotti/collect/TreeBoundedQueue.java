@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
  * equal priority are ordered according to their insertion order.
  * <p>
  * When the queue is full the {@code add(E)}, {@code offer(E)}, and {@code
- * addAll(Collection)}, operations behave according to the following policy: if
+ * addAll(Collection)} operations behave according to the following policy: if
  * the element to be added is greater than the element with the <i>lowest</i>
  * priority, the <i>lowest</i> element is removed and the new element is added;
  * else the new element is rejected.
