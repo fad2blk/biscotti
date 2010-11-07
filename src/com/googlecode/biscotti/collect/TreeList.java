@@ -459,6 +459,10 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this list
+	 * @throws CloneNotSupportedException
+	 *             if an attempt is made to clone is a {@code subList},
+	 *             {@code headList}, or {@code tailList} view of the parent
+	 *             list
 	 */
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {
