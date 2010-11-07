@@ -769,7 +769,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * 
 	 */
 
-	public void verifyProperties() {
+	private void verifyProperties() {
 		verifyProperty1(root);
 		verifyProperty2(root);
 		// Property 3 is implicit
