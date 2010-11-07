@@ -3,6 +3,8 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
@@ -276,10 +278,10 @@ final public class Collections4 {
 	}
 
 	/**
-	 * Creates an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * Creates an empty {@code LinkedHashMap} which orders its keys according to
 	 * their <i>access-order</i>.
 	 * 
-	 * @return an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * @return an empty {@code LinkedHashMap} which orders its keys according to
 	 *         their <i>access-order</i>
 	 * @see LinkedHashMap
 	 */
@@ -288,12 +290,12 @@ final public class Collections4 {
 	}
 
 	/**
-	 * Creates a <i>LinkedHashMap</i> which orders its keys according to their
+	 * Creates a {@code LinkedHashMap} which orders its keys according to their
 	 * <i>access-order</i>, containing the same mappings as the specified map.
 	 * 
 	 * @param m
 	 *            the map whose mappings this map should contain
-	 * @return a <i>LinkedHashMap</i> which orders its keys according to their
+	 * @return a {@code LinkedHashMap} which orders its keys according to their
 	 *         <i>access-order</i>, containing the same mappings as the
 	 *         specified map
 	 * @see LinkedHashMap
@@ -308,12 +310,12 @@ final public class Collections4 {
 	}
 
 	/**
-	 * Creates an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * Creates an empty {@code LinkedHashMap} which orders its keys according to
 	 * their <i>access-order</i>, having the specified initial capacity.
 	 * 
 	 * @param initialCapacity
 	 *            the initial capacity
-	 * @return an empty <i>LinkedHashMap</i> which orders its keys according to
+	 * @return an empty {@code LinkedHashMap} which orders its keys according to
 	 *         their <i>access-order</i>, having the specified initial capacity
 	 * @see LinkedHashMap
 	 */
@@ -445,6 +447,1395 @@ final public class Collections4 {
 	}
 
 	/**
+	 * Returns a synchronized (thread-safe) {@code SortedCollection} backed by
+	 * the specified sorted collection. In order to guarantee serial access, it
+	 * is critical that <b>all</b> access to the backing collection is
+	 * accomplished through the returned collection.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * collection when iterating over it:
+	 * 
+	 * <pre>
+	 *  SortedCollection sc = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(sc) {
+	 *     for(Object o: sc)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned sorted collection will be serializable if the specified
+	 * sorted collection is serializable.
+	 * 
+	 * @param sc
+	 *            the sorted collection to be "wrapped" in a synchronized sorted
+	 *            collection
+	 * @return a synchronized view of the specified sorted collection
+	 */
+	public static <E> SortedCollection<E> synchronize(
+			final SortedCollection<E> sc) {
+		return new SynchronizedSortedCollection<E>(sc);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code Queue} backed by the
+	 * specified queue. In order to guarantee serial access, it is critical that
+	 * <b>all</b> access to the backing queue is accomplished through the
+	 * returned queue.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned queue
+	 * when iterating over it:
+	 * 
+	 * <pre>
+	 *  Queue q = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(q) {
+	 *     for(Object o: q)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned queue will be serializable if the specified queue is
+	 * serializable.
+	 * 
+	 * @param q
+	 *            the queue to be "wrapped" in a synchronized queue
+	 * @return a synchronized view of the specified queue
+	 */
+	public static <E> Queue<E> synchronize(final Queue<E> q) {
+		return new SynchronizedQueue<E>(q);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code BoundedQueue} backed by the
+	 * specified bounded queue. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing queue is accomplished
+	 * through the returned queue.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * bounded queue when iterating over it:
+	 * 
+	 * <pre>
+	 *  BoundedQueue bq = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(bq) {
+	 *     for(Object o: bq)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned bounded queue will be serializable if the specified bounded
+	 * queue is serializable.
+	 * 
+	 * @param bq
+	 *            the bounded queue to be synchronized
+	 * @return a synchronized view of the specified bounded queue
+	 */
+	public static <E> Queue<E> synchronize(final BoundedQueue<E> bq) {
+		return new SynchronizedBoundedQueue<E>(bq);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code Deque} backed by the
+	 * specified deque. In order to guarantee serial access, it is critical that
+	 * <b>all</b> access to the backing deque is accomplished through the
+	 * returned deque.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned deque
+	 * when iterating over it:
+	 * 
+	 * <pre>
+	 *  Deque dq = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(dq) {
+	 *     for(Object o: dq)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 * synchronized (dq) {
+	 * 	Iterator i = deque.descendingIterator(); // Must be in synchronized block
+	 * 	while (i.hasNext())
+	 * 		foo(i.next());
+	 * }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned deque will be serializable if the specified deque is
+	 * serializable.
+	 * 
+	 * @param dq
+	 *            the deque to be "wrapped" in a synchronized deque
+	 * @return a synchronized view of the specified deque
+	 */
+	public static <E> Deque<E> synchronize(final Deque<E> dq) {
+		return new SynchronizedDeque<E>(dq);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code NavigableSet} backed by the
+	 * specified navigable set. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing set is accomplished
+	 * through the returned set (or its views).
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * navigable set when iterating over it or any of its {@code subSet},
+	 * {@code headSet}, or {@code tailSet} views.
+	 * 
+	 * <pre>
+	 *  NavigableSet ns = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(ns) {
+	 *     for(Object o: ns) // Must be in the synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  NavigableSet ns = Collections3.synchronize(...);
+	 *  NavigableSet ns2 = ns.headSet(element, true);
+	 *      ...
+	 *  synchronized(ns) {  // Note: ns, not ns2!!!
+	 *      Iterator i = ns2.descendingIterator(); // Must be in the synchronized block
+	 *      while (i.hasNext())
+	 *          foo(i.next());
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned navigable set will be serializable if the specified
+	 * navigable set is serializable.
+	 * 
+	 * @param ns
+	 *            the navigable set to be "wrapped" in a synchronized navigable
+	 *            set
+	 * @return a synchronized view of the specified navigable set
+	 */
+	public static <E> NavigableSet<E> synchronize(final NavigableSet<E> ns) {
+		return new SynchronizedNavigableSet<E>(ns);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code SortedList} backed by the
+	 * specified sorted list. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing list is accomplished
+	 * through the returned list (or its views).
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * sorted list when iterating over it or any of its {@code subList},
+	 * {@code headList}, or {@code tailList} views.
+	 * 
+	 * <pre>
+	 *  SortedList sl = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(sl) {
+	 *     for(Object o: sl) // Must be in the synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  SortedList sl = Collections3.synchronize(...);
+	 *  SortedList sl2 = ns.headList(element);
+	 *      ...
+	 *  synchronized(sl) {  // Note: sl, not sl2!!!
+	 *      Iterator i = sl2.descendingIterator(); // Must be in the synchronized block
+	 *      while (i.hasNext())
+	 *          foo(i.next());
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned sorted list will be serializable if the specified sorted
+	 * list is serializable.
+	 * 
+	 * @param sl
+	 *            the sorted list to be "wrapped" in a synchronized navigable
+	 *            set
+	 * @return a synchronized view of the specified sorted list
+	 */
+	public static <E> SortedList<E> synchronize(final SortedList<E> sl) {
+		return new SynchronizedSortedList<E>(sl);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code BoundedMap} backed by the
+	 * specified bounded map. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing map is accomplished
+	 * through the returned map.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * bounded map when iterating over any of its collection views:
+	 * 
+	 * <pre>
+	 *  Map bm = Collections3.synchronize(...);
+	 *      ...
+	 *  Set s = bm.keySet();  // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(bm) {  // Synchronizing on bm, not s!
+	 *      Iterator i = s.iterator(); // Must be in synchronized block
+	 *      while (i.hasNext())
+	 *          foo(i.next());
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * 
+	 * <p>
+	 * The returned bounded map will be serializable if the specified map is
+	 * serializable.
+	 * 
+	 * @param bm
+	 *            the bounded map to be "wrapped" in a synchronized bounded map
+	 * @return a synchronized view of the specified bounded map
+	 */
+	public static <K, V> BoundedMap<K, V> synchronize(final BoundedMap<K, V> bm) {
+		return new SynchronizedBoundedMap<K, V>(bm);
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {NavigableMap} backed by the
+	 * specified navigable map. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing map is accomplished
+	 * through the returned map (or its views).
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned
+	 * navigable map when iterating over any of its collection views, or the
+	 * collections views of any of its {@code subMap},{@code headMap},
+	 * {@code tailMap} views.
+	 * 
+	 * <pre>
+	 *  NavigableMap nm = Collections3.synchronize(...);
+	 *      ...
+	 *  Set s = nm.keySet();  // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(nm) {  // Synchronizing on m, not s!
+	 *      Iterator i = s.iterator(); // Must be in synchronized block
+	 *      while (i.hasNext())
+	 *          foo(i.next());
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  NavigableMap nm = Collections3.synchronize(...);
+	 *  NavigableMap nm2 = m.subMap(foo, true, bar, true);
+	 *      ...
+	 *  Set s2 = nm2.keySet();  // Needn't be in synchronized block
+	 *      ...
+	 *  synchronized(nm) {  // Synchronizing on nm, not nm2 or s2!
+	 *      Iterator i = s.iterator(); // Must be in synchronized block
+	 *      while (i.hasNext())
+	 *          foo(i.next());
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned navigable map will be serializable if the specified
+	 * navigable map is serializable.
+	 * 
+	 * @param nm
+	 *            the navigable map to be "wrapped" in a synchronized navigable
+	 *            map
+	 * @return a synchronized view of the specified navigable map
+	 */
+	public static <K, V> NavigableMap<K, V> synchronize(
+			final NavigableMap<K, V> nm) {
+		return new SynchronizedNavigableMap<K, V>(nm);
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedCollection<E> implements Collection<E>,
+			Serializable {
+
+		private static final long serialVersionUID = 3053995032091335093L;
+		final Collection<E> c;
+		final Object mutex;
+
+		private SynchronizedCollection(final Collection<E> c) {
+			this.c = checkNotNull(c);
+			mutex = this;
+		}
+
+		private SynchronizedCollection(final Collection<E> c, final Object mutex) {
+			this.c = c;
+			this.mutex = mutex;
+		}
+
+		@Override
+		public int size() {
+			synchronized (mutex) {
+				return c.size();
+			}
+		}
+
+		@Override
+		public boolean isEmpty() {
+			synchronized (mutex) {
+				return c.isEmpty();
+			}
+		}
+
+		@Override
+		public boolean contains(Object o) {
+			synchronized (mutex) {
+				return c.contains(o);
+			}
+		}
+
+		@Override
+		public Object[] toArray() {
+			synchronized (mutex) {
+				return c.toArray();
+			}
+		}
+
+		@Override
+		public <T> T[] toArray(T[] a) {
+			synchronized (mutex) {
+				return c.toArray(a);
+			}
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			return c.iterator();
+		}
+
+		@Override
+		public boolean add(E e) {
+			synchronized (mutex) {
+				return c.add(e);
+			}
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			synchronized (mutex) {
+				return c.remove(o);
+			}
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return c.containsAll(coll);
+			}
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> coll) {
+			synchronized (mutex) {
+				return c.addAll(coll);
+			}
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return c.removeAll(coll);
+			}
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return c.retainAll(coll);
+			}
+		}
+
+		@Override
+		public void clear() {
+			synchronized (mutex) {
+				c.clear();
+			}
+		}
+
+		@Override
+		public String toString() {
+			synchronized (mutex) {
+				return c.toString();
+			}
+		}
+
+		private void writeObject(ObjectOutputStream s) throws IOException {
+			synchronized (mutex) {
+				s.defaultWriteObject();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedSortedCollection<E> extends
+			SynchronizedCollection<E> implements SortedCollection<E> {
+
+		private static final long serialVersionUID = 1L;
+		private final SortedCollection<E> sc;
+
+		private SynchronizedSortedCollection(final SortedCollection<E> sc) {
+			super(sc);
+			this.sc = sc;
+		}
+
+		private SynchronizedSortedCollection(final SortedCollection<E> sc,
+				Object mutex) {
+			super(sc, mutex);
+			this.sc = sc;
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			return sc.comparator();
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedQueue<E> extends SynchronizedCollection<E>
+			implements Queue<E> {
+
+		private static final long serialVersionUID = 1L;
+		private final Queue<E> q;
+
+		private SynchronizedQueue(final Queue<E> q) {
+			super(q);
+			this.q = q;
+		}
+
+		@Override
+		public E element() {
+			synchronized (mutex) {
+				return q.element();
+			}
+		}
+
+		@Override
+		public boolean offer(E e) {
+			synchronized (mutex) {
+				return q.offer(e);
+			}
+		}
+
+		@Override
+		public E peek() {
+			synchronized (mutex) {
+				return q.peek();
+			}
+		}
+
+		@Override
+		public E poll() {
+			synchronized (mutex) {
+				return q.poll();
+			}
+		}
+
+		@Override
+		public E remove() {
+			synchronized (mutex) {
+				return q.remove();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedBoundedQueue<E> extends
+			SynchronizedQueue<E> implements BoundedQueue<E> {
+
+		private static final long serialVersionUID = 1L;
+		private final BoundedQueue<E> bq;
+
+		private SynchronizedBoundedQueue(final BoundedQueue<E> bq) {
+			super(bq);
+			this.bq = bq;
+		}
+
+		@Override
+		public int maxSize() {
+			return bq.maxSize();
+		}
+
+		@Override
+		public int remainingCapacity() {
+			synchronized (mutex) {
+				return bq.remainingCapacity();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedDeque<E> extends
+			SynchronizedQueue<E> implements Deque<E> {
+
+		private static final long serialVersionUID = 1L;
+		private final Deque<E> dq;
+
+		private SynchronizedDeque(final Deque<E> dq) {
+			super(dq);
+			this.dq = dq;
+		}
+
+		@Override
+		public void addFirst(E e) {
+			synchronized (mutex) {
+				dq.addFirst(e);
+			}
+		}
+
+		@Override
+		public void addLast(E e) {
+			synchronized (mutex) {
+				dq.addLast(e);
+			}
+		}
+
+		@Override
+		public Iterator<E> descendingIterator() {
+			return dq.descendingIterator();
+		}
+
+		@Override
+		public E getFirst() {
+			synchronized (mutex) {
+				return dq.getFirst();
+			}
+		}
+
+		@Override
+		public E getLast() {
+			synchronized (mutex) {
+				return dq.getLast();
+			}
+		}
+
+		@Override
+		public boolean offerFirst(E e) {
+			synchronized (mutex) {
+				return dq.offerFirst(e);
+			}
+		}
+
+		@Override
+		public boolean offerLast(E e) {
+			synchronized (mutex) {
+				return dq.offerLast(e);
+			}
+		}
+
+		@Override
+		public E peekFirst() {
+			synchronized (mutex) {
+				return dq.peekFirst();
+			}
+		}
+
+		@Override
+		public E peekLast() {
+			synchronized (mutex) {
+				return dq.peekLast();
+			}
+		}
+
+		@Override
+		public E pollFirst() {
+			synchronized (mutex) {
+				return dq.pollFirst();
+			}
+		}
+
+		@Override
+		public E pollLast() {
+			synchronized (mutex) {
+				return dq.pollLast();
+			}
+		}
+
+		@Override
+		public E pop() {
+			synchronized (mutex) {
+				return dq.pop();
+			}
+		}
+
+		@Override
+		public void push(E e) {
+			synchronized (mutex) {
+				dq.push(e);
+			}
+		}
+
+		@Override
+		public E removeFirst() {
+			synchronized (mutex) {
+				return dq.removeFirst();
+			}
+		}
+
+		@Override
+		public boolean removeFirstOccurrence(Object o) {
+			synchronized (mutex) {
+				return dq.removeFirstOccurrence(o);
+			}
+		}
+
+		@Override
+		public E removeLast() {
+			synchronized (mutex) {
+				return dq.removeLast();
+			}
+		}
+
+		@Override
+		public boolean removeLastOccurrence(Object o) {
+			synchronized (mutex) {
+				return dq.removeLastOccurrence(o);
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedSet<E> extends SynchronizedCollection<E>
+			implements Set<E> {
+
+		private static final long serialVersionUID = 487447009682186044L;
+
+		private SynchronizedSet(final Set<E> s) {
+			super(s);
+		}
+
+		private SynchronizedSet(final Set<E> s, final Object mutex) {
+			super(s, mutex);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			synchronized (mutex) {
+				return c.equals(o);
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			synchronized (mutex) {
+				return c.hashCode();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedSortedSet<E> extends SynchronizedSet<E>
+			implements SortedSet<E> {
+
+		private static final long serialVersionUID = 8695801310862127406L;
+		final private SortedSet<E> ss;
+
+		private SynchronizedSortedSet(final SortedSet<E> s) {
+			super(s);
+			ss = s;
+		}
+
+		private SynchronizedSortedSet(final SortedSet<E> s, final Object mutex) {
+			super(s, mutex);
+			ss = s;
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			synchronized (mutex) {
+				return ss.comparator();
+			}
+		}
+
+		@Override
+		public SortedSet<E> subSet(E fromElement, E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedSet<E>(ss.subSet(fromElement,
+						toElement), mutex);
+			}
+		}
+
+		@Override
+		public SortedSet<E> headSet(E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedSet<E>(ss.headSet(toElement),
+						mutex);
+			}
+		}
+
+		@Override
+		public SortedSet<E> tailSet(E fromElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedSet<E>(ss.tailSet(fromElement),
+						mutex);
+			}
+		}
+
+		@Override
+		public E first() {
+			synchronized (mutex) {
+				return ss.first();
+			}
+		}
+
+		@Override
+		public E last() {
+			synchronized (mutex) {
+				return ss.last();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedSortedList<E> extends
+			SynchronizedSortedCollection<E> implements SortedList<E> {
+
+		private static final long serialVersionUID = 1L;
+		private SortedList<E> sl;
+
+		private SynchronizedSortedList(final SortedList<E> sl) {
+			super(sl);
+			this.sl = sl;
+		}
+
+		private SynchronizedSortedList(final SortedList<E> sl,
+				final Object mutex) {
+			super(sl, mutex);
+			this.sl = sl;
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			synchronized (mutex) {
+				return sl.addAll(index, c);
+			}
+		}
+
+		@Override
+		public E get(int index) {
+			synchronized (mutex) {
+				return sl.get(index);
+			}
+		}
+
+		@Override
+		public E set(int index, E element) {
+			synchronized (mutex) {
+				return sl.set(index, element);
+			}
+		}
+
+		@Override
+		public void add(int index, E element) {
+			synchronized (mutex) {
+				sl.add(index, element);
+			}
+		}
+
+		@Override
+		public E remove(int index) {
+			synchronized (mutex) {
+				return sl.remove(index);
+			}
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			synchronized (mutex) {
+				return sl.indexOf(o);
+			}
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			synchronized (mutex) {
+				return sl.lastIndexOf(o);
+			}
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return sl.listIterator();
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			return sl.listIterator(index);
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sl.headList(toElement),
+						mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sl.subList(fromElement,
+						toElement), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sl.subList(fromIndex,
+						toIndex), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sl.tailList(fromElement),
+						mutex);
+			}
+		}
+
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedNavigableSet<E> extends
+			SynchronizedSortedSet<E> implements NavigableSet<E> {
+
+		private static final long serialVersionUID = 1L;
+		final private NavigableSet<E> ns;
+
+		private SynchronizedNavigableSet(final NavigableSet<E> ns) {
+			super(ns);
+			this.ns = ns;
+		}
+
+		private SynchronizedNavigableSet(final NavigableSet<E> ns,
+				final Object mutex) {
+			super(ns, mutex);
+			this.ns = ns;
+		}
+
+		@Override
+		public E lower(E e) {
+			synchronized (mutex) {
+				return ns.lower(e);
+			}
+		}
+
+		@Override
+		public E floor(E e) {
+			synchronized (mutex) {
+				return ns.floor(e);
+			}
+		}
+
+		@Override
+		public E ceiling(E e) {
+			synchronized (mutex) {
+				return ns.ceiling(e);
+			}
+		}
+
+		@Override
+		public E higher(E e) {
+			synchronized (mutex) {
+				return ns.higher(e);
+			}
+		}
+
+		@Override
+		public E pollFirst() {
+			synchronized (mutex) {
+				return ns.pollFirst();
+			}
+		}
+
+		@Override
+		public E pollLast() {
+			synchronized (mutex) {
+				return ns.pollLast();
+			}
+		}
+
+		@Override
+		public NavigableSet<E> descendingSet() {
+			synchronized (mutex) {
+				return new SynchronizedNavigableSet<E>(ns.descendingSet(),
+						mutex);
+			}
+		}
+
+		@Override
+		public Iterator<E> descendingIterator() {
+			return ns.descendingIterator();
+		}
+
+		@Override
+		public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
+				E toElement, boolean toInclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableSet<E>(ns.subSet(fromElement,
+						fromInclusive, toElement, toInclusive), mutex);
+			}
+		}
+
+		@Override
+		public NavigableSet<E> headSet(E toElement, boolean inclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableSet<E>(ns.headSet(toElement,
+						inclusive), mutex);
+			}
+		}
+
+		@Override
+		public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableSet<E>(ns.tailSet(fromElement,
+						inclusive), mutex);
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedMap<K, V> implements Map<K, V>,
+			Serializable {
+
+		private static final long serialVersionUID = 1978198479659022715L;
+		private final Map<K, V> m;
+		private transient Set<K> keySet = null;
+		private transient Set<Map.Entry<K, V>> entrySet = null;
+		private transient Collection<V> values = null;
+		final Object mutex;
+
+		private SynchronizedMap(final Map<K, V> m) {
+			this.m = checkNotNull(m);
+			mutex = this;
+		}
+
+		private SynchronizedMap(final Map<K, V> m, final Object mutex) {
+			this.m = checkNotNull(m);
+			this.mutex = mutex;
+		}
+
+		@Override
+		public int size() {
+			synchronized (mutex) {
+				return m.size();
+			}
+		}
+
+		@Override
+		public boolean isEmpty() {
+			synchronized (mutex) {
+				return m.isEmpty();
+			}
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			synchronized (mutex) {
+				return m.containsKey(key);
+			}
+		}
+
+		@Override
+		public boolean containsValue(Object value) {
+			synchronized (mutex) {
+				return m.containsValue(value);
+			}
+		}
+
+		@Override
+		public V get(Object key) {
+			synchronized (mutex) {
+				return m.get(key);
+			}
+		}
+
+		@Override
+		public V put(K key, V value) {
+			synchronized (mutex) {
+				return m.put(key, value);
+			}
+		}
+
+		@Override
+		public V remove(Object key) {
+			synchronized (mutex) {
+				return m.remove(key);
+			}
+		}
+
+		@Override
+		public void putAll(Map<? extends K, ? extends V> map) {
+			synchronized (mutex) {
+				m.putAll(map);
+			}
+		}
+
+		@Override
+		public void clear() {
+			synchronized (mutex) {
+				m.clear();
+			}
+		}
+
+		@Override
+		public Set<K> keySet() {
+			synchronized (mutex) {
+				if (keySet == null)
+					keySet = new SynchronizedSet<K>(m.keySet(), mutex);
+				return keySet;
+			}
+		}
+
+		@Override
+		public Set<Map.Entry<K, V>> entrySet() {
+			synchronized (mutex) {
+				if (entrySet == null)
+					entrySet = new SynchronizedSet<Map.Entry<K, V>>(
+							m.entrySet(), mutex);
+				return entrySet;
+			}
+		}
+
+		@Override
+		public Collection<V> values() {
+			synchronized (mutex) {
+				if (values == null)
+					values = new SynchronizedCollection<V>(m.values(), mutex);
+				return values;
+			}
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			synchronized (mutex) {
+				return m.equals(o);
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			synchronized (mutex) {
+				return m.hashCode();
+			}
+		}
+
+		@Override
+		public String toString() {
+			synchronized (mutex) {
+				return m.toString();
+			}
+		}
+
+		private void writeObject(ObjectOutputStream s) throws IOException {
+			synchronized (mutex) {
+				s.defaultWriteObject();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedBoundedMap<K, V> extends
+			SynchronizedMap<K, V> implements BoundedMap<K, V> {
+
+		private static final long serialVersionUID = 1L;
+		private final BoundedMap<K, V> bm;
+
+		private SynchronizedBoundedMap(final BoundedMap<K, V> bm) {
+			super(bm);
+			this.bm = bm;
+		}
+
+		@Override
+		public int maxSize() {
+			return bm.maxSize();
+		}
+
+		@Override
+		public boolean offer(K key, V value) {
+			synchronized (mutex) {
+				return bm.offer(key, value);
+			}
+		}
+
+		@Override
+		public int remainingCapacity() {
+			synchronized (mutex) {
+				return bm.remainingCapacity();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private static class SynchronizedSortedMap<K, V> extends
+			SynchronizedMap<K, V> implements SortedMap<K, V> {
+
+		private static final long serialVersionUID = -8798146769416483793L;
+		private final SortedMap<K, V> sm;
+
+		private SynchronizedSortedMap(final SortedMap<K, V> m) {
+			super(m);
+			sm = m;
+		}
+
+		private SynchronizedSortedMap(final SortedMap<K, V> m,
+				final Object mutex) {
+			super(m, mutex);
+			sm = m;
+		}
+
+		@Override
+		public Comparator<? super K> comparator() {
+			synchronized (mutex) {
+				return sm.comparator();
+			}
+		}
+
+		@Override
+		public SortedMap<K, V> subMap(K fromKey, K toKey) {
+			synchronized (mutex) {
+				return new SynchronizedSortedMap<K, V>(
+						sm.subMap(fromKey, toKey), mutex);
+			}
+		}
+
+		@Override
+		public SortedMap<K, V> headMap(K toKey) {
+			synchronized (mutex) {
+				return new SynchronizedSortedMap<K, V>(sm.headMap(toKey), mutex);
+			}
+		}
+
+		@Override
+		public SortedMap<K, V> tailMap(K fromKey) {
+			synchronized (mutex) {
+				return new SynchronizedSortedMap<K, V>(sm.tailMap(fromKey),
+						mutex);
+			}
+		}
+
+		@Override
+		public K firstKey() {
+			synchronized (mutex) {
+				return sm.firstKey();
+			}
+		}
+
+		@Override
+		public K lastKey() {
+			synchronized (mutex) {
+				return sm.lastKey();
+			}
+		}
+	}
+
+	/**
+	 * @serial include
+	 */
+	private final static class SynchronizedNavigableMap<K, V> extends
+			SynchronizedSortedMap<K, V> implements NavigableMap<K, V> {
+
+		private static final long serialVersionUID = 1L;
+		private final NavigableMap<K, V> nm;
+		private transient NavigableMap<K, V> descendingMap = null;
+		private transient NavigableSet<K> descendingKeySet = null;
+		private transient NavigableSet<K> navigableKeySet = null;
+
+		private SynchronizedNavigableMap(final NavigableMap<K, V> nm) {
+			super(nm);
+			this.nm = nm;
+		}
+
+		private SynchronizedNavigableMap(final NavigableMap<K, V> nm,
+				final Object mutex) {
+			super(nm, mutex);
+			this.nm = nm;
+		}
+
+		@Override
+		public Entry<K, V> lowerEntry(K key) {
+			synchronized (mutex) {
+				return nm.lowerEntry(key);
+			}
+		}
+
+		@Override
+		public K lowerKey(K key) {
+			synchronized (mutex) {
+				return nm.lowerKey(key);
+			}
+		}
+
+		@Override
+		public Entry<K, V> floorEntry(K key) {
+			synchronized (mutex) {
+				return nm.floorEntry(key);
+			}
+		}
+
+		@Override
+		public K floorKey(K key) {
+			synchronized (mutex) {
+				return nm.floorKey(key);
+			}
+		}
+
+		@Override
+		public Entry<K, V> ceilingEntry(K key) {
+			synchronized (mutex) {
+				return nm.ceilingEntry(key);
+			}
+		}
+
+		@Override
+		public K ceilingKey(K key) {
+			synchronized (mutex) {
+				return nm.ceilingKey(key);
+			}
+		}
+
+		@Override
+		public Entry<K, V> higherEntry(K key) {
+			synchronized (mutex) {
+				return nm.higherEntry(key);
+			}
+		}
+
+		@Override
+		public K higherKey(K key) {
+			synchronized (mutex) {
+				return nm.higherKey(key);
+			}
+		}
+
+		@Override
+		public Entry<K, V> firstEntry() {
+			synchronized (mutex) {
+				return nm.firstEntry();
+			}
+		}
+
+		@Override
+		public Entry<K, V> lastEntry() {
+			synchronized (mutex) {
+				return nm.lastEntry();
+			}
+		}
+
+		@Override
+		public Entry<K, V> pollFirstEntry() {
+			synchronized (mutex) {
+				return nm.pollFirstEntry();
+			}
+		}
+
+		@Override
+		public Entry<K, V> pollLastEntry() {
+			synchronized (mutex) {
+				return nm.pollLastEntry();
+			}
+		}
+
+		@Override
+		public NavigableMap<K, V> descendingMap() {
+			synchronized (mutex) {
+				if (descendingMap == null)
+					descendingMap = new SynchronizedNavigableMap<K, V>(
+							nm.descendingMap(), mutex);
+				return descendingMap;
+			}
+		}
+
+		@Override
+		public NavigableSet<K> navigableKeySet() {
+			synchronized (mutex) {
+				if (navigableKeySet == null)
+					navigableKeySet = new SynchronizedNavigableSet<K>(
+							nm.navigableKeySet(), mutex);
+				return navigableKeySet;
+			}
+		}
+
+		@Override
+		public NavigableSet<K> descendingKeySet() {
+			synchronized (mutex) {
+				if (descendingKeySet == null)
+					descendingKeySet = new SynchronizedNavigableSet<K>(
+							nm.descendingKeySet(), mutex);
+				return descendingKeySet;
+			}
+		}
+
+		@Override
+		public NavigableMap<K, V> subMap(K fromKey, boolean fromInclusive,
+				K toKey, boolean toInclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableMap<K, V>(nm.subMap(fromKey,
+						fromInclusive, toKey, toInclusive));
+			}
+		}
+
+		@Override
+		public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableMap<K, V>(nm.headMap(toKey,
+						inclusive));
+			}
+		}
+
+		@Override
+		public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
+			synchronized (mutex) {
+				return new SynchronizedNavigableMap<K, V>(nm.tailMap(fromKey,
+						inclusive));
+			}
+		}
+
+	}
+
+	/**
 	 * @serial include
 	 */
 	private static class UnmodifiableCollection<E> extends
@@ -453,7 +1844,7 @@ final public class Collections4 {
 		private static final long serialVersionUID = 1820017752578914078L;
 		final Collection<? extends E> c;
 
-		private UnmodifiableCollection(Collection<? extends E> c) {
+		private UnmodifiableCollection(final Collection<? extends E> c) {
 			this.c = checkNotNull(c);
 		}
 
@@ -522,7 +1913,7 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
-	private static class UnmodifiableSortedList<E> extends
+	private final static class UnmodifiableSortedList<E> extends
 			UnmodifiableSortedCollection<E> implements SortedList<E>,
 			Serializable {
 
@@ -645,8 +2036,8 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
-	private static class UnmodifiableDeque<E> extends UnmodifiableQueue<E>
-			implements Deque<E>, Serializable {
+	private final static class UnmodifiableDeque<E> extends
+			UnmodifiableQueue<E> implements Deque<E>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 		private final Deque<E> d;
@@ -751,7 +2142,7 @@ final public class Collections4 {
 
 		private static final long serialVersionUID = -9215047833775013803L;
 
-		private UnmodifiableSet(Set<? extends E> s) {
+		private UnmodifiableSet(final Set<? extends E> s) {
 			super(s);
 		}
 
@@ -775,7 +2166,7 @@ final public class Collections4 {
 		private static final long serialVersionUID = -4929149591599911165L;
 		private final SortedSet<E> ss;
 
-		private UnmodifiableSortedSet(SortedSet<E> ss) {
+		private UnmodifiableSortedSet(final SortedSet<E> ss) {
 			super(ss);
 			this.ss = ss;
 		}
@@ -815,14 +2206,14 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
-	private static class UnmodifiableNavigableSet<E> extends
+	private final static class UnmodifiableNavigableSet<E> extends
 			UnmodifiableSortedSet<E> implements NavigableSet<E>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 		private final NavigableSet<E> ns;
 		private transient NavigableSet<E> descendingSet = null;
 
-		private UnmodifiableNavigableSet(NavigableSet<E> ns) {
+		private UnmodifiableNavigableSet(final NavigableSet<E> ns) {
 			super(ns);
 			this.ns = ns;
 		}
@@ -902,7 +2293,7 @@ final public class Collections4 {
 		private transient Collection<V> values = null;
 		private final Map<? extends K, ? extends V> m;
 
-		private UnmodifiableMap(Map<? extends K, ? extends V> m) {
+		private UnmodifiableMap(final Map<? extends K, ? extends V> m) {
 			this.m = checkNotNull(m);
 		}
 
@@ -982,7 +2373,7 @@ final public class Collections4 {
 		private static final long serialVersionUID = -8806743815996713206L;
 		private final SortedMap<K, ? extends V> sm;
 
-		private UnmodifiableSortedMap(SortedMap<K, ? extends V> sm) {
+		private UnmodifiableSortedMap(final SortedMap<K, ? extends V> sm) {
 			super(sm);
 			this.sm = sm;
 		}
@@ -1021,7 +2412,7 @@ final public class Collections4 {
 	/**
 	 * @serial include
 	 */
-	final static class UnmodifiableNavigableMap<K, V> extends
+	private final static class UnmodifiableNavigableMap<K, V> extends
 			UnmodifiableSortedMap<K, V> implements NavigableMap<K, V>,
 			Serializable {
 

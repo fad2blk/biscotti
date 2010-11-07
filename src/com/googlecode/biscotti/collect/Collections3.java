@@ -417,18 +417,18 @@ final public class Collections3 {
 	 * collection when iterating over it:
 	 * 
 	 * <pre>
-	 *  SortedCollection sortedCollection = Collections3.synchronizedSortedCollection(...);
+	 *  SortedCollection sc = Collections3.synchronized(...);
 	 *      ...
-	 *  synchronized(sortedCollection) {
-	 *     for(Object o: sortedCollection)  // Must be in synchronized block
+	 *  synchronized(sc) {
+	 *     for(Object o: sc)  // Must be in synchronized block
 	 *        foo(o);
 	 *  }
 	 * </pre>
 	 * 
 	 * Failure to follow this advice may result in non-deterministic behavior.
 	 * <p>
-	 * The returned collection will be serializable if the specified collection
-	 * is serializable.
+	 * The returned sorted collection will be serializable if the specified
+	 * collection is serializable.
 	 * 
 	 * @param sortedCollection
 	 *            the sorted collection to be "wrapped" in a synchronized sorted
@@ -583,8 +583,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap}.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -598,8 +598,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap} with the same mappings as the provided {@code Map}.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap} with the same mappings as the provided {@code Map}.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -621,8 +621,8 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Creates a new <i>access-order/least-recently-used</i> {@code
-	 * LinkedHashMap} with the specified initial capacity.
+	 * Creates a new <i>access-order/least-recently-used</i>
+	 * {@code LinkedHashMap} with the specified initial capacity.
 	 * 
 	 * @param <K>
 	 *            the type of keys maintained by this map
@@ -1057,15 +1057,15 @@ final public class Collections3 {
 
 		public SortedSet<E> headSet(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet
-						.headSet(toElement), mutex);
+				return new SynchronizedSortedSet<E>(
+						sortedSet.headSet(toElement), mutex);
 			}
 		}
 
 		public SortedSet<E> tailSet(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedSet<E>(sortedSet
-						.tailSet(fromElement), mutex);
+				return new SynchronizedSortedSet<E>(
+						sortedSet.tailSet(fromElement), mutex);
 			}
 		}
 
@@ -1167,8 +1167,8 @@ final public class Collections3 {
 		public Set<Map.Entry<K, V>> entrySet() {
 			synchronized (mutex) {
 				if (entrySet == null)
-					entrySet = new SynchronizedSet<Map.Entry<K, V>>(m
-							.entrySet(), mutex);
+					entrySet = new SynchronizedSet<Map.Entry<K, V>>(
+							m.entrySet(), mutex);
 				return entrySet;
 			}
 		}
@@ -1348,8 +1348,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> headList(E toElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(sortedList
-						.headList(toElement), mutex);
+				return new SynchronizedSortedList<E>(
+						sortedList.headList(toElement), mutex);
 			}
 		}
 
@@ -1372,8 +1372,8 @@ final public class Collections3 {
 		@Override
 		public SortedList<E> tailList(E fromElement) {
 			synchronized (mutex) {
-				return new SynchronizedSortedList<E>(sortedList
-						.tailList(fromElement), mutex);
+				return new SynchronizedSortedList<E>(
+						sortedList.tailList(fromElement), mutex);
 			}
 		}
 	}
@@ -1462,8 +1462,8 @@ final public class Collections3 {
 	 * allows modules to provide users with "read-only" access to internal
 	 * sorted lists. Query operations on the returned list "read through" to the
 	 * specified list, and attempts to modify the returned sorted list, whether
-	 * direct or via its iterator, result in an {@code
-	 * UnsupportedOperationException}.
+	 * direct or via its iterator, result in an
+	 * {@code UnsupportedOperationException}.
 	 * <p>
 	 * The returned list will be serializable if the specified list is
 	 * serializable.
@@ -1592,8 +1592,8 @@ final public class Collections3 {
 	 * allows modules to provide users with "read-only" access to internal
 	 * bounded maps. Query operations on the returned map "read through" to the
 	 * specified map, and attempts to modify the returned bounded map, whether
-	 * direct or via its collection views, result in an {@code
-	 * nsupportedOperationException}.
+	 * direct or via its collection views, result in an
+	 * {@code nsupportedOperationException}.
 	 * <p>
 	 * The returned map will be serializable if the specified map is
 	 * serializable.
@@ -1896,5 +1896,5 @@ final public class Collections3 {
 			return c.hashCode();
 		}
 	}
-	
+
 }
