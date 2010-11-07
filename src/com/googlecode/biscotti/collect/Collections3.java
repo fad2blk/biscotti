@@ -710,7 +710,7 @@ final public class Collections3 {
 	}
 
 	/**
-	 * Returns a synchronized (thread-safe) {NavigableMap} backed by the
+	 * Returns a synchronized (thread-safe) {@code NavigableMap} backed by the
 	 * specified navigable map. In order to guarantee serial access, it is
 	 * critical that <b>all</b> access to the backing map is accomplished
 	 * through the returned map (or its views).
