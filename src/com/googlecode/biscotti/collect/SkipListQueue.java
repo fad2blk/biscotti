@@ -19,7 +19,7 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 	private static double P = .5;
 	private Random random = new Random();
 	private final Node<E> header = new Node<E>(null, MAX_LEVEL);
-	private int level = 1;
+	private int level = 0;
 	private int size = 0;
 	private int modCount = 0;
 	private final Comparator<? super E> comparator;
@@ -73,28 +73,28 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 		checkNotNull(e);
 		size++;
 		modCount++;
+		int i, newLevel;
 		Node<E>[] update = new Node[MAX_LEVEL];
-		Node<E> node = header;
-		for (int i = level - 1; i >= 0; i--) {
-			while (node.forward[i] != null
-					&& comparator.compare(node.forward[i].element, e) <= 0)
-				node = node.forward[i];
-			update[i] = node;
+		Node<E> x = header;
+		for (i = level - 1; i >= 0; i--) {
+			while (x.forward[i] != null
+					&& comparator.compare(x.forward[i].element, e) < 0)
+				x = x.forward[i];
+			update[i] = x;
 		}
-		int randomLevel = randomLevel();
-		if (randomLevel > level) {
-			for (int i = level; i <= randomLevel; i++)
+		x = x.forward[0];
+		newLevel = randomLevel();
+		if (newLevel > level) {
+			for (i = level + 1; i < newLevel; i++)
 				update[i] = header;
-			level = randomLevel;
+			level = newLevel;
 		}
-
-		node = new Node<E>(e, randomLevel);
-
-		for (int i = 0; i < randomLevel; i++) {
-			node.forward[i] = update[i].forward[i];
-			update[i].forward[i] = node;
-		}
-
+		x = new Node<E>(e, newLevel);
+		for (i = 0; i < newLevel; i++)
+			if (update[i] != null) {
+				x.forward[i] = update[i].forward[i];// ??
+				update[i].forward[i] = x;
+			}
 		return true;
 	}
 
@@ -114,7 +114,17 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 
 	@Override
 	public boolean contains(Object o) {
-		// return o != null && search((E) o) != null;
+		if (o != null) {
+			E e = (E) o;
+			Node<E> x = header;
+			for (int i = level - 1; i >= 0; i--)
+				while (x.forward[i] != null
+						&& comparator.compare(x.forward[i].element, e) < 0)
+					x = x.forward[i];
+			x = x.forward[0];
+			if (x != null && comparator.compare(x.element, e) == 0)
+				return true;
+		}
 		return false;
 	}
 
@@ -155,6 +165,25 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public boolean remove(Object o) {
 		checkNotNull(o);
+		E e = (E) o;
+		int i;
+		Node<E>[] update = new Node[MAX_LEVEL];
+		Node<E> x = header;
+		for (i = level - 1; i >= 0; i--) {
+			while (x.forward[i] != null
+					&& comparator.compare(x.forward[i].element, e) < 0)
+				x = x.forward[i];
+			update[i] = x;
+		}
+		x = x.forward[0];
+		if (x != null && comparator.compare(x.element, e) == 0)
+			for (i = 0; i < level; i++) {
+				if (update[i].forward[i] != x)
+					break;
+				update[i].forward[i] = x.forward[i];
+			}
+		while (level > 0 && header.forward[level - 1] == null)
+			level = level - 1;
 		return false;
 	}
 
@@ -178,10 +207,10 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 	}
 
 	private int randomLevel() {
-		int lvl = 1;
-		while (random.nextDouble() < P && lvl < MAX_LEVEL)
-			lvl = lvl + 1;
-		return lvl;
+		int level = 1;
+		while (random.nextDouble() < P && level < MAX_LEVEL)
+			level = level + 1;
+		return level;
 	}
 
 	// /**
