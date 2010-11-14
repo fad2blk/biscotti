@@ -102,7 +102,7 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 	public E peek() {
 		if (isEmpty())
 			return null;
-		return null;
+		return header.forward[0].element;
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public class SkipListQueue<E> extends AbstractQueue<E> implements
 
 	private int randomLevel() {
 		int level = 1;
-		while (random.nextDouble() < P && level < MAX_LEVEL)
+		while (random.nextDouble() < P && level <= MAX_LEVEL)
 			level = level + 1;
 		return level;
 	}
