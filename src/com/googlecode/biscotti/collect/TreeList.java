@@ -58,36 +58,44 @@ import com.google.common.collect.Ordering;
  * <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center">Method</th>
- * <th align="center">Running Time</th>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection) addAll(Collection)}</br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}</br> {@link #indexOf(Object)}</br>
- * {@link #lastIndexOf(Object)}</br> {@link #get(int)}</br> {@link #remove(int)}
- * </br></td>
- * <td align="center"><i>O(n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
- * {@link #remove(Object)}</br></td>
- * <td align="center"><i>O(lg(n - k) + k)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #isEmpty() isEmpty()}</br> {@link #size()}</br></td>
- * <td align="center"><i>O(1)</i></td>
- * </tr>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}</br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}</br>
+ *       {@link #indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #get(int)}</br>
+ *       {@link #remove(int)}</br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #remove(Object)}</br>
+ *     </td>
+ *     <td align="center"><i>O(lg(n - k) + k)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #size()}</br>
+ *     </td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * 
  * @author Zhenya Leonov
@@ -454,7 +462,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * @return a shallow copy of this list
 	 * @throws CloneNotSupportedException
 	 *             if an attempt is made to clone is a {@code subList},
-	 *             {@code headList}, or {@code tailList} view of the parent list
+	 *             {@code headList}, or {@code tailList} view of the parent
+	 *             list
 	 */
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {
