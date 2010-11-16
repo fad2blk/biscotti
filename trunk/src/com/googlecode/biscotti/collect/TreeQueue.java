@@ -167,10 +167,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	/**
 	 * Creates a new {@code TreeQueue} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link java.util.TreeQueue java.util.TreeQueue}, or
-	 * {@code SortedCollection} this queue will be ordered according to the same
-	 * ordering. Otherwise, this queue will be ordered according to the
-	 * <i>natural ordering</i> of its elements.
+	 * {@link SortedSet}, {@link java.util.PriorityQueue
+	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
+	 * ordered according to the same ordering. Otherwise, this queue will be
+	 * ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
