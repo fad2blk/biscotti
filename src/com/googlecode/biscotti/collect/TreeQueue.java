@@ -109,7 +109,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	transient Node min = nil;
 	transient Node root = nil;
 	transient int modCount = 0;
-	Comparator<? super E> comparator;
+	final Comparator<? super E> comparator;
 
 	TreeQueue(final Comparator<? super E> comparator) {
 		if (comparator != null)
