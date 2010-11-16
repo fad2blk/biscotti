@@ -189,8 +189,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * Returns the comparator used to order the elements in this collection. If one was not explicitly provided a <i>natural order</i>
-	 * comparator is returned.
+	 * Returns the comparator used to order the elements in this queue. If one
+	 * was not explicitly provided a <i>natural order</i> comparator is
+	 * returned.
 	 * 
 	 * @return the comparator used to order this queue
 	 */
