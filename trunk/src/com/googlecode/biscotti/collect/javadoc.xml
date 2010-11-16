@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public"
+        	     author="true"
+        	     classpath="C:\Users\Administrator\Workspace\biscotti\lib\guava\guava-src-r06"
+        	     destdir="javadoc"
+        	     doctitle="The Biscotti Project&lt;br&gt;API Documentation"
+    	         nodeprecated="false"
+    	         nodeprecatedlist="false"
+    	         noindex="false"
+    	         nonavbar="false"
+    	         notree="false"
+    	         packagenames="com.googlecode.biscotti.base,com.googlecode.biscotti.collect"
+    	         source="1.6"
+    	         sourcepath="src;C:\Program Files (x86)\Java\jdk1.6.0_20\src;C:\Users\Administrator\Workspace\biscotti\lib\guava\guava-src-r06"
+    	         splitindex="true"
+    	         use="true"
+    	         version="true">
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+            <link href="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
+        </javadoc>
+    </target>
+</project>
