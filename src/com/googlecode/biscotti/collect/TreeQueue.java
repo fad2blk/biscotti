@@ -48,9 +48,8 @@ import com.google.common.collect.Ordering;
  * {@code equals} when testing for element equality. The ordering imposed by the
  * comparator is not required to be <i>consistent with equals</i>. Given a
  * comparator {@code c}, for any two elements {@code e1} and {@code e2} such
- * that {@code c.compare(e1, e2) == 0} it is not necessary true that
- * {@code e1.equals(e2) == true}. This is allows duplicate elements to have
- * different priority.
+ * that {@code c.compare(e1, e2) == 0} it is not necessarily true that
+ * {@code e1.equals(e2) == true}.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, <i>k</i> is the highest number of
@@ -58,43 +57,49 @@ import com.google.common.collect.Ordering;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center">Method</th>
- * <th align="center">Running Time</th>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection)}<br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td align="center"><i>O(m lg n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}<br>
- * </td>
- * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
- * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
- * <td align="center"><i>O(lg(n - k) + k)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
- * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
- * {@link #size()}</br></td>
- * <td align="center"><i>O(1)</i></td>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection)}<br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m lg n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}<br>
+ *     </td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #offer(Object) offer(E)}</br>
+ *       {@link #remove(Object)}</br>
+ *     </td>
+ *     <td align="center"><i>O(lg(n - k) + k)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #element() element()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek()}</br> {@link #poll()}</br>
+ *       {@link #remove() remove()}</br>
+ *       {@link #size()}</br>
+ *   </td>
+ *   <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
  * <p>
  * Note: This queue uses the same ordering rules as
  * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
- * provides identical functionality, faster overall running time and ordered
- * traversals via its iterators.
+ * provides identical functionality and ordered traversals via its iterators.
  * 
  * @author Zhenya Leonov
  * @param <E>
