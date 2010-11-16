@@ -57,43 +57,36 @@ import com.google.common.collect.Ordering;
  * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m lg n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object)}</br>
- *     </td>
- *     <td align="center"><i>O(lg(n - k) + k)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br> {@link #poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size()}</br>
- *   </td>
- *   <td align="center"><i>O(1)</i></td>
+ * <tr>
+ * <th align="center">Method</th>
+ * <th align="center">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td align="center"><i>O(m lg n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br>
+ * </td>
+ * <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #contains(Object)}</br>
+ * {@link #offer(Object) offer(E)}</br> {@link #remove(Object)}</br></td>
+ * <td align="center"><i>O(lg(n - k) + k)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek()}</br> {@link #poll()}</br> {@link #remove() remove()}</br>
+ * {@link #size()}</br></td>
+ * <td align="center"><i>O(1)</i></td>
  * </tr>
  * </table>
  * <p>
@@ -189,8 +182,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * {@inheritDoc} If one was not explicitly provided a <i>natural order</i>
-	 * comparator is returned.
+	 * Returns the comparator used to order the elements in this queue. If one
+	 * was not explicitly provided a <i>natural order</i> comparator is
+	 * returned.
 	 * 
 	 * @return the comparator used to order this queue
 	 */
