@@ -112,7 +112,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	private transient Node max = nil;
 	private transient Node root = nil;
 	private transient int modCount = 0;
-	private Comparator<? super E> comparator;
+	private final Comparator<? super E> comparator;
 
 	private TreeList(final Comparator<? super E> comparator) {
 		if (comparator != null)
