@@ -143,7 +143,7 @@ final public class Collections3 {
 	 * @return a {@code TreeMap} containing the same mappings as the specified
 	 *         map, sorted according to the <i>natural ordering</i> of its keys
 	 */
-	public static <K extends Comparable<? super K>, V> TreeMap<K, V> newTreeMap(
+	public static <K, V> TreeMap<K, V> newTreeMap(
 			Map<? extends K, ? extends V> map) {
 		return new TreeMap<K, V>(map);
 	}
