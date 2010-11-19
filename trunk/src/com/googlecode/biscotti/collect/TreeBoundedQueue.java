@@ -1,10 +1,12 @@
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.SortedSet;
-
-import com.google.common.base.Preconditions;
 
 /**
  * An implementation of {@link BoundedQueue} backed by a {@link TreeQueue}. The
@@ -17,11 +19,11 @@ import com.google.common.base.Preconditions;
  * <i>least</i> element with respect to the specified ordering. Elements with
  * equal priority are ordered according to their insertion order.
  * <p>
- * When the queue is full the {@code add(E)}, {@code offer(E)}, and {@code
- * addAll(Collection)} operations behave according to the following policy: if
- * the element to be added is greater than the element with the <i>lowest</i>
- * priority, the <i>lowest</i> element is removed and the new element is added;
- * else the new element is rejected.
+ * When the queue is full the {@code add(E)}, {@code offer(E)}, and
+ * {@code addAll(Collection)} operations behave according to the following
+ * policy: if the element to be added is greater than the element with the
+ * <i>lowest</i> priority, the <i>lowest</i> element is removed and the new
+ * element is added; else the new element is rejected.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
@@ -60,7 +62,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 *             if {@code maxSize} is less than 1
 	 */
 	public static <E> TreeBoundedQueue<E> create(final int maxSize) {
-		Preconditions.checkArgument(maxSize > 0);
+		checkArgument(maxSize > 0);
 		return new TreeBoundedQueue<E>(maxSize, null);
 	}
 
@@ -79,8 +81,8 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 */
 	public static <E> TreeBoundedQueue<E> create(final int maxSize,
 			final Comparator<? super E> comparator) {
-		Preconditions.checkArgument(maxSize > 0);
-		Preconditions.checkNotNull(comparator);
+		checkArgument(maxSize > 0);
+		checkNotNull(comparator);
 		return new TreeBoundedQueue<E>(maxSize, comparator);
 	}
 
@@ -106,7 +108,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 */
 	public static <E> TreeBoundedQueue<E> create(
 			final Iterable<? extends E> elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		return new TreeBoundedQueue<E>(elements);
 	}
 
@@ -119,7 +121,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 */
 	@Override
 	public boolean add(E e) {
-		Preconditions.checkState(offer(e), "Queue full");
+		checkState(offer(e), "Queue full");
 		return true;
 	}
 
