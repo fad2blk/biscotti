@@ -365,7 +365,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		Node n = root;
 		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
-			if (cmp == 0 && e.equals(n.element))
+			if (e.equals(n.element))
 				return n;
 			if (cmp < 0)
 				n = n.left;
