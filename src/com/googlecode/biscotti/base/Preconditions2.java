@@ -1,9 +1,6 @@
 package com.googlecode.biscotti.base;
 
-import java.util.Comparator;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Ordering;
 
 /**
  * Static utility methods used to verify correctness of arguments passed to your
@@ -96,53 +93,53 @@ final public class Preconditions2 {
 		return arg;
 	}
 
-	/**
-	 * Ensures that the specified element is located between {@code fromElement}
-	 * inclusive, and {@code toElement} inclusive, according to their <i>natural
-	 * ordering</i>.
-	 * 
-	 * @param element
-	 *            a user-supplied element
-	 * @param fromElement
-	 *            low endpoint (inclusive) of the specified range
-	 * @param toElement
-	 *            high endpoint (inclusive) of the specified range
-	 * @return the specified element
-	 */
-	public static <T> T checkElementPosition(final T element,
-			final T fromElement, final T toElement) {
-		return checkElementPosition(element, fromElement, toElement,
-				(Comparator<? super T>) Ordering.natural());
-	}
-
-	/**
-	 * Ensures that the specified element is located between {@code fromElement}
-	 * inclusive, and {@code toElement} inclusive, according to the specified
-	 * {@code Comparator}.
-	 * 
-	 * @param element
-	 *            a user-supplied element
-	 * @param fromElement
-	 *            low endpoint (inclusive) of the specified range
-	 * @param toElement
-	 *            high endpoint (inclusive) of the specified range
-	 * @param comparator
-	 *            a user-supplied comparator
-	 * @return the specified element
-	 */
-	public static <T> T checkElementPosition(final T element,
-			final T fromElement, final T toElement,
-			Comparator<? super T> comparator) {
-		if (comparator.compare(element, fromElement) < 0)
-			throw new IllegalArgumentException(format(
-					"element (%s) must be greater or equal to (%s)", element,
-					fromElement));
-		if (comparator.compare(element, toElement) >= 0)
-			throw new IllegalArgumentException(format(
-					"element (%s) must be strictly less than (%s)", element,
-					toElement));
-		return element;
-	}
+//	/**
+//	 * Ensures that the specified element is located between {@code fromElement}
+//	 * inclusive, and {@code toElement} inclusive, according to their <i>natural
+//	 * ordering</i>.
+//	 * 
+//	 * @param element
+//	 *            a user-supplied element
+//	 * @param fromElement
+//	 *            low endpoint (inclusive) of the specified range
+//	 * @param toElement
+//	 *            high endpoint (inclusive) of the specified range
+//	 * @return the specified element
+//	 */
+//	public static <T> T checkElementPosition(final T element,
+//			final T fromElement, final T toElement) {
+//		return checkElementPosition(element, fromElement, toElement,
+//				(Comparator<? super T>) Ordering.natural());
+//	}
+//
+//	/**
+//	 * Ensures that the specified element is located between {@code fromElement}
+//	 * inclusive, and {@code toElement} inclusive, according to the specified
+//	 * {@code Comparator}.
+//	 * 
+//	 * @param element
+//	 *            a user-supplied element
+//	 * @param fromElement
+//	 *            low endpoint (inclusive) of the specified range
+//	 * @param toElement
+//	 *            high endpoint (inclusive) of the specified range
+//	 * @param comparator
+//	 *            a user-supplied comparator
+//	 * @return the specified element
+//	 */
+//	public static <T> T checkElementPosition(final T element,
+//			final T fromElement, final T toElement,
+//			Comparator<? super T> comparator) {
+//		if (comparator.compare(element, fromElement) < 0)
+//			throw new IllegalArgumentException(format(
+//					"element (%s) must be greater or equal to (%s)", element,
+//					fromElement));
+//		if (comparator.compare(element, toElement) >= 0)
+//			throw new IllegalArgumentException(format(
+//					"element (%s) must be strictly less than (%s)", element,
+//					toElement));
+//		return element;
+//	}
 
 	/**
 	 * Substitutes each {@code %s} in {@code template} with an argument. These
