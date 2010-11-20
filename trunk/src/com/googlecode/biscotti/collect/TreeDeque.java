@@ -1,5 +1,7 @@
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -7,8 +9,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
-
-import com.google.common.base.Preconditions;
 
 /**
  * An unbounded priority {@link Deque} based on a modified <a
@@ -144,7 +144,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 *         {@code comparator}
 	 */
 	public static <E> TreeDeque<E> create(final Comparator<? super E> comparator) {
-		Preconditions.checkNotNull(comparator);
+		checkNotNull(comparator);
 		return new TreeDeque<E>(comparator);
 	}
 
@@ -168,7 +168,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 *             iterable itself is {@code null}
 	 */
 	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
-		Preconditions.checkNotNull(elements);
+		checkNotNull(elements);
 		return new TreeDeque<E>(elements);
 	}
 

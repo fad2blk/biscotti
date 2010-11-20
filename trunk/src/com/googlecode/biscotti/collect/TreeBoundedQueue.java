@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.SortedSet;
 
@@ -39,7 +38,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		BoundedQueue<E> {
 
 	private static final long serialVersionUID = 1L;
-	private int maxSize;
+	private final int maxSize;
 
 	private TreeBoundedQueue(final int maxSize, final Comparator<? super E> c) {
 		super(c);
@@ -89,11 +88,11 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	/**
 	 * Creates a new {@code TreeBoundedQueue} containing the elements of and
 	 * having the maximum size equal to the number of elements in the specified
-	 * {@code Iterable}. If the specified iterable is a collection and is an
-	 * instance of a {@link SortedSet} or is another {@code PriorityQueue}
-	 * instance, this queue will be ordered according to the same ordering.
-	 * Otherwise, this priority queue will be ordered according to the
-	 * {@link Comparable natural ordering} of its elements.
+	 * {@code Iterable}. If the specified iterable is an instance of
+	 * {@link SortedSet}, {@link java.util.PriorityQueue
+	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
+	 * ordered according to the same ordering. Otherwise, this queue will be
+	 * ordered according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
@@ -105,11 +104,15 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
+	 * @throws IllegalArgumentException
+	 *             if the specified iterable is empty
 	 */
 	public static <E> TreeBoundedQueue<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new TreeBoundedQueue<E>(elements);
+		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(elements);
+		checkArgument(!q.isEmpty());
+		return q;
 	}
 
 	/**
@@ -142,10 +145,10 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		return super.offer(e);
 	}
 
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		return super.addAll(c);
-	}
+	// @Override
+	// public boolean addAll(Collection<? extends E> c) {
+	// return super.addAll(c);
+	// }
 
 	@Override
 	public int maxSize() {
