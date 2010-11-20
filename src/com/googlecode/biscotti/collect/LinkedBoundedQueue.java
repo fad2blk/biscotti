@@ -1,11 +1,14 @@
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingQueue;
 import com.google.common.collect.Lists;
 
@@ -14,8 +17,8 @@ import com.google.common.collect.Lists;
  * elements in <i>first-in-first-out</i> (FIFO) manner; it considers the
  * <i>eldest</i> element to be the least recently inserted element. To prevent
  * this queue from exceeding its capacity restrictions the eldest element is
- * removed as needed when calling {@code add(E)}, {@code offer(E)}, and {@code
- * addAll(Collection)} methods. Elements may be {@code null}.
+ * removed as needed when calling {@code add(E)}, {@code offer(E)}, and
+ * {@code addAll(Collection)} methods. Elements may be {@code null}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally, consider "wrapping" the
@@ -34,7 +37,7 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	private final int maxSize;
 
 	private LinkedBoundedQueue(final int maxSize) {
-		Preconditions.checkArgument(maxSize > 0);
+		checkArgument(maxSize > 0);
 		queue = Lists.newLinkedList();
 		this.maxSize = maxSize;
 	}
@@ -45,8 +48,9 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	private LinkedBoundedQueue(final Iterable<? extends E> iterable) {
-		Preconditions.checkNotNull(iterable);
+		checkNotNull(iterable);
 		this.queue = Lists.newLinkedList(iterable);
+		checkArgument(!isEmpty());
 		this.maxSize = this.size();
 	}
 
@@ -70,16 +74,18 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * iteration order, and having the maximum size equal to the number of
 	 * elements in the specified {@code iterable}.
 	 * 
-	 * @param iterable
+	 * @param elements
 	 *            the iterable instance whose elements are to be placed in this
 	 *            queue
 	 * @return a new {@code LinkedBoundedQueue} with the same elements,
 	 *         iteration order, and having the maximum size equal to the number
 	 *         of elements in the specified iterable
+	 * @throws IllegalArgumentException
+	 *             if the specified iterable is empty
 	 */
 	public static <E> LinkedBoundedQueue<E> create(
-			final Iterable<? extends E> iterable) {
-		return new LinkedBoundedQueue<E>(iterable);
+			final Iterable<? extends E> elements) {
+		return new LinkedBoundedQueue<E>(elements);
 	}
 
 	/**
@@ -112,8 +118,8 @@ public final class LinkedBoundedQueue<E> extends ForwardingQueue<E> implements
 	 */
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		Preconditions.checkNotNull(c);
-		Preconditions.checkState(c != this);
+		checkNotNull(c);
+		checkState(c != this);
 		boolean returnValue = false;
 		for (E element : c)
 			if (add(element))
