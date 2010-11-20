@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
@@ -123,8 +122,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 	private TreeList(final Iterable<? extends E> elements) {
 		Comparator<? super E> comparator = null;
-		if (elements instanceof NavigableSet<?>)
-			comparator = ((NavigableSet) elements).comparator();
+		if (elements instanceof SortedSet<?>)
+			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			comparator = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
