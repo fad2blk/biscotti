@@ -725,7 +725,7 @@ final public class Collections3 {
 	 *      ...
 	 *  Set s = nm.keySet();  // Needn't be in synchronized block
 	 *      ...
-	 *  synchronized(nm) {  // Synchronizing on m, not s!
+	 *  synchronized(nm) {  // Synchronizing on nm, not s!
 	 *      Iterator i = s.iterator(); // Must be in synchronized block
 	 *      while (i.hasNext())
 	 *          foo(i.next());
