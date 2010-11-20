@@ -150,16 +150,16 @@ final public class Collections3 {
 
 	/**
 	 * Creates a {@code TreeMap} containing the same mappings and using the same
-	 * ordering as the specified navigable map.
+	 * ordering as the specified sorted map.
 	 * 
 	 * @param map
-	 *            m the navigable map whose mappings are to be placed in this
-	 *            map, and whose comparator is to be used to sort this map
+	 *            m the sorted map whose mappings are to be placed in this map,
+	 *            and whose comparator is to be used to sort this map
 	 * @return a {@code TreeMap} containing the same mappings and using the same
-	 *         ordering as the specified navigable map
+	 *         ordering as the specified sorted map
 	 */
 	public static <K extends Comparable<? super K>, V> TreeMap<K, V> newTreeMap(
-			NavigableMap<K, ? extends V> map) {
+			SortedMap<K, ? extends V> map) {
 		return new TreeMap<K, V>(map);
 	}
 
@@ -200,7 +200,7 @@ final public class Collections3 {
 
 	/**
 	 * Creates a {@code TreeSet} containing the elements of the specified
-	 * iterable. If the iterable is an instance of a {@link NavigableSet},
+	 * iterable. If the iterable is an instance of a {@link SortedSet},
 	 * {@link PriorityQueue java.util.PriorityQueue}, or
 	 * {@link SortedCollection}, this set will be sorted according to the same
 	 * ordering. Otherwise, this set will be sorted according to the <i>natural
@@ -215,8 +215,8 @@ final public class Collections3 {
 		checkNotNull(elements);
 		Comparator<? super E> c = null;
 
-		if (elements instanceof NavigableSet<?>)
-			c = ((NavigableSet) elements).comparator();
+		if (elements instanceof SortedSet<?>)
+			c = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
 			c = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
