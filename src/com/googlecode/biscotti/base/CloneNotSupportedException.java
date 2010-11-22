@@ -4,9 +4,10 @@ package com.googlecode.biscotti.base;
  * A runtime exception thrown by the {@code clone()} method to indicate that an
  * object could not or should not be cloned.
  * <p>
- * Unlike the checked {@link java.lang.CloneNotSupportedException}, this
- * exception can be thrown by sub classes whose parent classes do not throw a
- * {@link java.lang.CloneNotSupportedException}.
+ * Unlike the checked {@link java.lang.CloneNotSupportedException
+ * java.lang.CloneNotSupportedException}, this exception can be thrown by sub
+ * classes whose parent classes do not throw a
+ * {@code java.lang.CloneNotSupportedException}.
  */
 public class CloneNotSupportedException extends RuntimeException {
 
