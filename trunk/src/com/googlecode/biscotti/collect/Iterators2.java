@@ -37,8 +37,8 @@ public final class Iterators2 {
 	/**
 	 * Combines multiple list iterators into a single {@code ListIterator}. The
 	 * returned list iterator supports the {@code add(E)}, {@code remove()}, and
-	 * {@code set(E)} operations if the corresponding source list iterator
-	 * supports them.
+	 * {@code set(E)} operations if the corresponding backing iterator supports
+	 * them.
 	 * 
 	 * @param inputs
 	 *            the source list iterators
