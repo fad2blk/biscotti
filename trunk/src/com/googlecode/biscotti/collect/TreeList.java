@@ -25,7 +25,7 @@ import com.google.common.collect.Ordering;
 /**
  * A {@link SortedList} implementation, based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
- * Elements are ordered from <i>least</i> to <i>greatest</i> according to their
+ * Elements are sorted from <i>least</i> to <i>greatest</i> according to their
  * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
  * creation. Attempting to remove or insert {@code null} elements is prohibited.
  * Querying for {@code null} elements is allowed. Inserting non-comparable
@@ -461,8 +461,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 * @return a shallow copy of this list
 	 * @throws CloneNotSupportedException
 	 *             if an attempt is made to clone is a {@code subList},
-	 *             {@code headList}, or {@code tailList} view of the parent
-	 *             list
+	 *             {@code headList}, or {@code tailList} view of the parent list
 	 */
 	@Override
 	public TreeList<E> clone() throws CloneNotSupportedException {

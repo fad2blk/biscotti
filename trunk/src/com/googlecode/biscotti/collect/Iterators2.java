@@ -120,11 +120,11 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Returns the number of elements in the provided {@code Iterator} which
+	 * Returns the number of elements in the given {@code Iterator} which
 	 * satisfy the specified {@code Predicate}.
 	 * 
 	 * @param iterator
-	 *            the provided {@code Iterator}
+	 *            the given {@code Iterator}
 	 * @param predicate
 	 *            the specified {@code Predicate}
 	 * @return the number of elements in {@code iterator} which satisfy
@@ -142,13 +142,13 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Returns the number of elements in the provided {@code Iterator} which do
-	 * not satisfy the specified {@code Predicate}.
+	 * Returns the number of elements in the given {@code Iterator} which do not
+	 * satisfy the specified {@code Predicate}.
 	 * 
 	 * @param <E>
-	 *            the type of elements in the provided {@code Iterator}
+	 *            the type of elements in the given {@code Iterator}
 	 * @param iterator
-	 *            the provided {@code Iterator}
+	 *            the given {@code Iterator}
 	 * @param predicate
 	 *            the specified {@code Predicate}
 	 * @return the number of elements in {@code iterator} which do not satisfy
@@ -166,8 +166,8 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Decorates the provided {@code ListIterator} to return only the elements
-	 * that are instances of the specified {@code Class}.
+	 * Decorates the given {@code ListIterator} to return only the elements that
+	 * are instances of the specified {@code Class}.
 	 * 
 	 * @param unfiltered
 	 *            a list iterator containing objects of any type
@@ -182,11 +182,11 @@ public final class Iterators2 {
 	}
 
 	/**
-	 * Decorates the provided {@code ListIterator} to return only the elements
-	 * that satisfy the specified {@code Predicate}.
+	 * Decorates the given {@code ListIterator} to return only the elements that
+	 * satisfy the specified {@code Predicate}.
 	 * 
 	 * @param unfiltered
-	 *            the provided list iterator
+	 *            the given list iterator
 	 * @param predicate
 	 *            the specified predicate
 	 * @return an {@code UnmodifiableListIterator} which returns only the
@@ -419,22 +419,22 @@ public final class Iterators2 {
 
 	/**
 	 * Returns a {@code ListIterator} that applies the specified
-	 * {@code Function} to each element of the provided list iterator.
+	 * {@code Function} to each element of the given list iterator.
 	 * <p>
 	 * The returned list iterator does not support {@code add(E)} and
-	 * {@code set(E)} but does support {@code remove()} if the provided list
+	 * {@code set(E)} but does support {@code remove()} if the given list
 	 * iterator does.
 	 * 
 	 * @param <E>
-	 *            the type of elements traversed by the provided list iterator
+	 *            the type of elements traversed by the given list iterator
 	 * @param <T>
 	 *            the type of output of the specified function
 	 * @param fromIterator
-	 *            the provided list iterator
+	 *            the given list iterator
 	 * @param function
 	 *            the specified function
-	 * @return a {@code ListIterator} that applies {@code function} to each
-	 *         element of {@code fromIterator}.
+	 * @return a list iterator that applies {@code function} to each element of
+	 *         {@code fromIterator}
 	 */
 	public static <E, T> ListIterator<T> transform(
 			final ListIterator<E> fromIterator,

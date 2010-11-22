@@ -13,12 +13,12 @@ import java.util.SortedSet;
 /**
  * An unbounded priority {@link Deque} based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
- * elements of this deque are ordered according to their <i>natural
- * ordering</i>, or by an explicit {@link Comparator} provided at creation.
- * Inserting {@code null} elements will fail cleanly and safely leaving this
- * deque unmodified. Querying for {@code null} elements is allowed. Attempting
- * to insert non-comparable elements will result in a {@code ClassCastException}
- * . The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
+ * elements of this deque are sorted according to their <i>natural ordering</i>,
+ * or by an explicit {@link Comparator} provided at creation. Inserting
+ * {@code null} elements will fail cleanly and safely leaving this deque
+ * unmodified. Querying for {@code null} elements is allowed. Attempting to
+ * insert non-comparable elements will result in a {@code ClassCastException} .
+ * The {@code addFirst(E)}, {@code addLast(E)}, {@code offerFirst(E)},
  * {@code offerLast(E)}, and {@code push(E)} operations are not supported.
  * <p>
  * This deque is ordered from <i>least</i> to <i>greatest</i> with respect to
@@ -48,7 +48,7 @@ import java.util.SortedSet;
  * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
  * duplicate elements of each other, and <i>m</i> is the size of the specified
  * collection):
- * <p>
+  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center">Method</th>

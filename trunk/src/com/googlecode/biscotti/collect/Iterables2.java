@@ -17,7 +17,7 @@ public final class Iterables2 {
 	}
 
 	/**
-	 * Returns the number of elements in the provided {@code Iterable} which
+	 * Returns the number of elements in the given {@code Iterable} which
 	 * satisfy the specified {@code Predicate}.
 	 * 
 	 * @param <E>
@@ -41,8 +41,8 @@ public final class Iterables2 {
 	}
 
 	/**
-	 * Returns the number of elements in the provided {@code Iterable} which do
-	 * not satisfy the specified {@code Predicate}.
+	 * Returns the number of elements in the given {@code Iterable} which do not
+	 * satisfy the specified {@code Predicate}.
 	 * 
 	 * @param <E>
 	 *            the type of elements in the provided {@code Iterable}

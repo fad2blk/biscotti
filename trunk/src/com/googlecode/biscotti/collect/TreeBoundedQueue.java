@@ -9,10 +9,10 @@ import java.util.SortedSet;
 
 /**
  * An implementation of {@link BoundedQueue} backed by a {@link TreeQueue}. The
- * elements of this queue are ordered according to their <i>natural
- * ordering</i>, or by an explicit {@link Comparator} provided at creation.
- * Inserting {@code null} elements is prohibited. Attempting to insert
- * non-comparable elements will result in a {@code ClassCastException}.
+ * elements of this queue are sorted according to their <i>natural ordering</i>,
+ * or by an explicit {@link Comparator} provided at creation. Inserting
+ * {@code null} elements is prohibited. Attempting to insert non-comparable
+ * elements will result in a {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with

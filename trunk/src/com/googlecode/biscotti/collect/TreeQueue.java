@@ -20,10 +20,10 @@ import com.google.common.collect.Ordering;
 /**
  * An unbounded priority {@link Queue} based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
- * elements of this queue are ordered according to their <i>natural
- * ordering</i>, or by an explicit {@link Comparator} provided at creation.
- * Attempting to remove or insert {@code null} elements is prohibited. Querying
- * for {@code null} elements is allowed. Inserting non-comparable elements will
+ * elements of this queue are sorted according to their <i>natural ordering</i>,
+ * or by an explicit {@link Comparator} provided at creation. Attempting to
+ * remove or insert {@code null} elements is prohibited. Querying for
+ * {@code null} elements is allowed. Inserting non-comparable elements will
  * result in a {@code ClassCastException}.
  * <p>
  * The first element (the head) of this queue is considered to be the
