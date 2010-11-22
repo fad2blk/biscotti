@@ -8,14 +8,14 @@ package com.googlecode.biscotti.base;
  * exception can be thrown by sub classes whose parent classes do not throw a
  * {@link java.lang.CloneNotSupportedException}.
  */
-public class NotClonableException extends RuntimeException {
+public class CloneNotSupportedException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a {@code CloneNotSupportedException} with no detail message.
 	 */
-	public NotClonableException() {
+	public CloneNotSupportedException() {
 		super();
 	}
 
@@ -26,7 +26,7 @@ public class NotClonableException extends RuntimeException {
 	 * @param s
 	 *            the detail message
 	 */
-	public NotClonableException(String s) {
+	public CloneNotSupportedException(String s) {
 		super(s);
 	}
 }
