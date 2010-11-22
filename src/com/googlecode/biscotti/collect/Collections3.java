@@ -717,7 +717,7 @@ final public class Collections3 {
 	 * <p>
 	 * It is imperative that the user manually synchronize on the returned
 	 * navigable map when iterating over any of its collection views, or the
-	 * collections views of any of its {@code subMap},{@code headMap},
+	 * collections views of any of its {@code subMap}, {@code headMap},
 	 * {@code tailMap} views.
 	 * 
 	 * <pre>
