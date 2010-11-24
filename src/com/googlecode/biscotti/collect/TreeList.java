@@ -264,8 +264,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 	@Override
 	public int indexOf(Object o) {
-		if (o != null)
-			super.indexOf(o);
+		if (o != null) {
+			E e = (E) o;
+			ListIterator<E> itor = listIterator();
+			while (itor.hasNext())
+				if (comparator.compare(itor.next(), e) == 0)
+					return itor.previousIndex();
+		}
 		return -1;
 	}
 
@@ -277,10 +282,12 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
+			E e = (E) o;
 			ListIterator<E> itor = listIterator();
 			while (itor.hasNext())
-				if (itor.next().equals(o)) {
-					while (itor.hasNext() && itor.next().equals(o))
+				if (comparator.compare(itor.next(), e) == 0) {
+					while (itor.hasNext()
+							&& comparator.compare(itor.next(), e) == 0)
 						;
 					return itor.previousIndex();
 				}
