@@ -36,8 +36,8 @@ public class SkipSet<E> extends AbstractSet<E> implements SortedCollection<E> {
 	private static int level = 1;
 	private final Random random = new Random();
 	private final Node<E> header = new Node(null, MAX_LEVEL);
+	// final Node<E>[] update = new Node[MAX_LEVEL];
 	private final Comparator<? super E> comparator;
-	private final Node<E>[] update = new Node[MAX_LEVEL];
 
 	SkipSet(final Comparator<? super E> comparator) {
 		if (comparator != null)
@@ -81,170 +81,38 @@ public class SkipSet<E> extends AbstractSet<E> implements SortedCollection<E> {
 		return comparator;
 	}
 
-	@Override
-	public boolean add(E e) {
-		Node<E> x = header;
-		//int thisLevel = level;
-		int i = level - 1;
-
-		int newLevel = randomLevel();
-		Node<E> newNode = new Node<E>(e, newLevel);
-		
-		// Check whether or not we've exceeded the current level of the list
-		if(newLevel > level) {
-			// We did exceed it, so we must set the previously unused forward references
-			// to the new node and adjust the level of the list.
-			java.util.Arrays.fill(header.next, level, newLevel, newNode);
-			level = newLevel;
-		}
-		else if (level>newLevel) {
-			// In this case level was smaller than the list, we need to descend without
-			// updating anything until we've reached level "level". From there we must
-			// start updating (next loop).
-			do {
-				Node<E> node = x.next[i];
-				while ((node != null) && (comparator.compare(node.element, e) < 0)) {
-					x = node;
-					node = x.next[i];
-				}
-				i--;
-			} while (i>level-1);
-		}
-		do {
-			// Descend while updating.
-			// Since we are sure we need to do this for at least one level (level 1), we use
-			// a do-while construction to save us an unnecessary test.
-			Node<E> node = x.next[i];
-			while ((node != null) && (comparator.compare(node.element, e) < 0)) {
-				x = node;
-				node = x.next[i];
-			}
-			newNode.next[i]=node;
-			x.next[i]=newNode;
-			i--;
-		} while (i>=0);
-		//_modCount++;
-		size++;
-		return true;
-//		Node<E> x = header;
-//		int i = level -1;
-//		//new level
-//		int newLevel = randomLevel();
-//
-//		Node<E> newNode = new Node<E>(e, newLevel);
-//
-//		if (newLevel > level) {
-//			java.util.Arrays.fill(header.next, level, newLevel, newNode);
-//			level = newLevel;
-//		} else {//if (level > newLevel) {
-//			do {
-//				Node<E> node = x.next[i];
-//				while ((node != null)
-//						&& (comparator.compare(node.element, e) < 0)) {
-//					x = node;
-//					node = x.next[i];
-//				}
-//				i--;
-//			} while (i > newLevel - 1);
-//		}
-//		for(; i >= 0; i--){
-//			Node<E> node = x.next[i];
-//			while ((node != null) && (comparator.compare(node.element, e) < 0)) {
-//				x = node;
-//				node = x.next[i];
-//			}
-//			if (node != null && comparator.compare(node.element, e) == 0)
-//				return false;
-//			newNode.next[i] = node;
-//			x.next[i] = newNode;
-//		}
-//		//modCount++;
-//		size++;
-//		return true;
-	}
-	
-	public boolean add1(E e) {
-		checkNotNull(e);
-		
-		//final Comparator<? super E> comparator = this.comparator;
-		
-		
-		//Node<E>[] update = new Node[MAX_LEVEL];
-		Node<E> x = header;
-		int i;
-		for (i = level - 1; i >= 0; i--) {
-			while (x.next[i] != null
-					&& comparator.compare(x.next[i].element, e) < 0)
-				x = x.next[i];
-			update[i] = x;
-		}
-		x = x.next[0];
-		if (x != null && comparator.compare(x.element, e) == 0)
-			return false;
-		int newLevel = randomLevel();
-		if (newLevel > level) {
-			Arrays.fill(update, level, newLevel, header);
-//			for (i = level; i < newLevel; i++)
-//				update[i] = header;
-			level = newLevel;
-		}
-		x = new Node<E>(e, newLevel);
-		for (i = 0; i < newLevel; i++) {
-			x.next[i] = update[i].next[i];
-			update[i].next[i] = x;
-		}
-		size++;
-		return true;
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		E e = (E) o;
-		checkNotNull(e);
-		Node<E>[] update = new Node[MAX_LEVEL];
-		Node<E> x = header;
-		int i;
-		for (i = level - 1; i >= 0; i--) {
-			while (x.next[i] != null
-					&& comparator.compare(x.next[i].element, e) < 0)
-				x = x.next[i];
-			update[i] = x;
-		}
-		// x = x.next[0];
-		// if (x != null && comparator.compare(x.element, e) == 0) {
-		// for (i = 0; i < level; i++) {
-		// if (update[i].next[i] != x)
-		// break;
-		// update[i].next[i] = x.next[i];
-		// }
-		// while (level > 0 && header.next[level] != null)
-		// level--;
-		// size--;
-		// return true;
-		// }
-		// return false;
-		return remove(e, x, update);
-	}
-
-	private boolean remove(E e, Node<E> x, Node<E>[] update) {
-		if (x != null && comparator.compare(x.element, e) == 0) {
-			for (int i = 0; i < level; i++) {
-				if (update[i].next[i] != x)
-					break;
-				update[i].next[i] = x.next[i];
-			}
-			while (level > 0 && header.next[level] != null)
-				level--;
-			size--;
-			return true;
-		}
-		return false;
-	}
+	// @Override
+	// public boolean add(E e) {
+	// checkNotNull(e);
+	// Node<E> x = header;
+	// int i;
+	// for (i = level - 1; i >= 0; i--) {
+	// while (x.forward[i] != null
+	// && comparator.compare(x.forward[i].element, e) < 0)
+	// x = x.forward[i];
+	// update[i] = x;
+	// }
+	// x = x.forward[0];
+	// if (x != null && comparator.compare(x.element, e) == 0)
+	// return false;
+	// int newLevel = randomLevel();
+	// if (newLevel > level) {
+	// Arrays.fill(update, level, newLevel, header);
+	// level = newLevel;
+	// }
+	// x = new Node<E>(e, newLevel);
+	// for (i = 0; i < newLevel; i++) {
+	// x.forward[i] = update[i].forward[i];
+	// update[i].forward[i] = x;
+	// }
+	// size++;
+	// return true;
+	// }
 
 	@Override
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
-			Node<E> node = header.next[0];
+			Node<E> node = header.forward[0];
 
 			@Override
 			public boolean hasNext() {
@@ -256,7 +124,7 @@ public class SkipSet<E> extends AbstractSet<E> implements SortedCollection<E> {
 				if (node == null)
 					throw new NoSuchElementException();
 				E e = node.element;
-				node = node.next[0];
+				node = node.forward[0];
 				return e;
 			}
 
@@ -273,20 +141,91 @@ public class SkipSet<E> extends AbstractSet<E> implements SortedCollection<E> {
 	}
 
 	public int randomLevel() {
-		int randomLevel = 1;
-		while (randomLevel < MAX_LEVEL && random.nextDouble() < P)
-			randomLevel++;
-		return Math.min(randomLevel, level + 1);
+		int l = 1;
+		while (l < MAX_LEVEL && random.nextDouble() < P)
+			l++;
+		return l;
 	}
 
 	private static class Node<E> {
 		private final E element;
-		private final Node<E>[] next;
+		private final Node<E>[] forward;
 
 		private Node(final E element, final int level) {
 			this.element = element;
-			next = new Node[level];
+			forward = new Node[level];
 		}
+	}
+
+	// private Node<E> find(E element) {
+	// Node<E> x = header;
+	// for (int i = level - 1; i >= 0; --i) {
+	// while (x.forward[i] != null
+	// && comparator.compare(x.forward[i].element, element) < 0)
+	// x = x.forward[i];
+	// update[i] = x;
+	// }
+	// return x.forward[0];
+	// }
+
+	public boolean add(E e) {
+		checkNotNull(e);
+		Node<E> x = header;
+		final int newLevel = randomLevel();
+		final Node<E> newNode = new Node<E>(e, newLevel);		
+		//int i;
+		for(int i = level - 1; i > newLevel; i--){
+			while ((x.forward[i] != null)
+					&& (comparator.compare(x.forward[i].element, e) < 0))
+				x = x.forward[i];
+		}
+		for(int i = newLevel - 1; i>=0; i--){
+			Node<E> node = x.forward[i];
+			while ((node != null) && (comparator.compare(node.element, e) < 0)) {
+				x = node;
+				node = x.forward[i];
+			}
+			if (x.forward[0] != null
+					&& comparator.compare(x.forward[0].element, e) == 0)
+				return false;
+			newNode.forward[i] = node;
+			x.forward[i] = newNode;
+		}
+		if (newLevel > level) {
+			Arrays.fill(header.forward, level, newLevel, newNode);
+			level = newLevel;
+		}
+		size++;
+		return true;
+
+	}
+
+	public boolean add1(E e) {
+		checkNotNull(e);
+		Node<E> x = header;
+		final Node<E>[] update = new Node[MAX_LEVEL];
+		int i = level;
+		while (--i >= 0) {
+			while (x.forward[i] != null
+					&& comparator.compare(x.forward[i].element, e) < 0)
+				x = x.forward[i];
+			update[i] = x;
+		}
+		x = x.forward[0];
+		if (x != null && comparator.compare(x.element, e) == 0)
+			return false;
+		int randomLevel = randomLevel();
+		Node<E> newNode = new Node<E>(e, randomLevel);
+		if (randomLevel > level) {
+			Arrays.fill(update, level, randomLevel, header);
+			level = randomLevel;
+		}
+		for (i = 0; i < randomLevel; ++i) {
+			newNode.forward[i] = update[i].forward[i];
+			update[i].forward[i] = newNode;
+		}
+		size++;
+		return true;
 	}
 
 }
