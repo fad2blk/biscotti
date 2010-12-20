@@ -43,7 +43,7 @@ Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the faste
 
 Another good catch. My collections are cloneable for the sake of consistency, but this wasn't always so. For the most part the following explanation is part of a much bigger rant that doesn't belong in this FAQ. Having said that:
 
-The [http://download.oracle.com/javase/6/docs/api/java/lang/CloneNotSupportedException.html CloneNotSupportedException] in the JDK is _not_ a runtime exception. If you extend a class which implements the `Cloneable` interface, the child class can only throw the `CloneNotSupportedException` if the `clone()` method of the parent class also throws it. This is a Catch-22 situation, since the parent class is designed to be cloneable and would not throws it in the first place.
+The [http://download.oracle.com/javase/6/docs/api/java/lang/CloneNotSupportedException.html CloneNotSupportedException] in the JDK is _not_ a runtime exception. If you extend a class which implements the `Cloneable` interface, the child class can only throw the `CloneNotSupportedException` if the `clone()` method of the parent class also throws it. This is a Catch-22 situation, since the parent class is designed to be cloneable and would not throw it in the first place.
 
 For many other reasons, cloning is horribly broken in Java. Don't take my word for it. Here is what [http://en.wikipedia.org/wiki/Joshua_Bloch Joshua Bloch] had to say [http://www.artima.com/intv/bloch13.html about it].
 
