@@ -9,13 +9,19 @@ Not really. This project is in the pre-alpha stage of development. Although ther
 
 ==What was your motivation for building all this?==
 
-Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collection libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections], and the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
+Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collections libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections], and the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
 
+I designed this library from the ground up to have a well formed interface hierarchy matching (and in some cases improving on) the JDK. It faithfully adheres to the conventions set forth by the JDK and to a lesser extent by the Google Collections.
 
 = Design =
 
 ==Why so much emphasis on sorted collections?==
-This library isn't just a rehash of what is already out there. Sorted data structures have generally been missing from most collections libraries for Java. For example I would be very interested to see any implementation of the [http://download.oracle.com/javase/6/docs/api/java/util/List.html List] interface which maintains the elements in sorted order, let alone provides fast random insertion and removal.
+
+This library isn't just a rehash of what is already out there. Sorted data structures have generally been missing from most collections libraries for Java. For example I would be very interested to see any implementation of the [http://download.oracle.com/javase/6/docs/api/java/util/List.html List] interface which maintains the elements in sorted order, let alone provides fast random insertion and removal operations.
+
+http://google-collections.googlecode.com/svn/trunk/javadoc/index.html
+
+==Why do you need a sorted list? Google Collections already provides a [http://google-collections.googlecode.com/svn/trunk/javadoc/index.html?com/google/common/collect/TreeMultiset.html TreeMultiset]
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
