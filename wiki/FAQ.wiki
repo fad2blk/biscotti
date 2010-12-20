@@ -19,7 +19,7 @@ I designed this library from the ground up to have a well formed interface hiera
 
 This library isn't just a rehash of what is already out there. For the most part sorted data structures have generally been missing from most collections libraries, and not only for Java. For example I would be very interested to see any implementation of the [http://download.oracle.com/javase/6/docs/api/java/util/List.html List] interface which maintains the elements in sorted order, let alone provides fast random insertion and removal operations.
 
-==Why do you need a sorted list? A `[http://google-collections.googlecode.com/svn/trunk/javadoc/index.html?com/google/common/collect/TreeMultiset.html TreeMultiset]` is already provided in the Google Collections.==
+==Why do you need a sorted list? A [http://google-collections.googlecode.com/svn/trunk/javadoc/index.html?com/google/common/collect/TreeMultiset.html TreeMultiset] is already provided in the Google Collections.==
 
 I've been asked this question several times. The idea that a `Multiset` (or `Bag`) can be substituted for a `List` is a misnomer. Without getting into mathematical abstractions, it is suffice to say that a `List` is the only data structure that provides explicit control over the order of the elements. For example you can explicitly query for the element located in the `i`_th_ position.
 
