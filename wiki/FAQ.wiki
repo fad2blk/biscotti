@@ -21,9 +21,4 @@ This library isn't just a rehash of what is already out there. Sorted data struc
 
 http://google-collections.googlecode.com/svn/trunk/javadoc/index.html
 
-==Why do you need a sorted list? Google Collections already provides a [http://google-collections.googlecode.com/svn/trunk/javadoc/index.html?com/google/common/collect/TreeMultiset.html TreeMultiset]
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+==Why do you need a sorted list? Google Collections already provides a [http://google-collections.googlecode.com/svn/trunk/javadoc/index.html?com/google/common/collect/TreeMultiset.html TreeMultiset]==
