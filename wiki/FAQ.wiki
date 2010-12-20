@@ -40,3 +40,9 @@ On the other hand, there are several [http://en.wikipedia.org/wiki/Skip_list Ski
 Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the fastest concurrent skip-list based algorithm that I am aware of. Having said that, besides being extremely complicated, OpenJDK was released under the GNU General Public License (GPL). Even if it was possible to modify his algorithm for the purposes of this project, the GPL License is completely incompatible with the Apache License 2.0 under which this project was released.
 
 ===Why do you provide a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/base/CloneNotSupportedException.html CloneNotSupportedException]? One is already provided in Java, and you don't<br>even use it in your Collections.===
+
+Another good catch. My collections are cloneable for the sake of consistency, but this wasn't always so. For the most part this explanation is part of a much bigger rant that doesn't belong here in this FAQ. Having said that, the http://download.oracle.com/javase/6/docs/api/java/lang/CloneNotSupportedException.html CloneNotSupportedException] in the JDK is not a runtime exception. If you extend a class which implements the `Cloneable` the only way the child class can throw a `CloneNotSupportedException` is if the `clone()` method of the parent class throws it. This is a catch-22 situation, since the parent class almost never throws it, because it is in fact designed to be cloned.
+
+For many other reasons, cloning is horribly broken in Java. Don't take my word for it. Here is what [http://en.wikipedia.org/wiki/Joshua_Bloch Joshua Bloch] had to say [http://www.artima.com/intv/bloch13.html about it].
+
+The least I could do is provide an analogous runtime exception.
