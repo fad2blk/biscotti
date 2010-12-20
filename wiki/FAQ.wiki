@@ -11,7 +11,7 @@ Not really. This project is in the pre-alpha stage of development. Although ther
 
 Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collections libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections], and the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
 
-I designed this library from the ground up to have a well formed interface hierarchy matching (and in some cases improving on) that of the JDK. It faithfully adheres to the conventions set forth by the JDK and to a lesser extent by the Google Collections.
+I designed this library from the ground up to have a well formed interface hierarchy matching (and in some cases improving on) that of the JDK. Further more this project faithfully adheres to the conventions set forth by the JDK and to a lesser extent by the Google Collections.
 
 = Design =
 
@@ -24,3 +24,7 @@ This library isn't just a rehash of what is already out there. For the most part
 I've been asked this question several times. The idea that a `Multiset` (or `Bag`) can be substituted for a `List` is a misnomer. Without getting into mathematical abstractions, it is suffice to say that a `List` is the only data structure that provides explicit control over the order of the elements. For example you can explicitly query for the element located in the `i`_th_ position.
 
 Incidentally a similar question was asked under one of the issues in the Google Collections regarding the implementation of a `UniqueList` (a list the rejects duplicate elements) versus a `SortedSet`.
+
+==If you build on Java 6 and try to match the interface hierarchy of the JDK, why do you have a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/SortedList.html SortedList] and not a `NavigableList` with methods analogous to `SortedSet`?==
+
+Good catch. Simply put the `SortedList` interface was more than enough to demonstrate a concrete [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/TreeList.html TreeList] implementation. In the future I plan to create the `NavigableList` interface and extend `TreeList` to implement it.
