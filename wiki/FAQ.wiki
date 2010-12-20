@@ -29,6 +29,6 @@ Incidentally a similar question was asked under one of the issues in the Google 
 
 Good catch. Simply put the `SortedList` interface was more than enough to demonstrate the concrete [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/TreeList.html TreeList] implementation. In the future I plan to create a`NavigableList` interface and have `TreeList` to implement it.
 
-===Besides synchronized wrappers in the [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/Collections3.html Collections3] class, you don't have any thread-safe let alone<br>concurrent implementations of your collections, what gives?===
+===Besides synchronized wrappers in the [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/Collections3.html Collections3] class, you don't have any thread-safe, let alone<br>concurrent implementations of your collections, what gives?===
 
 Good question. The only _tree_-based locking implementations which I am aware of choke under concurrent access. Their performance degrades linearly with each new concurrent user, and they don't perform significantly better than the provided synchronized wrappers which act like a global lock.
