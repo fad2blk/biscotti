@@ -33,6 +33,8 @@ Good catch. Simply put the `SortedList` interface was more than enough to demons
 
 Good question. The only _tree_-based locking implementations which I am aware of choke under concurrent access. Their performance degrades linearly with each new concurrent user, and they don't perform significantly better than the provided synchronized wrappers which act like a global lock.
 
-On the other hand, there are several [http://en.wikipedia.org/wiki/Skip_list Skip List] locking and lock-free concurrent algorithms which are remarkably fast, and are fairly strait forward to implement.
+On the other hand, there are several [http://en.wikipedia.org/wiki/Skip_list Skip List] locking and lock-free concurrent algorithms which are remarkably fast, and are fairly strait forward to implement. I've been working on implementing [http://www.cs.brown.edu/~levyossi/Pubs/LazySkipList.pdf A Simple Optimistic Skip-List Algorithm]. The first implementation will probably come in the form of a `ConcurrentSkipQueue`.
 
-I've been working on implementing [http://www.cs.brown.edu/~levyossi/Pubs/LazySkipList.pdf A Simple Optimistic Skip-List Algorithm]. The first implementation will probably come in the form of a `ConcurrentSkipQueue`.
+===Didn't [http://en.wikipedia.org/wiki/Doug_Lea Doug Lea] already implement a [http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentSkipListSet.html ConcurrentSkipListSet] for Java 6?===
+
+Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the fastest concurrent skip-list based algorithm that I am aware of. Having said that, besides being extremely complicated, OpenJDK was released under the GNU General Public License (GPL). Even if it was possible to modify his algorithm for the purposes of this project, the GPL License is completely incompatible with the Apache 2.0 License under which this project was released.
