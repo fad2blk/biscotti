@@ -27,7 +27,7 @@ Incidentally a similar question was asked under one of the issues in the Google 
 
 ===If you build on Java 6 and try to match the interface hierarchy of the JDK, why do you have a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/SortedList.html SortedList]<br>and not a `NavigableList` with methods analogous to `NavigableSet`?===
 
-Good catch. Simply put the `SortedList` interface was more than enough to demonstrate the concrete [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/TreeList.html TreeList] implementation. In the future I plan to create a`NavigableList` interface and have `TreeList` to implement it.
+Good catch. Simply put, the `SortedList` interface was more than enough to demonstrate the concrete [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/TreeList.html TreeList] implementation. In the future I plan to create a `NavigableList` interface and have `TreeList` to implement it.
 
 ===Besides synchronized wrappers in the [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/Collections3.html Collections3] class, you don't have any thread-safe, let alone<br>concurrent implementations of your collections, what gives?===
 
