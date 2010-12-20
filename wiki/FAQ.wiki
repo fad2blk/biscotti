@@ -39,4 +39,4 @@ On the other hand, there are several [http://en.wikipedia.org/wiki/Skip_list Ski
 
 Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the fastest concurrent skip-list based algorithm that I am aware of. Having said that, besides being extremely complicated, OpenJDK was released under the GNU General Public License (GPL). Even if it was possible to modify his algorithm for the purposes of this project, the GPL License is completely incompatible with the Apache License 2.0 under which this project was released.
 
-===Why do you provide a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/base/CloneNotSupportedException.html CloneNotSupportedException]? One is already provided in Java,<br>and you don't even use it in your Collections.===
+===Why do you provide a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/base/CloneNotSupportedException.html CloneNotSupportedException]? One is already provided in Java, and you don't<br>even use it in your Collections.===
