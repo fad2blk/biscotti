@@ -3,8 +3,13 @@
 
 = Introduction =
 
-Add your content here.
+== Is this library safe to use? ==
 
+Not really. This project is in the pre-alpha stage of development. Although there is a download available, I would encourage you to thoroughly test any part of this library that you are planning to use in a production environment.
+
+== What was your motivation for building all this? ==
+
+Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collection libraries for Java since the days of Objectspace JGL. This library has been influenced by JGL, Apache Commons Collections, GNU Trove, and of course the Google Collections along with the Java Collections Framework.
 
 = Details =
 
