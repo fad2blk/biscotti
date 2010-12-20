@@ -1,15 +1,15 @@
 #summary Frequently anticipated questions
 #labels Featured
 
-= Introduction =
+=Introduction=
 
-== Is this library safe to use? ==
+==Is this library safe to use?==
 
 Not really. This project is in the pre-alpha stage of development. Although there is a download available, I would encourage you to thoroughly test any part of this library that you are planning to use in a production environment.
 
-== What was your motivation for building all this? ==
+==What was your motivation for building all this?==
 
-Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collection libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections] along with the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
+Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collection libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections], and the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
 
 = Details =
 
