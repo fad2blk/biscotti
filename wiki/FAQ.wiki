@@ -11,7 +11,11 @@ Not really. This project is in the pre-alpha stage of development. Although ther
 
 Having somewhat of a background in data mining, I have always been fascinated by _cute_ and _efficient_ data structures.  I have been playing around with various third party collection libraries for Java since the days of Objectspace JGL. This library has been influenced by [http://recursionsw.com/Products/jgl.html JGL], [http://commons.apache.org/collections/ Apache Commons Collections], [http://trove.starlight-systems.com/ GNU Trove], and of course the [http://code.google.com/p/google-collections/ Google Collections], and the [http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html Java Collections Framework].
 
-= Details =
+
+= Design =
+
+==Why so much emphasis on sorted collections?==
+This library isn't just a rehash of what is already out there. Sorted data structures have generally been missing from most collections libraries for Java. For example I would be very interested to see any implementation of the [http://download.oracle.com/javase/6/docs/api/java/util/List.html List] interface which maintains the elements in sorted order, let alone provides fast random insertion and removal.
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
