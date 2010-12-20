@@ -32,3 +32,7 @@ Good catch. Simply put the `SortedList` interface was more than enough to demons
 ===Besides synchronized wrappers in the [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/Collections3.html Collections3] class, you don't have any thread-safe, let alone<br>concurrent implementations of your collections, what gives?===
 
 Good question. The only _tree_-based locking implementations which I am aware of choke under concurrent access. Their performance degrades linearly with each new concurrent user, and they don't perform significantly better than the provided synchronized wrappers which act like a global lock.
+
+On the other hand there are several [http://en.wikipedia.org/wiki/Skip_list Skip List] locking and lock-free concurrent algorithms. Both the locking and lock-free based algorithms perform remarkably fast, and are fairly strait forward to implement.
+
+I've been working on implementing [http://www.cs.brown.edu/~levyossi/Pubs/LazySkipList.pdf] A Simple Optimistic Skip-List Algorithm]. A `ConcurrentSkipQueue` and a `ConcurrentSkipList` implementations are on the way.
