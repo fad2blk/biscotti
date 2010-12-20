@@ -25,7 +25,6 @@ I've been asked this question several times. The idea that a `Multiset` (or `Bag
 
 Incidentally a similar question was asked under one of the issues in the Google Collections regarding the implementation of a `UniqueList` (a list the rejects duplicate elements) versus a `SortedSet`.
 
-==If you build on Java 6 and try to match the interface hierarchy of the JDK,
-why do you have a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/SortedList.html SortedList] and not a `NavigableList` with methods analogous to `NavigableSet`?==
+==If you build on Java 6 and try to match the interface hierarchy of the JDK, why do you have a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/SortedList.html SortedList] and not a `NavigableList` with methods analogous to `NavigableSet`?==
 
 Good catch. Simply put the `SortedList` interface was more than enough to demonstrate a concrete [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/TreeList.html TreeList] implementation. In the future I plan to create the `NavigableList` interface and extend `TreeList` to implement it.
