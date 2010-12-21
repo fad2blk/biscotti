@@ -20,14 +20,14 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * A non-blocking capacity restricted {@link Queue}. The size of this queue can
- * vary, but never exceed the maximum number of elements (the bound) specified
- * at creation.
+ * A capacity restricted {@link Queue}. The size of this queue can vary, but
+ * never exceed the maximum number of elements (the bound) specified at
+ * creation.
  * <p>
  * Classes which implement this interface are not required to be to be
  * <i>thread-safe</i>, and should not be used as a substitute for the
- * {@link BlockingQueue} implementations offered in the {@code
- * java.util.concurrent} package.
+ * {@link BlockingQueue} implementations offered in the
+ * {@code java.util.concurrent} package.
  * <p>
  * Typical implementations will define a policy for removing <i>stale</i>
  * elements, or otherwise throw an {@code IllegalStateException} to prevent the

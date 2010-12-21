@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SortedSet;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -53,10 +54,7 @@ import com.google.common.collect.Ordering;
  * result in a {@code ConcurrentModificationException}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
- * concurrently it must be synchronized externally. Consider using the
- * inherently <i>thread-safe</i> {@link PriorityBlockingQueue} instead, or
- * "wrapping" the queue using the {@link Collections3#synchronize(Queue)}
- * method.
+ * concurrently it must be synchronized externally.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
@@ -131,27 +129,12 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	TreeQueue(final Comparator<? super E> comparator) {
-		if (comparator != null)
-			this.comparator = comparator;
-		else
-			this.comparator = (Comparator<? super E>) Ordering.natural();
-	}
-
-	TreeQueue(final Iterable<? extends E> elements) {
-		Comparator<? super E> comparator = null;
-		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
-		else if (elements instanceof java.util.PriorityQueue<?>)
-			comparator = ((java.util.PriorityQueue) elements).comparator();
-		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
-		if (comparator == null)
-			this.comparator = (Comparator<? super E>) Ordering.natural();
-		else
-			this.comparator = comparator;
-		for (E element : elements)
-			add(element);
+	TreeQueue(final Comparator<? super E> comparator,
+			final Iterable<? extends E> elements) {
+		this.comparator = comparator;
+		if (elements != null)
+			for (E element : elements)
+				add(element);
 	}
 
 	/**
@@ -162,7 +145,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
-		return new TreeQueue<E>((Comparator<? super E>) null);
+		return new TreeQueue<E>(Ordering.natural(), null);
 	}
 
 	/**
@@ -176,16 +159,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> TreeQueue<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeQueue<E>(comparator);
+		return new TreeQueue<E>(comparator, null);
 	}
 
 	/**
 	 * Creates a new {@code TreeQueue} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
-	 * ordered according to the same ordering. Otherwise, this queue will be
-	 * ordered according to the <i>natural ordering</i> of its elements.
+	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection}
+	 * this queue will be ordered according to the same ordering. Otherwise,
+	 * this queue will be ordered according to the <i>natural ordering</i> of
+	 * its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
@@ -200,7 +183,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new TreeQueue<E>(elements);
+		final Comparator<? super E> comparator;
+		if (elements instanceof SortedSet<?>)
+			comparator = ((SortedSet) elements).comparator();
+		else if (elements instanceof PriorityQueue<?>)
+			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
+		else
+			comparator = (Comparator<? super E>) Ordering.natural();
+		return new TreeQueue<E>(comparator, elements);
 	}
 
 	/**

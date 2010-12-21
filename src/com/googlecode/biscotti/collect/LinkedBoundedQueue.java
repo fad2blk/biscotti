@@ -37,8 +37,7 @@ import com.google.common.collect.Lists;
  * {@code addAll(Collection)} methods. Elements may be {@code null}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
- * concurrently it must be synchronized externally, consider "wrapping" the
- * queue using the {@link Collections3#synchronize(BoundedQueue)} method.
+ * concurrently it must be synchronized externally.
  * 
  * @author Zhenya Leonov
  * @param <E>

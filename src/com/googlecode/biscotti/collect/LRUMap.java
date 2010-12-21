@@ -28,8 +28,7 @@ import com.google.common.base.Preconditions;
  * stale mappings in <i>least-recently-accessed</i> order.
  * <p>
  * This implementation is not <i>thread-safe</i>. If multiple threads modify
- * this map concurrently it must be synchronized externally, consider "wrapping"
- * the map using the {@link Collections3#synchronize(BoundedMap)} method.
+ * this map concurrently it must be synchronized externally.
  * 
  * @author Zhenya Leonov
  * @param <K>

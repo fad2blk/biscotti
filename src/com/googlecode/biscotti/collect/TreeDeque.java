@@ -24,7 +24,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.SortedSet;
+
+import com.google.common.collect.Ordering;
 
 /**
  * An unbounded priority {@link Deque} based on a modified <a
@@ -49,8 +52,7 @@ import java.util.SortedSet;
  * result in a {@code ConcurrentModificationException}.
  * <p>
  * This deque is not <i>thread-safe</i>. If multiple threads modify this deque
- * concurrently it must be synchronized externally, consider "wrapping" the
- * deque using the {@link Collections3#synchronize(Deque)} method.
+ * concurrently it must be synchronized externally.
  * <p>
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to maintain priority order, and
@@ -131,12 +133,8 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	private static final long serialVersionUID = 1L;
 	private Node max = nil;
 
-	private TreeDeque(final Comparator<? super E> comparator) {
-		super(comparator);
-	}
-
-	private TreeDeque(final Iterable<? extends E> elements) {
-		super(elements);
+	private TreeDeque(final Comparator<? super E> comparator, Iterable<? extends E> elements) {
+		super(comparator, elements);
 	}
 
 	/**
@@ -147,7 +145,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeDeque<E> create() {
-		return new TreeDeque<E>((Comparator<? super E>) null);
+		return new TreeDeque<E>(Ordering.natural(), null);
 	}
 
 	/**
@@ -161,16 +159,16 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 */
 	public static <E> TreeDeque<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeDeque<E>(comparator);
+		return new TreeDeque<E>(comparator, null);
 	}
 
 	/**
 	 * Creates a new {@code TreeDeque} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of of
-	 * {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@link SortedCollection} this deque will be
-	 * ordered according to the same ordering. Otherwise, this deque will be
-	 * ordered according to the <i>natural ordering</i> of its elements.
+	 * {@link SortedSet}, {@link PriorityQueue} or {@link SortedCollection} this
+	 * deque will be ordered according to the same ordering. Otherwise, this
+	 * deque will be ordered according to the <i>natural ordering</i> of its
+	 * elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the deque
@@ -185,8 +183,18 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 */
 	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new TreeDeque<E>(elements);
+		final Comparator<? super E> comparator;
+		if (elements instanceof SortedSet<?>)
+			comparator = ((SortedSet) elements).comparator();
+		else if (elements instanceof PriorityQueue<?>)
+			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
+		else
+			comparator = (Comparator<? super E>) Ordering.natural();
+		return new TreeDeque<E>(comparator, elements);
 	}
+
 
 	/**
 	 * Guaranteed to throw an {@code UnsupportedOperationException} exception

@@ -21,7 +21,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.SortedSet;
+
+import com.google.common.collect.Ordering;
 
 /**
  * An implementation of {@link BoundedQueue} backed by a {@link TreeQueue}. The
@@ -41,8 +44,7 @@ import java.util.SortedSet;
  * element is added; else the new element is rejected.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
- * concurrently it must be synchronized externally, consider "wrapping" the
- * queue using the {@link Collections3#synchronize(BoundedQueue)} method.
+ * concurrently it must be synchronized externally.
  * <p>
  * Refer to {@link TreeQueue} for details of the underlying implementation.
  * 
@@ -56,14 +58,16 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
-	private TreeBoundedQueue(final int maxSize, final Comparator<? super E> c) {
-		super(c);
+	private TreeBoundedQueue(final int maxSize,
+			final Comparator<? super E> comparator) {
+		super(comparator, null);
 		this.maxSize = maxSize;
 	}
 
-	private TreeBoundedQueue(final Iterable<? extends E> elements) {
-		super(elements);
-		this.maxSize = size();
+	private TreeBoundedQueue(final Comparator<? super E> comparator,
+			final Iterable<? extends E> elements) {
+		super(comparator, elements);
+		this.maxSize = size;
 	}
 
 	/**
@@ -76,9 +80,10 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E> TreeBoundedQueue<E> create(final int maxSize) {
+	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
+			final int maxSize) {
 		checkArgument(maxSize > 0);
-		return new TreeBoundedQueue<E>(maxSize, null);
+		return new TreeBoundedQueue<E>(maxSize, Ordering.natural());
 	}
 
 	/**
@@ -126,7 +131,16 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	public static <E> TreeBoundedQueue<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(elements);
+		final Comparator<? super E> comparator;
+		if (elements instanceof SortedSet<?>)
+			comparator = ((SortedSet) elements).comparator();
+		else if (elements instanceof PriorityQueue<?>)
+			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
+		else
+			comparator = (Comparator<? super E>) Ordering.natural();
+		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(comparator, elements);
 		checkArgument(!q.isEmpty());
 		return q;
 	}
