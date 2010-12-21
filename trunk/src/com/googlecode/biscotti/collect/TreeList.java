@@ -34,9 +34,11 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.SortedSet;
 
 import com.google.common.collect.Ordering;
+import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -57,8 +59,7 @@ import com.google.common.collect.Ordering;
  * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
- * concurrently it must be synchronized externally, considering "wrapping" the
- * list using the {@link Collections3#synchronize(SortedList)} method.
+ * concurrently it must be synchronized externally.
  * <p>
  * <b>Implementation Note:</b> The the ordering maintained by this list must be
  * <i>consistent with equals</i> if this it is to function correctly. This is so
@@ -129,27 +130,12 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
-	private TreeList(final Comparator<? super E> comparator) {
-		if (comparator != null)
-			this.comparator = comparator;
-		else
-			this.comparator = (Comparator<? super E>) Ordering.natural();
-	}
-
-	private TreeList(final Iterable<? extends E> elements) {
-		Comparator<? super E> comparator = null;
-		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
-		else if (elements instanceof java.util.PriorityQueue<?>)
-			comparator = ((java.util.PriorityQueue) elements).comparator();
-		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
-		if (comparator == null)
-			this.comparator = (Comparator<? super E>) Ordering.natural();
-		else
-			this.comparator = comparator;
-		for (E element : elements)
-			add(element);
+	private TreeList(final Comparator<? super E> comparator,
+			final Iterable<? extends E> elements) {
+		this.comparator = comparator;
+		if (elements != null)
+			for (E element : elements)
+				add(element);
 	}
 
 	/**
@@ -160,7 +146,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 *         their natural ordering
 	 */
 	public static <E extends Comparable<? super E>> TreeList<E> create() {
-		return new TreeList<E>((Comparator<? super E>) null);
+		return new TreeList<E>(Ordering.natural(), null);
 	}
 
 	/**
@@ -174,7 +160,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	public static <E> TreeList<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeList<E>(comparator);
+		return new TreeList<E>(comparator, null);
 	}
 
 	/**
@@ -198,7 +184,16 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	public static <E> TreeList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		return new TreeList<E>(elements);
+		final Comparator<? super E> comparator;
+		if (elements instanceof SortedSet<?>)
+			comparator = ((SortedSet) elements).comparator();
+		else if (elements instanceof PriorityQueue<?>)
+			comparator = ((PriorityQueue) elements).comparator();
+		else if (elements instanceof SortedCollection<?>)
+			comparator = ((SortedCollection) elements).comparator();
+		else
+			comparator = (Comparator<? super E>) Ordering.natural();
+		return new TreeList<E>(comparator, elements);
 	}
 
 	/**
@@ -487,8 +482,13 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 *             {@code headList}, or {@code tailList} view of the parent list
 	 */
 	@Override
-	public TreeList<E> clone() throws CloneNotSupportedException {
-		TreeList<E> clone = (TreeList<E>) super.clone();
+	public TreeList<E> clone() {
+		TreeList<E> clone;
+		try {
+			clone = (TreeList<E>) super.clone();
+		} catch (java.lang.CloneNotSupportedException e) {
+			throw new InternalError();
+		}
 		clone.nil = new Node();
 		clone.min = clone.nil;
 		clone.max = clone.nil;
@@ -533,7 +533,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		public SubList(TreeList<E> l, int fromIndex, int toIndex,
 				E fromElement, E toElement) {
-			super(l.comparator);
+			super(l.comparator, null);
 			this.l = l;
 			min = l.min;
 			offset = fromIndex;
@@ -701,7 +701,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		}
 
 		@Override
-		public TreeList<E> clone() throws CloneNotSupportedException {
+		public TreeList<E> clone() {
 			throw new CloneNotSupportedException();
 		}
 
