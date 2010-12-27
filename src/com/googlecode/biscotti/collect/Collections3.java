@@ -319,26 +319,29 @@ final public class Collections3 {
 	public static <K, V> Map<K, V> newAccessOrderMap(
 			final Map<? extends K, ? extends V> m) {
 		checkNotNull(m);
-		Map<K, V> map = new LinkedHashMap<K, V>(Math.max(m.size(), 16), .75F,
-				true);
+		Map<K, V> map = new LinkedHashMap<K, V>(Math.max(
+				(int) (m.size() / .75F) + 1, 16), .75F, true);
 		map.putAll(m);
 		return map;
 	}
 
 	/**
 	 * Creates an empty {@code LinkedHashMap} which orders its keys according to
-	 * their <i>access-order</i>, having the specified initial capacity.
+	 * their <i>access-order</i>, with enough capacity to hold the specified
+	 * number of entries without rehashing.
 	 * 
 	 * @param initialCapacity
 	 *            the initial capacity
 	 * @return an empty {@code LinkedHashMap} which orders its keys according to
-	 *         their <i>access-order</i>, having the specified initial capacity
+	 *         their <i>access-order</i>, with enough capacity to hold the
+	 *         specified number of entries without rehashing
 	 * @see LinkedHashMap
 	 */
-	public static <K, V> Map<K, V> newAccessOrderMapWithInitialCapacity(
-			final int initialCapacity) {
-		checkArgument(initialCapacity >= 0);
-		return new LinkedHashMap<K, V>(initialCapacity, .75F, true);
+	public static <K, V> Map<K, V> newAccessOrderMapWithExpectedSize(
+			final int expectedSize) {
+		checkArgument(expectedSize >= 0);
+		return new LinkedHashMap<K, V>(Math.max(expectedSize * 2, 16), .75F,
+				true);
 	}
 
 	/**
