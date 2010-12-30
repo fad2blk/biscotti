@@ -299,11 +299,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	@Override
 	public ListIterator<E> listIterator() {
 		return new ListIterator<E>() {
-			int index = 0;
-			Node next = min;
-			Node prev = nil;
-			Node last = nil;
-			int expectedModCount = modCount;
+			private int index = 0;
+			private Node next = min;
+			private Node prev = nil;
+			private Node last = nil;
+			private int expectedModCount = modCount;
 
 			@Override
 			public void add(E e) {
