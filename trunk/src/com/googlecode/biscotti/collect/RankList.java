@@ -16,25 +16,23 @@
 
 package com.googlecode.biscotti.collect;
 
+import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 
-import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.SortedSet;
 
-import com.google.common.collect.Ordering;
+import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 
-public class RankList<E> extends AbstractCollection<E> implements
-		SortedCollection<E>, List<E> {
+public class RankList<E> extends AbstractList<E> implements List<E> {
 
 	private int size = 0;
 	private static final double P = .5;
@@ -43,51 +41,21 @@ public class RankList<E> extends AbstractCollection<E> implements
 	private final Random random = new Random();
 	private final Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Node<E> tail = new Node<E>(null, MAX_LEVEL);
-	private final Comparator<? super E> comparator;
 
-	private RankList(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
-		this.comparator = comparator;
+	private RankList() {
 		Arrays.fill(head.next, tail);
 		Arrays.fill(head.distance, 1);
-		if (elements != null)
-			for (E element : elements)
-				add(element);
 	}
 
 	public static <E extends Comparable<? super E>> RankList<E> create() {
-		return new RankList<E>(Ordering.natural(), null);
-	}
-
-	public static <E> RankList<E> create(final Comparator<? super E> comparator) {
-		checkNotNull(comparator);
-		return new RankList<E>(comparator, null);
+		return new RankList<E>();
 	}
 
 	public static <E> RankList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		final Comparator<? super E> comparator;
-		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
-		else if (elements instanceof java.util.PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
-		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
-		else
-			comparator = (Comparator<? super E>) Ordering.natural();
-		return new RankList<E>(comparator, elements);
-	}
-
-	@Override
-	public Comparator<? super E> comparator() {
-		return comparator;
-	}
-
-	@Override
-	public boolean add(E e) {
-		checkNotNull(e);
-		add(size, e);
-		return true;
+		RankList<E> list = new RankList<E>();
+		Iterables.addAll(list, elements);
+		return list;
 	}
 
 	@Override
@@ -102,10 +70,9 @@ public class RankList<E> extends AbstractCollection<E> implements
 
 	@Override
 	public void add(int index, E element) {
-		checkNotNull(element);
 		checkPositionIndex(index, size);
-		int pos = 0;
 		Node<E> curr = head;
+		int pos = 0;
 		final int newLevel = randomLevel();
 		final Node<E> newNode = new Node<E>(element, newLevel);
 		if (newLevel > level) {
@@ -115,7 +82,7 @@ public class RankList<E> extends AbstractCollection<E> implements
 		}
 		for (int i = level - 1; i >= 0; i--) {
 			while (pos + curr.distance[i] <= index) {
-				pos = pos + curr.distance[i];
+				pos += curr.distance[i];
 				curr = curr.next[i];
 			}
 			if (i > newLevel - 1)
@@ -129,43 +96,42 @@ public class RankList<E> extends AbstractCollection<E> implements
 		}
 		newNode.prev = curr;
 		newNode.next[0].prev = newNode;
+		modCount++;
 		size++;
 	}
 
 	@Override
-	public boolean addAll(int arg0, Collection<? extends E> arg1) {
-		// TODO Auto-generated method stub
-		return false;
+	public E get(int index) {
+		checkElementIndex(index, size);
+		return search(index).element;
+
 	}
 
 	@Override
-	public E get(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int indexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int lastIndexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int lastIndexOf(Object o) {
+		Node<E> node = tail;
+		for (int i = size - 1; i >= 0; i--) {
+			node = node.prev;
+			if (Objects.equal(node.element, o))
+				return i;
+		}
+		return -1;
 	}
 
 	@Override
 	public ListIterator<E> listIterator() {
 		return new ListIterator<E>() {
-
 			private Node<E> node = head.next[0];
+			private Node<E> last = null;
 			private int index = 0;
+			private int expectedModCount = modCount;
 
 			@Override
-			public void add(E arg0) {
-				throw new UnsupportedOperationException();
+			public void add(E element) {
+				checkForConcurrentModification();
+				RankList.this.add(index, element);
+				expectedModCount = RankList.this.modCount;
+				next();
 			}
 
 			@Override
@@ -180,11 +146,13 @@ public class RankList<E> extends AbstractCollection<E> implements
 
 			@Override
 			public E next() {
+				checkForConcurrentModification();
 				if (!hasNext())
 					throw new NoSuchElementException();
 				index++;
+				last = node;
 				node = node.next[0];
-				return node.prev.e;
+				return last.element;
 			}
 
 			@Override
@@ -194,11 +162,12 @@ public class RankList<E> extends AbstractCollection<E> implements
 
 			@Override
 			public E previous() {
+				checkForConcurrentModification();
 				if (index == 0)
 					throw new NoSuchElementException();
-				index--;
-				node = node.prev;
-				return node.e;
+				index--;			
+				last = node = node.prev;
+				return node.element;
 			}
 
 			@Override
@@ -212,57 +181,115 @@ public class RankList<E> extends AbstractCollection<E> implements
 			}
 
 			@Override
-			public void set(E arg0) {
-				throw new UnsupportedOperationException();
+			public void set(E element) {
+				checkForConcurrentModification();
+				if(last == null)
+					throw new IllegalStateException();
+				last.element = element;
 			}
 
+			private void checkForConcurrentModification() {
+				if (expectedModCount != modCount)
+					throw new ConcurrentModificationException();
+			}
 		};
 	}
 
 	@Override
-	public ListIterator<E> listIterator(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public ListIterator<E> listIterator(int index) {
+		checkPositionIndex(index, size);
+		ListIterator<E> listIterator = listIterator();
+		for (int i = 0; i < index; i++)
+			listIterator.next();
+		return listIterator;
 	}
 
 	@Override
-	public E remove(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public E remove(int index) {
+		checkElementIndex(index, size);
+		final Node<E>[] update = new Node[level];
+		Node<E> node = head;
+		int pos = 0;
+		for (int i = level - 1; i >= 0; i--) {
+			while (pos + node.distance[i] <= index) {
+				pos += node.distance[i];
+				node = node.next[i];
+			}
+			update[i] = node;
+		}
+		node = node.next[0];
+		delete(node, update);
+		return node.element;
 	}
 
 	@Override
-	public E set(int arg0, E arg1) {
+	public boolean remove(Object o) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
-	public List<E> subList(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public void clear() {
+		Arrays.fill(head.next, tail);
+		Arrays.fill(head.distance, 1);
+		size = 0;
+		modCount++;
+	}
+
+	@Override
+	public E set(int index, E element) {
+		checkElementIndex(index, size);
+		Node<E> node = search(index);
+		E e = node.element;
+		node.element = element;
+		return e;
 	}
 
 	// Skip List
 
-	private int randomLevel() {
-		int level = 1;
-		while (level < MAX_LEVEL && random.nextDouble() < P)
-			level++;
-		return level;
-	}
-
 	private static class Node<E> {
-		private final E e;
+		private E element;
 		private Node<E> prev;
 		private final Node<E>[] next;
 		private final int[] distance;
 
 		private Node(final E element, final int size) {
-			this.e = element;
+			this.element = element;
 			next = new Node[size];
 			distance = new int[size];
 		}
+	}
+
+	private Node<E> search(final int index) {
+		Node<E> curr = head;
+		int pos = -1;
+		for (int i = level - 1; i >= 0; i--)
+			while (pos + curr.distance[i] <= index) {
+				pos = pos + curr.distance[i];
+				curr = curr.next[i];
+			}
+		return curr;
+	}
+
+	private void delete(final Node<E> node, final Node<E>[] update) {
+		node.next[0].prev = node.prev;
+		for (int i = 0; i < level; i++)
+			if (update[i].next[i] == node) {
+				update[i].next[i] = node.next[i];
+				update[i].distance[i] += node.distance[i] - 1;
+			} else
+				update[i].distance[i]--;
+		while (head.next[level - 1] == tail && level > 0)
+			level--;
+		modCount++;
+		size--;
+	}
+
+	private int randomLevel() {
+		int randomLevel = 1;
+		while (randomLevel < MAX_LEVEL - 1 && random.nextDouble() < P)
+			randomLevel++;
+		return randomLevel;
 	}
 
 }
