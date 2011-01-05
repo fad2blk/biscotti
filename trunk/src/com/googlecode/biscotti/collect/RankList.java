@@ -32,6 +32,19 @@ import java.util.Random;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 
+/**
+ * A {@code List} implementation that is optimized for efficient <a
+ * href="http://en.wikipedia.org/wiki/Random_access">random access</a> insertion
+ * and removal operations, based on a <a
+ * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> invented by <a
+ * href="http://www.cs.umd.edu/~pugh/">William Pugh</a>.
+ * 
+ * 
+ * 
+ * @author Zhenya Leonov
+ * @param <E>
+ *            the type of elements maintained by this list
+ */
 public class RankList<E> extends AbstractList<E> implements List<E> {
 
 	private int size = 0;
@@ -165,7 +178,7 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 				checkForConcurrentModification();
 				if (index == 0)
 					throw new NoSuchElementException();
-				index--;			
+				index--;
 				last = node = node.prev;
 				return node.element;
 			}
@@ -183,7 +196,7 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 			@Override
 			public void set(E element) {
 				checkForConcurrentModification();
-				if(last == null)
+				if (last == null)
 					throw new IllegalStateException();
 				last.element = element;
 			}
