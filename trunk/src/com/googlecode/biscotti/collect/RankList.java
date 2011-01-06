@@ -35,9 +35,12 @@ import com.google.common.collect.Iterables;
 /**
  * A {@code List} implementation that is optimized for efficient <a
  * href="http://en.wikipedia.org/wiki/Random_access">random access</a> insertion
- * and removal operations, based on a <a
+ * and removal operations, based on a modified version of a <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> invented by <a
- * href="http://www.cs.umd.edu/~pugh/">William Pugh</a>.
+ * href="http://www.cs.umd.edu/~pugh/">William Pugh</a> in 1990, see <i>Section
+ * 3.4 Linear List Operations</i> in <a
+ * href="ftp://ftp.cs.umd.edu/pub/skipLists/cookbook.pdf">A Skip List
+ * Cookbook</a>.
  * 
  * 
  * 
@@ -141,10 +144,7 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 
 			@Override
 			public void add(E element) {
-				checkForConcurrentModification();
-				RankList.this.add(index, element);
-				expectedModCount = RankList.this.modCount;
-				next();
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
