@@ -19,9 +19,12 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkState;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -31,32 +34,99 @@ import java.util.Random;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
  * A {@code List} implementation that is optimized for efficient <a
  * href="http://en.wikipedia.org/wiki/Random_access">random access</a> insertion
  * and removal operations, based on a modified version of a <a
- * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> invented by <a
- * href="http://www.cs.umd.edu/~pugh/">William Pugh</a> in 1990, see <i>Section
- * 3.4 Linear List Operations</i> in <a
- * href="ftp://ftp.cs.umd.edu/pub/skipLists/cookbook.pdf">A Skip List
- * Cookbook</a>.
+ * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> invented by <a
+ * href="http://www.cs.umd.edu/~pugh/">William Pugh</a> in 1990. Implements all
+ * optional list operations, and permits all elements, including {@code null}.
+ * <p>
+ * The underlying skip list implementation provides expected logarithmic running
+ * time for all linear list operations with an extremely high degree of
+ * probability as the list grows. Linear list operations (e.g., “insert this
+ * after the i<i>th</i> element of the list”) are sometimes called rank
+ * operations.
+ * <p>
+ * The following table summarizes the expected performance of this class as
+ * compared to the {@code ArrayList} and {@code LinkedList} implementations in
+ * Java Collection Framework:
+ * <p>
+ * <table border cellpadding="3" cellspacing="1">
+ *   <tr>
+ *     <th></th>
+ *     <th align="center" colspan="3">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <th align="center">Method</th>
+ *     <th align="center">RankList</th>     
+ *     <th align="center">ArrayList</th>
+ *     <th align="center">LinkedList</th>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}</br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #get(int)}</br>
+ *       {@link #remove(int)}</br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #remove(Object)}</br>
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *     <td align="center"><i>O(n)</i></td>
+ *     <td align="center"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #size()}</br>
+ *     </td>
+ *     <td align="center"><i>O(1)</i></td>
+ *     <td align="center"><i>O(1)</i></td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
+ * </table>
+ * 
+ * 
+ * 
  * 
  * 
  * 
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
+ * @see <a href="ftp://ftp.cs.umd.edu/pub/skipLists/cookbook.pdf">A Skip List
+ *      Cookbook</a>
  */
-public class RankList<E> extends AbstractList<E> implements List<E> {
+public class RankList<E> extends AbstractList<E> implements List<E>, Serializable, Cloneable {
 
 	private int size = 0;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
-	private static int level = 1;
-	private final Random random = new Random();
-	private final Node<E> head = new Node<E>(null, MAX_LEVEL);
-	private final Node<E> tail = new Node<E>(null, MAX_LEVEL);
+	private int level = 1;
+	private Random random = new Random();
+	private Node<E> head = new Node<E>(null, MAX_LEVEL);
+	private Node<E> tail = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
 		Arrays.fill(head.next, tail);
@@ -144,7 +214,9 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 
 			@Override
 			public void add(E element) {
-				throw new UnsupportedOperationException();
+				checkForConcurrentModification();
+				RankList.this.add(index - 1, element);
+				expectedModCount = modCount;
 			}
 
 			@Override
@@ -190,14 +262,17 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 
 			@Override
 			public void remove() {
-				throw new UnsupportedOperationException();
+				checkForConcurrentModification();
+				checkState(last != null);
+				RankList.this.remove(index - 1);
+				expectedModCount = modCount;
+				last = null;
 			}
 
 			@Override
 			public void set(E element) {
 				checkForConcurrentModification();
-				if (last == null)
-					throw new IllegalStateException();
+				checkState(last != null);
 				last.element = element;
 			}
 
@@ -236,17 +311,11 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 	}
 
 	@Override
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void clear() {
 		Arrays.fill(head.next, tail);
 		Arrays.fill(head.distance, 1);
-		size = 0;
 		modCount++;
+		size = 0;
 	}
 
 	@Override
@@ -256,6 +325,52 @@ public class RankList<E> extends AbstractList<E> implements List<E> {
 		E e = node.element;
 		node.element = element;
 		return e;
+	}
+	
+	/**
+	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this list
+	 * @throws CloneNotSupportedException
+	 *             if an attempt is made to clone is a {@code subList},
+	 *             {@code headList}, or {@code tailList} view of the parent list
+	 */
+	@Override
+	public RankList<E> clone() {
+		RankList<E> clone;
+		try {
+			clone = (RankList<E>) super.clone();
+		} catch (java.lang.CloneNotSupportedException e) {
+			throw new InternalError();
+		}
+		clone.head = new Node<E>(null, MAX_LEVEL);
+		clone.tail = new Node<E>(null, MAX_LEVEL);
+		clone.random = new Random();
+		clone.clear();
+		clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
+	}
+
+	private void writeObject(java.io.ObjectOutputStream oos)
+			throws java.io.IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(size);
+		for (E e : this)
+			oos.writeObject(e);
+	}
+
+	private void readObject(java.io.ObjectInputStream ois)
+			throws java.io.IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		random = new Random();
+		modCount = 0;
+		level = 1;
+		clear();
+		int size = ois.readInt();
+		for (int i = 0; i < size; i++)
+			add((E) ois.readObject());
 	}
 
 	// Skip List
