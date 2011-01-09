@@ -76,16 +76,10 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #addAll(Collection)}<br>
+ *       {@link #addAll(Collection) addAll(Collection)}<br>
  *       {@link #containsAll(Collection) containsAll(Collection)}</br>
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m lg n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br>
  *     </td>
  *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
  *   </tr>
@@ -94,7 +88,7 @@ import com.google.common.collect.Ordering;
  *       {@link #add(Object) add(E)}</br>
  *       {@link #contains(Object)}</br>
  *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object)}</br>
+ *       {@link #remove(Object)}
  *     </td>
  *     <td align="center"><i>O(lg(n - k) + k)</i></td>
  *   </tr>
@@ -105,6 +99,7 @@ import com.google.common.collect.Ordering;
  *       {@link #peek()}</br> {@link #poll()}</br>
  *       {@link #remove() remove()}</br>
  *       {@link #size()}</br>
+ *       {@link #clear()}
  *   </td>
  *   <td align="center"><i>O(1)</i></td>
  * </tr>
@@ -297,6 +292,14 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public int size() {
 		return size;
+	}
+	
+	@Override
+	public void clear(){
+		modCount++;
+		root = nil;
+		min = nil;
+		size = 0;
 	}
 
 	/**
