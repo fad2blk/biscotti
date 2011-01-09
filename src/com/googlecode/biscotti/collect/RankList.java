@@ -106,7 +106,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #contains(Object)}</br>
+ *       {@link #contains(Object) contains(Object)}</br>
  *     </td>
  *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
  *   </tr>
@@ -122,7 +122,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #remove(Object)}</br>
+ *       {@link #remove(Object) remove(Object)}</br>
  *     </td>
  *   </tr>
  * </table>
