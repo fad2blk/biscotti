@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -37,22 +36,31 @@ import com.google.common.collect.Iterables;
 import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
- * A {@code List} implementation that is optimized for efficient <a
+ * A {@code List} optimized for efficient <a
  * href="http://en.wikipedia.org/wiki/Random_access">random access</a> insertion
- * and removal operations, based on a modified version of a <a
- * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> invented by <a
- * href="http://www.cs.umd.edu/~pugh/">William Pugh</a> in 1990. Implements all
- * optional list operations, and permits all elements, including {@code null}.
+ * and removal operations. Implements all optional list operations, and permits
+ * all elements, including {@code null}.
  * <p>
- * The underlying skip list implementation provides expected logarithmic running
- * time for all linear list operations with an extremely high degree of
- * probability as the list grows. Linear list operations (e.g., “insert this
- * after the i<i>th</i> element of the list”) are sometimes called rank
- * operations.
+ * The iterators obtained from the {@link #iterator()} and
+ * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
+ * elements in this list at any time after an iterator is created, in any way
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}.
  * <p>
- * The following table summarizes the expected performance of this class as
- * compared to the {@code ArrayList} and {@code LinkedList} implementations in
- * Java Collection Framework:
+ * This list is not <i>thread-safe</i>. If multiple threads modify this list
+ * concurrently it must be synchronized externally.
+ * <p>
+ * The underlying implementation is based on a <a
+ * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> modified to
+ * provide logarithmic running time for all linear list operations (sometimes
+ * called rank operations). A skip list is a probabilistic data structure for
+ * storing items in sorted order. It is impossible to make any hard guarantees
+ * regarding the worst-case performance of this class. Practical performance is
+ * <i>expected</i> to be logarithmic with an extremely high degree of
+ * probability.
+ * <p>
+ * The following table summarizes the performance of this class as compared to
+ * {@code ArrayList} and {@code LinkedList}:
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -61,64 +69,71 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <th align="center">Method</th>
- *     <th align="center">RankList</th>     
- *     <th align="center">ArrayList</th>
- *     <th align="center">LinkedList</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}</br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #indexOf(Object)}</br>
- *       {@link #lastIndexOf(Object)}</br>
- *       {@link #get(int)}</br>
- *       {@link #remove(int)}</br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
+ *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
+ *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
+ *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
- *       {@link #remove(Object)}</br>
  *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *     <td align="center"><i>O(n)</i></td>
- *     <td align="center"><i>O(n)</i></td>
+ *     <td align="center" rowspan="5"><i>O(log n)</i></td>
+ *     <td align="center" rowspan="3"><i>O(1)</i></td>
+ *     <td align="center"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #clear()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #size()}</br>
+ *       {@link #get(int)}</br>
+ *       <td align="center" rowspan="4"><i>O(n)</i></td>
  *     </td>
- *     <td align="center"><i>O(1)</i></td>
- *     <td align="center"><i>O(1)</i></td>
- *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #set(int)}</br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(int, Object) add(int, E)}</br>
+ *     </td>
+ *     <td align="center" rowspan="2"><i>O(n)</i></td>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #remove(int)}</br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #contains(Object)}</br>
+ *     </td>
+ *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #indexOf(Object)}</br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #lastIndexOf(Object)}</br>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #remove(Object)}</br>
+ *     </td>
  *   </tr>
  * </table>
  * 
- * 
- * 
- * 
- * 
- * 
  * @author Zhenya Leonov
+ * 
  * @param <E>
  *            the type of elements maintained by this list
- * @see <a href="ftp://ftp.cs.umd.edu/pub/skipLists/cookbook.pdf">A Skip List
- *      Cookbook</a>
  */
-public class RankList<E> extends AbstractList<E> implements List<E>, Serializable, Cloneable {
+public class RankList<E> extends AbstractList<E> implements List<E>,
+		Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private int size = 0;
@@ -130,8 +145,8 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 	private Node<E> tail = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
-		Arrays.fill(head.next, tail);
 		Arrays.fill(head.distance, 1);
+		Arrays.fill(head.next, tail);
 	}
 
 	public static <E extends Comparable<? super E>> RankList<E> create() {
@@ -212,8 +227,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 			private Node<E> last = null;
 			private int index = 0;
 			private int expectedModCount = modCount;
-			private Node<E>[] update = new Node[level];
-			
+
 			@Override
 			public void add(E element) {
 				checkForConcurrentModification();
@@ -330,7 +344,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 		node.element = element;
 		return e;
 	}
-	
+
 	/**
 	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
 	 * are not cloned.
@@ -350,9 +364,11 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 		}
 		clone.head = new Node<E>(null, MAX_LEVEL);
 		clone.tail = new Node<E>(null, MAX_LEVEL);
+		Arrays.fill(clone.head.next, clone.tail);
+		Arrays.fill(clone.head.distance, 1);
 		clone.random = new Random();
-		clone.clear();
 		clone.modCount = 0;
+		clone.size = 0;
 		clone.addAll(this);
 		return clone;
 	}
@@ -368,10 +384,10 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
+		Arrays.fill(head.distance, 1);
+		Arrays.fill(head.next, tail);
 		random = new Random();
-		modCount = 0;
 		level = 1;
-		clear();
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
