@@ -85,16 +85,10 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #clear() clear()}<br>
- *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
  *       {@link #add(Object) add(E)}</br>
  *       {@link #contains(Object) contains(Object)}</br>
  *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object) remove(Object)}</br>
+ *       {@link #remove(Object) remove(Object)}
  *     </td>
  *     <td align="center">
  *       <i>O(lg(n - k) + k)</i></td>
@@ -116,6 +110,7 @@ import com.google.common.collect.Ordering;
  *       {@link #pop() pop()}</br>
  *       {@link #removeFirst() removeFirst()}</br>
  *       {@link #removeLast() removeLast()}</br>
+ *       {@link #clear()}
  *     </td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
@@ -378,6 +373,12 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	public boolean removeLastOccurrence(Object o) {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		max = nil;
+	}
 
 	/**
 	 * Returns a shallow copy of this {@code TreeDeque}. The elements themselves
@@ -409,6 +410,10 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
 	}
+	
+	/*
+	 * Red-Black Tree
+	 */
 
 	@Override
 	void insert(final Node z) {
