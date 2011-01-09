@@ -32,6 +32,8 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -124,12 +126,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	TreeQueue(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
+	TreeQueue(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
-		if (elements != null)
-			for (E element : elements)
-				add(element);
 	}
 
 	/**
@@ -140,7 +138,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
-		return new TreeQueue<E>(Ordering.natural(), null);
+		return new TreeQueue<E>(Ordering.natural());
 	}
 
 	/**
@@ -154,7 +152,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> TreeQueue<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeQueue<E>(comparator, null);
+		return new TreeQueue<E>(comparator);
 	}
 
 	/**
@@ -178,16 +176,17 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		final Comparator<? super E> comparator;
+		final TreeQueue<E> addTo;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			addTo = create(((SortedSet) elements).comparator());
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			addTo = create(((PriorityQueue) elements).comparator());
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			addTo = create(((SortedCollection) elements).comparator());
 		else
-			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeQueue<E>(comparator, elements);
+			addTo = create((Comparator<? super E>) Ordering.natural());
+		Iterables.addAll(addTo, elements);
+		return addTo;
 	}
 
 	/**

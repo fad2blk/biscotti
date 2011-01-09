@@ -37,6 +37,7 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.googlecode.biscotti.base.CloneNotSupportedException;
 
@@ -130,12 +131,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
-	private TreeList(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
+	private TreeList(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
-		if (elements != null)
-			for (E element : elements)
-				add(element);
 	}
 
 	/**
@@ -146,7 +143,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 *         their natural ordering
 	 */
 	public static <E extends Comparable<? super E>> TreeList<E> create() {
-		return new TreeList<E>(Ordering.natural(), null);
+		return new TreeList<E>(Ordering.natural());
 	}
 
 	/**
@@ -160,7 +157,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	public static <E> TreeList<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeList<E>(comparator, null);
+		return new TreeList<E>(comparator);
 	}
 
 	/**
@@ -184,16 +181,17 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	 */
 	public static <E> TreeList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		final Comparator<? super E> comparator;
+		final TreeList<E> addTo;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			addTo = create(((SortedSet) elements).comparator());
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			addTo = create(((PriorityQueue) elements).comparator());
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			addTo = create(((SortedCollection) elements).comparator());
 		else
-			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeList<E>(comparator, elements);
+			addTo = create((Comparator<? super E>) Ordering.natural());
+		Iterables.addAll(addTo, elements);
+		return addTo;
 	}
 
 	/**
@@ -533,7 +531,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		public SubList(TreeList<E> l, int fromIndex, int toIndex,
 				E fromElement, E toElement) {
-			super(l.comparator, null);
+			super(l.comparator);
 			this.l = l;
 			min = l.min;
 			offset = fromIndex;
