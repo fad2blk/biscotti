@@ -120,6 +120,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  */
 public class RankList<E> extends AbstractList<E> implements List<E>, Serializable, Cloneable {
 
+	private static final long serialVersionUID = 1L;
 	private int size = 0;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
@@ -211,12 +212,15 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 			private Node<E> last = null;
 			private int index = 0;
 			private int expectedModCount = modCount;
-
+			private Node<E>[] update = new Node[level];
+			
 			@Override
 			public void add(E element) {
 				checkForConcurrentModification();
-				RankList.this.add(index - 1, element);
+				RankList.this.add(index++, element);
 				expectedModCount = modCount;
+				last = null;
+				node = node.next[0];
 			}
 
 			@Override
@@ -264,7 +268,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>, Serializabl
 			public void remove() {
 				checkForConcurrentModification();
 				checkState(last != null);
-				RankList.this.remove(index - 1);
+				RankList.this.remove(--index);
 				expectedModCount = modCount;
 				last = null;
 			}
