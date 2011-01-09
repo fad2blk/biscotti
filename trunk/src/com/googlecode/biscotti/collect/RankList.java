@@ -89,7 +89,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #set(int)}</br>
+ *       {@link #set(int, Object) set(int, E)}</br>
  *     </td>
  *   </tr>
  *   <tr>
