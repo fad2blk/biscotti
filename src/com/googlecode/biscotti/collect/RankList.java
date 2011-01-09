@@ -64,11 +64,10 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
- *     <th></th>
+ *     <th align="center" rowspan="2">Method</th>
  *     <th align="center" colspan="3">Running Time</th>
  *   </tr>
  *   <tr>
- *     <th align="center">Method</th>
  *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
  *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
  *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
@@ -112,7 +111,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #indexOf(Object)}</br>
+ *       {@link #indexOf(Object) indexOf(Objecet)}</br>
  *     </td>
  *   </tr>
  *   <tr>
@@ -346,7 +345,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	}
 
 	/**
-	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
+	 * Returns a shallow copy of this {@code RankList}. The elements themselves
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this list

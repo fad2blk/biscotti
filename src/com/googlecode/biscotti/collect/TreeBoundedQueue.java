@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -60,13 +61,15 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 
 	private TreeBoundedQueue(final int maxSize,
 			final Comparator<? super E> comparator) {
-		super(comparator, null);
+		super(comparator);
 		this.maxSize = maxSize;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
-		super(comparator, elements);
+		super(comparator);
+		Iterables.addAll(this, elements);
+		checkArgument(size > 0);
 		this.maxSize = size;
 	}
 
@@ -141,7 +144,6 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(comparator, elements);
-		checkArgument(!q.isEmpty());
 		return q;
 	}
 
