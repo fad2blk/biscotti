@@ -68,8 +68,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		super(comparator);
-		Iterables.addAll(this, elements);
-		checkArgument(size > 0);
+		checkArgument(Iterables.addAll(this, elements));
 		this.maxSize = size;
 	}
 
@@ -110,13 +109,13 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeBoundedQueue} containing the elements of and
+	 * Creates a new {@code TreeBoundedQueue} containing the elements of, and
 	 * having the maximum size equal to the number of elements in the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link java.util.PriorityQueue
-	 * java.util.PriorityQueue}, or {@code SortedCollection} this queue will be
-	 * ordered according to the same ordering. Otherwise, this queue will be
-	 * ordered according to the <i>natural ordering</i> of its elements.
+	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection}
+	 * this queue will be ordered according to the same ordering. Otherwise,
+	 * this queue will be ordered according to the <i>natural ordering</i> of
+	 * its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the queue
