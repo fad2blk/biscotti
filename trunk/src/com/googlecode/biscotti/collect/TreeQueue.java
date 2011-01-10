@@ -30,9 +30,7 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SortedSet;
-import java.util.concurrent.PriorityBlockingQueue;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
@@ -98,7 +96,8 @@ import com.google.common.collect.Ordering;
  *     <td>
  *       {@link #element() element()}</br>
  *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br> {@link #poll()}</br>
+ *       {@link #peek()}</br>
+ *       {@link #poll()}</br>
  *       {@link #remove() remove()}</br>
  *       {@link #size()}</br>
  *       {@link #clear()}
@@ -128,6 +127,12 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 
 	TreeQueue(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
+	}
+
+	TreeQueue(final Comparator<? super E> comparator,
+			final Iterable<? extends E> elements) {
+		this(comparator);
+		Iterables.addAll(this, elements);
 	}
 
 	/**
@@ -176,17 +181,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		final TreeQueue<E> addTo;
+		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			addTo = create(((SortedSet) elements).comparator());
+			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			addTo = create(((PriorityQueue) elements).comparator());
+			comparator = ((PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			addTo = create(((SortedCollection) elements).comparator());
+			comparator = ((SortedCollection) elements).comparator();
 		else
-			addTo = create((Comparator<? super E>) Ordering.natural());
-		Iterables.addAll(addTo, elements);
-		return addTo;
+			comparator = (Comparator<? super E>) Ordering.natural();
+		return new TreeQueue<E>(comparator, elements);
 	}
 
 	/**
@@ -292,9 +296,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	public int size() {
 		return size;
 	}
-	
+
 	@Override
-	public void clear(){
+	public void clear() {
 		modCount++;
 		root = nil;
 		min = nil;
