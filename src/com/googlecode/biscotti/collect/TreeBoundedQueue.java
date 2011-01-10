@@ -109,7 +109,7 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeBoundedQueue} containing the elements of, and
+	 * Creates a new {@code TreeBoundedQueue} containing the elements of and
 	 * having the maximum size equal to the number of elements in the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection}
