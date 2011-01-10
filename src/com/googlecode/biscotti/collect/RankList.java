@@ -54,13 +54,13 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> modified to
  * provide logarithmic running time for all linear list operations (sometimes
  * called rank operations). A skip list is a probabilistic data structure for
- * storing items in sorted order. It is impossible to make any hard guarantees
- * regarding the worst-case performance of this class. Practical performance is
- * <i>expected</i> to be logarithmic with an extremely high degree of
- * probability.
+ * storing items (in this case indices) in in sorted order. Strictly speaking it
+ * is impossible to make any hard guarantees regarding the worst-case
+ * performance of this class. Practical performance is <i>expected</i> to be
+ * logarithmic with an extremely high degree of probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class as compared to
- * {@code ArrayList} and {@code LinkedList}:
+ * an {@code ArrayList} and a {@code LinkedList}:
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -129,7 +129,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * @author Zhenya Leonov
  * 
  * @param <E>
- *            the type of elements maintained by this list
+ * the type of elements maintained by this list
  */
 public class RankList<E> extends AbstractList<E> implements List<E>,
 		Serializable, Cloneable {
