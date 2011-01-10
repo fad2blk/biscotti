@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -67,7 +66,7 @@ import com.google.common.collect.Ordering;
  * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
  * duplicate elements of each other, and <i>m</i> is the size of the specified
  * collection):
-  * <p>
+ * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center">Method</th>
@@ -133,6 +132,11 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		super(comparator);
 	}
 
+	private TreeDeque(final Comparator<? super E> comparator,
+			Iterable<? extends E> elements) {
+		super(comparator, elements);
+	}
+
 	/**
 	 * Creates a new {@code TreeDeque} that orders its elements according to
 	 * their <i>natural ordering</i>.
@@ -160,7 +164,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
 	/**
 	 * Creates a new {@code TreeDeque} containing the elements of the specified
-	 * {@code Iterable}. If the specified iterable is an instance of of
+	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link PriorityQueue} or {@link SortedCollection} this
 	 * deque will be ordered according to the same ordering. Otherwise, this
 	 * deque will be ordered according to the <i>natural ordering</i> of its
@@ -179,19 +183,17 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	 */
 	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
-		final TreeDeque<E> addTo;
+		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			addTo = create(((SortedSet) elements).comparator());
+			comparator = ((SortedSet) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			addTo = create(((PriorityQueue) elements).comparator());
+			comparator = ((PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			addTo = create(((SortedCollection) elements).comparator());
+			comparator = ((SortedCollection) elements).comparator();
 		else
-			addTo = create((Comparator<? super E>) Ordering.natural());
-		Iterables.addAll(addTo, elements);
-		return addTo;
+			comparator = (Comparator<? super E>) Ordering.natural();
+		return new TreeDeque<E>(comparator, elements);
 	}
-
 
 	/**
 	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
@@ -375,9 +377,9 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	public boolean removeLastOccurrence(Object o) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public void clear(){
+	public void clear() {
 		super.clear();
 		max = nil;
 	}
@@ -412,7 +414,7 @@ final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
 	}
-	
+
 	/*
 	 * Red-Black Tree
 	 */
