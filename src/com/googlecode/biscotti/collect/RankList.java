@@ -129,7 +129,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * @author Zhenya Leonov
  * 
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
 public class RankList<E> extends AbstractList<E> implements List<E>,
 		Serializable, Cloneable {
