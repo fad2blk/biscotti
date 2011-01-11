@@ -140,12 +140,12 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	private static final int MAX_LEVEL = 32;
 	private int level = 1;
 	private Random random = new Random();
-	private Node<E> head = new Node<E>(null, MAX_LEVEL);
-	private Node<E> tail = new Node<E>(null, MAX_LEVEL);
+	private Node<E> anchor = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
-		Arrays.fill(head.distance, 1);
-		Arrays.fill(head.next, tail);
+		Arrays.fill(anchor.distance, 1);
+		Arrays.fill(anchor.next, anchor);
+		anchor.prev = anchor;
 	}
 
 	public static <E extends Comparable<? super E>> RankList<E> create() {
@@ -172,13 +172,13 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public void add(int index, E element) {
 		checkPositionIndex(index, size);
-		Node<E> curr = head;
+		Node<E> curr = anchor;
 		int pos = 0;
 		final int newLevel = randomLevel();
 		final Node<E> newNode = new Node<E>(element, newLevel);
 		if (newLevel > level) {
 			for (int i = level; i < newLevel; i++)
-				head.distance[i] = size + 1;
+				anchor.distance[i] = size + 1;
 			level = newLevel;
 		}
 		for (int i = level - 1; i >= 0; i--) {
@@ -210,7 +210,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public int lastIndexOf(Object o) {
-		Node<E> node = tail;
+		Node<E> node = anchor;
 		for (int i = size - 1; i >= 0; i--) {
 			node = node.prev;
 			if (Objects.equal(node.element, o))
@@ -222,7 +222,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public ListIterator<E> listIterator() {
 		return new ListIterator<E>() {
-			private Node<E> node = head.next[0];
+			private Node<E> node = anchor.next[0];
 			private Node<E> last = null;
 			private int index = 0;
 			private int expectedModCount = modCount;
@@ -313,7 +313,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	public E remove(int index) {
 		checkElementIndex(index, size);
 		final Node<E>[] update = new Node[level];
-		Node<E> node = head;
+		Node<E> node = anchor;
 		int pos = 0;
 		for (int i = level - 1; i >= 0; i--) {
 			while (pos + node.distance[i] <= index) {
@@ -329,8 +329,9 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public void clear() {
-		Arrays.fill(head.next, tail);
-		Arrays.fill(head.distance, 1);
+		Arrays.fill(anchor.distance, 1);
+		Arrays.fill(anchor.next, anchor);
+		anchor.prev = anchor;
 		modCount++;
 		size = 0;
 	}
@@ -361,10 +362,10 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
-		clone.head = new Node<E>(null, MAX_LEVEL);
-		clone.tail = new Node<E>(null, MAX_LEVEL);
-		Arrays.fill(clone.head.next, clone.tail);
-		Arrays.fill(clone.head.distance, 1);
+		clone.anchor = new Node<E>(null, MAX_LEVEL);
+		Arrays.fill(clone.anchor.next, clone.anchor);
+		Arrays.fill(clone.anchor.distance, 1);
+		clone.anchor.prev = clone.anchor;
 		clone.random = new Random();
 		clone.modCount = 0;
 		clone.size = 0;
@@ -383,8 +384,9 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		Arrays.fill(head.distance, 1);
-		Arrays.fill(head.next, tail);
+		Arrays.fill(anchor.distance, 1);
+		Arrays.fill(anchor.next, anchor);
+		anchor.prev = anchor;
 		random = new Random();
 		level = 1;
 		int size = ois.readInt();
@@ -408,7 +410,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	}
 
 	private Node<E> search(final int index) {
-		Node<E> curr = head;
+		Node<E> curr = anchor;
 		int pos = -1;
 		for (int i = level - 1; i >= 0; i--)
 			while (pos + curr.distance[i] <= index) {
@@ -426,7 +428,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 				update[i].distance[i] += node.distance[i] - 1;
 			} else
 				update[i].distance[i]--;
-		while (head.next[level - 1] == tail && level > 0)
+		while (anchor.next[level - 1] == anchor && level > 0)
 			level--;
 		modCount++;
 		size--;
