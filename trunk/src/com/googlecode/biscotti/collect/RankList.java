@@ -59,8 +59,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * performance of this class. Practical performance is <i>expected</i> to be
  * logarithmic with an extremely high degree of probability as the list grows.
  * <p>
- * The following table summarizes the performance of this class as compared to
- * an {@code ArrayList} and a {@code LinkedList}:
+ * The following table summarizes the performance of this class compared to an
+ * {@code ArrayList} and a {@code LinkedList}:
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -74,9 +74,9 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #add(Object) add(E)}</br>
+ *       {@link #add(Object) add(E)}
  *     </td>
- *     <td align="center" rowspan="5"><i>O(log n)</i></td>
+ *     <td align="center" rowspan="8"><i>O(log n)</i></td>
  *     <td align="center" rowspan="3"><i>O(1)</i></td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
@@ -88,42 +88,43 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #set(int, Object) set(int, E)}</br>
+ *       {@link #set(int, Object) set(int, E)}
  *     </td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #add(int, Object) add(int, E)}</br>
  *     </td>
- *     <td align="center" rowspan="2"><i>O(n)</i></td>
+ *     <td align="center" rowspan="5"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #remove(int)}</br>
+ *       {@link #remove(int)}
  *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link Iterator#remove()}</td>
+ *     <td align="center" rowspan="3"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#remove()}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
+ *     <td align="center" colspan="3"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #contains(Object) contains(Object)}</br>
+ *       {@link #indexOf(Object) indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #remove(Object) remove(Object)}
  *     </td>
  *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #indexOf(Object) indexOf(Objecet)}</br>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #lastIndexOf(Object)}</br>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #remove(Object) remove(Object)}</br>
- *     </td>
- *   </tr>
  * </table>
  * 
  * @author Zhenya Leonov
