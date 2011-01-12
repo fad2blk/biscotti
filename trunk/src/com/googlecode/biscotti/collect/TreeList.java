@@ -70,9 +70,9 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * the standpoint of this list, equal.
  * <p>
  * The underlying red-black tree provides the following worst case running time
- * for this list and its views (where <i>n</i> is the size of this list,
- * <i>k</i> is the highest number of duplicate elements of each other, and
- * <i>m</i> is the size of the specified collection):
+ * (where <i>n</i> is the size of this list, <i>k</i> is the highest number of
+ * duplicate elements of each other, and <i>m</i> is the size of the specified
+ * collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -90,11 +90,10 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #clear() clear()}</br>
  *       {@link #indexOf(Object)}</br>
  *       {@link #lastIndexOf(Object)}</br>
  *       {@link #get(int)}</br>
- *       {@link #remove(int)}</br>
+ *       {@link #remove(int)}
  *     </td>
  *     <td align="center"><i>O(n)</i></td>
  *   </tr>
@@ -102,22 +101,29 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *     <td>
  *       {@link #add(Object) add(E)}</br>
  *       {@link #contains(Object)}</br>
- *       {@link #remove(Object)}</br>
+ *       {@link #remove(Object)}
  *     </td>
  *     <td align="center"><i>O(lg(n - k) + k)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
+ *       {@link #clear() clear()}</br>
  *       {@link #isEmpty() isEmpty()}</br>
  *       {@link #size()}</br>
+ *       {@link Iterator#remove()}</br>
+ *       {@link ListIterator#remove()}
  *     </td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
  * </table>
+ * <p>
+ * The {@code headList}, {@code subList}, and {@code tailList} views exhibit
+ * identical running time, except for the {@code clear()} operation which runs
+ * in linear time proportional to the size of the view.
  * 
  * @author Zhenya Leonov
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		Cloneable, Serializable {
@@ -431,6 +437,15 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	public int size() {
 		return size;
 	}
+	
+//	@Override
+//	public void clear() {
+//		modCount++;
+//		root = nil;
+//		min = nil;
+//		max = nil;
+//		size = 0;
+//	}
 
 	@Override
 	public TreeList<E> headList(E toElement) {
@@ -528,6 +543,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		private final E fromElement;
 		private final E toElement;
 		private int size;
+		private Node min;
+		private Node max;
 
 		private void checkForConcurrentModification() {
 			if (modCount != l.modCount)
@@ -536,7 +553,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		public SubList(TreeList<E> l, int fromIndex, int toIndex,
 				E fromElement, E toElement) {
-			super(l.comparator, null);
+			super(l.comparator);
 			this.l = l;
 			min = l.min;
 			offset = fromIndex;
@@ -701,6 +718,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		public int size() {
 			checkForConcurrentModification();
 			return size;
+		}
+		
+		@Override
+		public void clear() {
+			removeRange(0, size());
 		}
 
 		@Override
