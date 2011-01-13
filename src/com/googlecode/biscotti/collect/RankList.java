@@ -368,6 +368,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		Arrays.fill(clone.anchor.distance, 1);
 		clone.anchor.prev = clone.anchor;
 		clone.random = new Random();
+		clone.level = 1;
 		clone.modCount = 0;
 		clone.size = 0;
 		clone.addAll(this);
