@@ -363,7 +363,6 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
-		clone.anchor = new Node<E>(null, MAX_LEVEL);
 		Arrays.fill(clone.anchor.next, clone.anchor);
 		Arrays.fill(clone.anchor.distance, 1);
 		clone.anchor.prev = clone.anchor;
