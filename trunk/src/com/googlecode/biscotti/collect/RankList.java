@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.AbstractList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -52,11 +52,11 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * <p>
  * The underlying implementation is based on a <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
- * provide logarithmic running time for all linear list operations
- * (insert/remove an element at the i<i>th</i> index). Linear list operations
- * are sometimes referred to as rank operations.
+ * provide logarithmic running time for all linear list operations (e.g., insert
+ * an element at the i<i>th</i> index). Linear list operations are sometimes
+ * referred to as rank operations.
  * <p>
- * Skip Lists are probabilistic data structures for storing items in sorted
+ * A Skip List is probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
@@ -65,8 +65,6 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * The following table summarizes the performance of this class compared to an
  * {@code ArrayList} and a {@code LinkedList}:
  * <p>
- * 
- * <pre>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center" rowspan="2">Method</th>
@@ -76,6 +74,29 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
  *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
  *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(n log n)</i></td>
+ *     <td align="center" colspan="2"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #containsAll(Collection) containsAll(Collection)}
+ *     </td>
+ *     <td align="center" colspan="3" rowspan="3"><i>O(n&#178;)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #retainAll(Collection) retainAll(Collection)}
+ *     </td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -146,12 +167,14 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	private static final int MAX_LEVEL = 32;
 	private int level = 1;
 	private Random random = new Random();
-	private Node<E> anchor = new Node<E>(null, MAX_LEVEL);
+	private Node<E> header = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
-		Arrays.fill(anchor.distance, 1);
-		Arrays.fill(anchor.next, anchor);
-		anchor.prev = anchor;
+		for (int i = 0; i < MAX_LEVEL; i++) {
+			header.next[i] = header;
+			header.dist[i] = 1;
+		}
+		header.prev = header;
 	}
 
 	public static <E extends Comparable<? super E>> RankList<E> create() {
@@ -178,27 +201,27 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public void add(int index, E element) {
 		checkPositionIndex(index, size);
-		Node<E> curr = anchor;
+		Node<E> curr = header;
 		int pos = 0;
 		final int newLevel = randomLevel();
 		final Node<E> newNode = new Node<E>(element, newLevel);
 		if (newLevel > level) {
 			for (int i = level; i < newLevel; i++)
-				anchor.distance[i] = size + 1;
+				header.dist[i] = size + 1;
 			level = newLevel;
 		}
 		for (int i = level - 1; i >= 0; i--) {
-			while (pos + curr.distance[i] <= index) {
-				pos += curr.distance[i];
+			while (pos + curr.dist[i] <= index) {
+				pos += curr.dist[i];
 				curr = curr.next[i];
 			}
 			if (i > newLevel - 1)
-				curr.distance[i]++;
+				curr.dist[i]++;
 			else {
 				newNode.next[i] = curr.next[i];
 				curr.next[i] = newNode;
-				newNode.distance[i] = pos + curr.distance[i] - index;
-				curr.distance[i] = index + 1 - pos;
+				newNode.dist[i] = pos + curr.dist[i] - index;
+				curr.dist[i] = index + 1 - pos;
 			}
 		}
 		newNode.prev = curr;
@@ -216,7 +239,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public int lastIndexOf(Object o) {
-		Node<E> node = anchor;
+		Node<E> node = header;
 		for (int i = size - 1; i >= 0; i--) {
 			node = node.prev;
 			if (Objects.equal(node.element, o))
@@ -228,7 +251,7 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public ListIterator<E> listIterator() {
 		return new ListIterator<E>() {
-			private Node<E> node = anchor.next[0];
+			private Node<E> node = header.next[0];
 			private Node<E> last = null;
 			private int index = 0;
 			private int expectedModCount = modCount;
@@ -319,11 +342,11 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	public E remove(int index) {
 		checkElementIndex(index, size);
 		final Node<E>[] update = new Node[level];
-		Node<E> node = anchor;
+		Node<E> node = header;
 		int pos = 0;
 		for (int i = level - 1; i >= 0; i--) {
-			while (pos + node.distance[i] <= index) {
-				pos += node.distance[i];
+			while (pos + node.dist[i] <= index) {
+				pos += node.dist[i];
 				node = node.next[i];
 			}
 			update[i] = node;
@@ -335,9 +358,11 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public void clear() {
-		Arrays.fill(anchor.distance, 1);
-		Arrays.fill(anchor.next, anchor);
-		anchor.prev = anchor;
+		for (int i = 0; i < MAX_LEVEL; i++) {
+			header.next[i] = header;
+			header.dist[i] = 1;
+		}
+		header.prev = header;
 		modCount++;
 		size = 0;
 	}
@@ -368,9 +393,11 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
-		Arrays.fill(clone.anchor.next, clone.anchor);
-		Arrays.fill(clone.anchor.distance, 1);
-		clone.anchor.prev = clone.anchor;
+		for (int i = 0; i < MAX_LEVEL; i++) {
+			clone.header.next[i] = clone.header;
+			clone.header.dist[i] = 1;
+		}
+		clone.header.prev = clone.header;
 		clone.random = new Random();
 		clone.level = 1;
 		clone.modCount = 0;
@@ -390,9 +417,11 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		Arrays.fill(anchor.distance, 1);
-		Arrays.fill(anchor.next, anchor);
-		anchor.prev = anchor;
+		for (int i = 0; i < MAX_LEVEL; i++) {
+			header.next[i] = header;
+			header.dist[i] = 1;
+		}
+		header.prev = header;
 		random = new Random();
 		level = 1;
 		int size = ois.readInt();
@@ -406,21 +435,21 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		private E element;
 		private Node<E> prev;
 		private final Node<E>[] next;
-		private final int[] distance;
+		private final int[] dist;
 
 		private Node(final E element, final int size) {
 			this.element = element;
 			next = new Node[size];
-			distance = new int[size];
+			dist = new int[size];
 		}
 	}
 
 	private Node<E> search(final int index) {
-		Node<E> curr = anchor;
+		Node<E> curr = header;
 		int pos = -1;
 		for (int i = level - 1; i >= 0; i--)
-			while (pos + curr.distance[i] <= index) {
-				pos = pos + curr.distance[i];
+			while (pos + curr.dist[i] <= index) {
+				pos = pos + curr.dist[i];
 				curr = curr.next[i];
 			}
 		return curr;
@@ -431,10 +460,10 @@ public class RankList<E> extends AbstractList<E> implements List<E>,
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
 				update[i].next[i] = node.next[i];
-				update[i].distance[i] += node.distance[i] - 1;
+				update[i].dist[i] += node.dist[i] - 1;
 			} else
-				update[i].distance[i]--;
-		while (anchor.next[level - 1] == anchor && level > 0)
+				update[i].dist[i]--;
+		while (header.next[level - 1] == header && level > 0)
 			level--;
 		modCount++;
 		size--;
