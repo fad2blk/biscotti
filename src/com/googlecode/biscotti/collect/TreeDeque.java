@@ -123,7 +123,7 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this deque
  */
-final public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
+public final class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
 	private static final long serialVersionUID = 1L;
 	private Node max = nil;
