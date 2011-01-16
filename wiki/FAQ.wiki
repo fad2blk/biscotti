@@ -49,14 +49,11 @@ For many other reasons, cloning is horribly broken in Java. Don't take my word f
 
 = Implementation =
 
-===Why do the `TreeList.addAll(Collection)`, `TreeQueue.addAll(Collection)`, and
-`TreeDeque.addAll(Collection)` operations run in logarithmic time? Shouldn't they run in linear time?===
+===Why do the `TreeList.addAll(Collection)`, `TreeQueue.addAll(Collection)`, and <br> `TreeDeque.addAll(Collection)` operations run in logarithmic time? Shouldn't they run in linear time?===
 
 That's correct. It's possible to merge two balanced trees together in _O(n)_ time. I haven't gotten around to it. I will update all the tree collections at some point. Usage of the `addAll` operation is generally expected to be low. This isn't a very high priority at the moment.
 
 The same goes for Skip List based collections as well.
-
-
 
 
 
