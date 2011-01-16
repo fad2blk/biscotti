@@ -63,7 +63,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class compared to an
- * {@code ArrayList} and a {@code LinkedList}:
+ * {@code ArrayList} and a {@code LinkedList} (where <i>n</i> is the size of
+ * this list and <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -79,14 +80,14 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *     <td>
  *       {@link #addAll(Collection) addAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(n log n)</i></td>
- *     <td align="center" colspan="2"><i>O(n)</i></td>
+ *     <td align="center"><i>O(m log n)</i></td>
+ *     <td align="center" colspan="2"><i>O(m)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #containsAll(Collection) containsAll(Collection)}
  *     </td>
- *     <td align="center" colspan="3" rowspan="3"><i>O(n&#178;)</i></td>
+ *     <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
