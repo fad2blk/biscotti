@@ -31,13 +31,13 @@ Good catch. Simply put, the `SortedList` interface was more than enough to demon
 
 ===Besides synchronized wrappers in the [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/collect/Collections3.html Collections3] class, you don't have any thread-safe, let alone<br>concurrent implementations of your collections, what gives?===
 
-Good question. The only _tree_-based concurrent implementations which I am aware of choke under concurrent access. Their performance degrades linearly with each new concurrent user, and they don't perform significantly better than the provided synchronized wrappers which act like a global lock.
+Good question. The _tree_-based concurrent implementations which I am aware of choke under concurrent access. Their performance degrades linearly with each new thread, and they don't perform significantly better than the provided synchronized wrappers which act like a global lock.
 
 On the other hand, there are several [http://en.wikipedia.org/wiki/Skip_list Skip List] locking and lock-free concurrent algorithms which are remarkably fast, and are fairly strait forward to implement. I've been working on implementing [http://www.cs.brown.edu/~levyossi/Pubs/LazySkipList.pdf A Simple Optimistic Skip-List Algorithm]. The first implementation will probably come in the form of a `ConcurrentSkipQueue`.
 
 ===Didn't [http://en.wikipedia.org/wiki/Doug_Lea Doug Lea] already implement a [http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentSkipListSet.html ConcurrentSkipListSet] for Java 6?===
 
-Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the fastest concurrent skip-list based algorithm that I am aware of. Having said that, besides being extremely complicated, OpenJDK was released under the GNU General Public License (GPL). Even if it was possible to modify his algorithm for the purposes of this project, the GPL License is completely incompatible with the Apache License 2.0 under which this project was released.
+Yes. In fact the algorithm implemented by Doug Lea is lock-free and is the fastest concurrent skip-list based algorithm that I am aware of. Having said that, besides being complicated, OpenJDK was released under the GNU General Public License (GPL). Even if it was possible to modify his algorithm for the purposes of this project, the GPL License is completely incompatible with the Apache License 2.0 under which this project was released.
 
 ===Why do you provide a [http://biscotti.googlecode.com/svn/trunk/javadoc/index.html?com/googlecode/biscotti/base/CloneNotSupportedException.html CloneNotSupportedException]? One is already provided in Java, and you don't<br>even use it in your Collections.===
 
@@ -46,3 +46,36 @@ Another good catch. My collections are cloneable for the sake of consistency, bu
 The [http://download.oracle.com/javase/6/docs/api/java/lang/CloneNotSupportedException.html CloneNotSupportedException] in the JDK is _not_ a runtime exception. If you extend a class which implements the `Cloneable` interface, the child class can only throw the `CloneNotSupportedException` if the `clone()` method of the parent class also throws it. This is a Catch-22 situation, since the parent class is designed to be cloneable and would not throw it in the first place.
 
 For many other reasons, cloning is horribly broken in Java. Don't take my word for it. Here is what [http://en.wikipedia.org/wiki/Joshua_Bloch Joshua Bloch] had to say [http://www.artima.com/intv/bloch13.html about it].
+
+= Implementation =
+
+===Why do the `TreeList.addAll(Collection)`, `TreeQueue.addAll(Collection)`, and `TreeDeque.addAll(Collection)` operations run in logarithmic time? Shouldn't they run in linear time?===
+
+That's correct. It's possible to merge two balanced trees together in _O(n)_ time. I haven't gotten around to it. I will update all the tree collections at some point. Usage of the `addAll` operation is generally expected to be low. This isn't a very high priority at the moment.
+
+The same goes for Skip List based collections as well.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
