@@ -277,12 +277,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		}
 		return -1;
 	}
-
-	@Override
-	public Iterator<E> iterator() {
-		return listIterator();
-	}
-
+	
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
@@ -297,6 +292,11 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				}
 		}
 		return -1;
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return listIterator();
 	}
 
 	/**
@@ -438,14 +438,14 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		return size;
 	}
 	
-//	@Override
-//	public void clear() {
-//		modCount++;
-//		root = nil;
-//		min = nil;
-//		max = nil;
-//		size = 0;
-//	}
+	@Override
+	public void clear() {
+		modCount++;
+		root = nil;
+		min = nil;
+		max = nil;
+		size = 0;
+	}
 
 	@Override
 	public TreeList<E> headList(E toElement) {
