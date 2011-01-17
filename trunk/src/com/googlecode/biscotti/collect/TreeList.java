@@ -43,7 +43,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
- * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>.
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>.
  * Elements are sorted from <i>least</i> to <i>greatest</i> according to their
  * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
  * creation. Attempting to remove or insert {@code null} elements is prohibited.
@@ -67,7 +67,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * elements which are deemed equal by the comparator's {@code compare(E, E)}
  * method are, from the standpoint of this list, equal.
  * <p>
- * The underlying red-black tree provides the following worst case running time
+ * The underlying Red-Black Tree provides the following worst case running time
  * (where <i>n</i> is the size of this list, <i>k</i> is the highest number of
  * duplicate elements of each other, and <i>m</i> is the size of the specified
  * collection):
