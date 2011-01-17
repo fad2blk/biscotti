@@ -62,6 +62,10 @@ import com.google.common.collect.Iterables;
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
  * <p>
+ * The following table summarizes the performance of this class compared to an
+ * {@code ArrayList} and a {@code LinkedList} (where n is the size of this list
+ * and m is the size of the specified collection):
+ * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
  *     <th align="center" rowspan="2">Method</th>
@@ -143,7 +147,10 @@ import com.google.common.collect.Iterables;
  *   </tr>
  *   <tr>
  *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
- *     <td align="center" colspan="3"><i>O(1)</i></td>
+ *     <td align="center" colspan="3" rowspan="2"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #clear()}</td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -154,6 +161,10 @@ import com.google.common.collect.Iterables;
  *     </td>
  *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
+ * <p>
+ * The {@code subList} view exhibits identical time complexity, except for the
+ * {@code clear()} operation which runs in linear time proportional to the size
+ * of the view.
  * 
  * @author Zhenya Leonov
  * 
