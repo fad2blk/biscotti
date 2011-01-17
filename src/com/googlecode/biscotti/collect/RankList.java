@@ -163,12 +163,12 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
-	private int size = 0;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
-	private int level = 1;
-	private Random random = new Random();
-	private Node<E> header = new Node<E>(null, MAX_LEVEL);
+	private transient int size = 0;
+	private transient int level = 1;
+	private transient Random random = new Random();
+	private transient Node<E> header = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
 		for (int i = 0; i < MAX_LEVEL; i++) {
@@ -418,6 +418,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
+		header = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			header.next[i] = header;
 			header.dist[i] = 1;
