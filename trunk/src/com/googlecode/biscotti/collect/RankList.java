@@ -33,7 +33,6 @@ import java.util.Random;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
  * A {@code List} optimized for efficient <a
@@ -63,93 +62,97 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
  * <p>
- * The following table summarizes the performance of this class compared to an
- * {@code ArrayList} and a {@code LinkedList} (where <i>n</i> is the size of
- * this list and <i>m</i> is the size of the specified collection):
- * <p>
  * <table border cellpadding="3" cellspacing="1">
- * <tr>
- * <th align="center" rowspan="2">Method</th>
- * <th align="center" colspan="3">Running Time</th>
- * </tr>
- * <tr>
- * <td align="center"><b>RankList</b><br>
- * (<i>expected</i>)</td>
- * <td align="center"><b>ArrayList</b><br>
- * (<i>amortized</i>)</td>
- * <td align="center"><b>LinkedList</b><br>
- * (<i>worst-case</i>)</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection) addAll(Collection)}</td>
- * <td align="center"><i>O(m log n)</i></td>
- * <td align="center" colspan="2"><i>O(m)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #containsAll(Collection) containsAll(Collection)}</td>
- * <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #retainAll(Collection) retainAll(Collection)}</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</td>
- * <td align="center" rowspan="9"><i>O(log n)</i></td>
- * <td align="center" rowspan="3"><i>O(1)</i></td>
- * <td align="center"><i>O(1)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #get(int)}</br>
- * <td align="center" rowspan="5"><i>O(n)</i></td>
- * </td>
- * </tr>
- * <tr>
- * <td>
- * {@link #set(int, Object) set(int, E)}</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(int, Object) add(int, E)}</br></td>
- * <td align="center" rowspan="6"><i>O(n)</i></td>
- * </td>
- * </tr>
- * <tr>
- * <td>
- * {@link #remove(int)}</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #listIterator(int)}</td>
- * </tr>
- * <tr>
- * <td>{@link Iterator#remove()}</td>
- * <td align="center" rowspan="3"><i>O(1)</i></td>
- * </tr>
- * <tr>
- * <td>{@link ListIterator#remove()}</td>
- * </tr>
- * <tr>
- * <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
- * </tr>
- * <tr>
- * <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
- * <td align="center" colspan="3"><i>O(1)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #contains(Object) contains(Object)}</br> {@link #indexOf(Object)
- * indexOf(Object)}</br> {@link #lastIndexOf(Object)}</br>
- * {@link #remove(Object) remove(Object)}</td>
- * <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
+ *   <tr>
+ *     <th align="center" rowspan="2">Method</th>
+ *     <th align="center" colspan="3">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
+ *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
+ *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}
+ *     </td>
+ *     <td align="center"><i>O(m log n)</i></td>
+ *     <td align="center" colspan="2"><i>O(m)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #containsAll(Collection) containsAll(Collection)}
+ *     </td>
+ *     <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #retainAll(Collection) retainAll(Collection)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}
+ *     </td>
+ *     <td align="center" rowspan="9"><i>O(log n)</i></td>
+ *     <td align="center" rowspan="3"><i>O(1)</i></td>
+ *     <td align="center"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #get(int)}</br>
+ *       <td align="center" rowspan="5"><i>O(n)</i></td>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #set(int, Object) set(int, E)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(int, Object) add(int, E)}</br>
+ *     </td>
+ *     <td align="center" rowspan="6"><i>O(n)</i></td>
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #remove(int)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #listIterator(int)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link Iterator#remove()}</td>
+ *     <td align="center" rowspan="3"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#remove()}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
+ *     <td align="center" colspan="3"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #contains(Object) contains(Object)}</br>
+ *       {@link #indexOf(Object) indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #remove(Object) remove(Object)}
+ *     </td>
+ *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * 
  * @author Zhenya Leonov
@@ -166,14 +169,14 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	private transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
-	private transient Node<E> header = new Node<E>(null, MAX_LEVEL);
+	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 
 	private RankList() {
 		for (int i = 0; i < MAX_LEVEL; i++) {
-			header.next[i] = header;
-			header.dist[i] = 1;
+			head.next[i] = head;
+			head.dist[i] = 1;
 		}
-		header.prev = header;
+		head.prev = head;
 	}
 
 	/**
@@ -214,13 +217,13 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public void add(int index, E element) {
 		checkPositionIndex(index, size);
-		Node<E> curr = header;
+		Node<E> curr = head;
 		int pos = 0;
 		final int newLevel = randomLevel();
 		final Node<E> newNode = new Node<E>(element, newLevel);
 		if (newLevel > level) {
 			for (int i = level; i < newLevel; i++)
-				header.dist[i] = size + 1;
+				head.dist[i] = size + 1;
 			level = newLevel;
 		}
 		for (int i = level - 1; i >= 0; i--) {
@@ -252,7 +255,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public int lastIndexOf(Object o) {
-		Node<E> node = header;
+		Node<E> node = head;
 		for (int i = size - 1; i >= 0; i--) {
 			node = node.prev;
 			if (Objects.equal(node.element, o))
@@ -276,7 +279,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	public E remove(int index) {
 		checkElementIndex(index, size);
 		final Node<E>[] update = new Node[level];
-		Node<E> node = header;
+		Node<E> node = head;
 		int pos = 0;
 		for (int i = level - 1; i >= 0; i--) {
 			while (pos + node.dist[i] <= index) {
@@ -293,10 +296,10 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public void clear() {
 		for (int i = 0; i < MAX_LEVEL; i++) {
-			header.next[i] = header;
-			header.dist[i] = 1;
+			head.next[i] = head;
+			head.dist[i] = 1;
 		}
-		header.prev = header;
+		head.prev = head;
 		modCount++;
 		size = 0;
 	}
@@ -315,9 +318,6 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this list
-	 * @throws CloneNotSupportedException
-	 *             if an attempt is made to clone is a {@code subList},
-	 *             {@code headList}, or {@code tailList} view of the parent list
 	 */
 	@Override
 	public RankList<E> clone() {
@@ -328,10 +328,10 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 			throw new InternalError();
 		}
 		for (int i = 0; i < MAX_LEVEL; i++) {
-			clone.header.next[i] = clone.header;
-			clone.header.dist[i] = 1;
+			clone.head.next[i] = clone.head;
+			clone.head.dist[i] = 1;
 		}
-		clone.header.prev = clone.header;
+		clone.head.prev = clone.head;
 		clone.random = new Random();
 		clone.level = 1;
 		clone.modCount = 0;
@@ -351,12 +351,12 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		header = new Node<E>(null, MAX_LEVEL);
+		head = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++) {
-			header.next[i] = header;
-			header.dist[i] = 1;
+			head.next[i] = head;
+			head.dist[i] = 1;
 		}
-		header.prev = header;
+		head.prev = head;
 		random = new Random();
 		level = 1;
 		int size = ois.readInt();
@@ -372,7 +372,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		private int expectedModCount = modCount;
 
 		private ListItor() {
-			node = header.next[0];
+			node = head.next[0];
 			offset = 0;
 		}
 
@@ -469,7 +469,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	}
 
 	private Node<E> search(final int index) {
-		Node<E> curr = header;
+		Node<E> curr = head;
 		int pos = -1;
 		for (int i = level - 1; i >= 0; i--)
 			while (pos + curr.dist[i] <= index) {
@@ -487,7 +487,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 				update[i].dist[i] += node.dist[i] - 1;
 			} else
 				update[i].dist[i]--;
-		while (header.next[level - 1] == header && level > 0)
+		while (head.next[level - 1] == head && level > 0)
 			level--;
 		modCount++;
 		size--;
