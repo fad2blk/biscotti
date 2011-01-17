@@ -35,6 +35,43 @@ import java.util.SortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
+/**
+ * A {@link List} whose elements are sorted from <i>least</i> to <i>greatest</i>
+ * according to their <i>natural ordering</i>, or by an explicit
+ * {@link Comparator} provided at creation. Attempting to remove or insert
+ * {@code null} elements is prohibited. Querying for {@code null} elements is
+ * allowed. Inserting non-comparable elements will result in a
+ * {@code ClassCastException}. The {@code add(int, E)} ,
+ * {@code addAll(int, Collection)}, and {@code set(int, E)} operations are not
+ * supported.
+ * <p>
+ * The iterators obtained from the {@link #iterator()} and
+ * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
+ * elements in this list at any time after an iterator is created, in any way
+ * except through the iterator's own remove method, will result in a
+ * {@code ConcurrentModificationException}. Further, the list iterator does not
+ * support the {@code add(E)} and {@code set(E)} operations.
+ * <p>
+ * This list is not <i>thread-safe</i>. If multiple threads modify this list
+ * concurrently it must be synchronized externally.
+ * <p>
+ * The underlying implementation is based on a <a
+ * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
+ * provide logarithmic running time for both insertion and removal operations
+ * and linear list operations (e.g. get the element at the i<i>th</i> index).
+ * <p>
+ * A Skip List is a probabilistic data structure for maintaining items in sorted
+ * order. Strictly speaking it is impossible to make any hard guarantees
+ * regarding the worst-case performance of this class. Practical performance is
+ * <i>expected</i> to be logarithmic with an extremely high degree of
+ * probability as the list grows.
+ * <p>
+ * 
+ * @author Zhenya Leonov
+ * 
+ * @param <E>
+ *            the type of elements maintained by this list
+ */
 public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		SortedCollection<E> {
 
@@ -120,17 +157,17 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		checkNotNull(element);
 		final Node<E>[] update = new Node[MAX_LEVEL];
 		final int newLevel = randomLevel();
-		final int[] pos = new int[MAX_LEVEL];
-		Node<E> x = header;
+		final int[] indices = new int[MAX_LEVEL];
+		Node<E> curr = header;
 		int idx = 0;
 		for (int i = level - 1; i >= 0; i--) {
-			while (x.next[i] != header
-					&& comparator.compare(x.next[i].element, element) < 0) {
-				idx += x.dist[i];
-				x = x.next[i];
+			while (curr.next[i] != header
+					&& comparator.compare(curr.next[i].element, element) < 0) {
+				idx += curr.dist[i];
+				curr = curr.next[i];
 			}
-			update[i] = x;
-			pos[i] = idx;
+			update[i] = curr;
+			indices[i] = idx;
 		}
 		if (newLevel > level) {
 			for (int i = level; i < newLevel; i++) {
@@ -139,20 +176,20 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			}
 			level = newLevel;
 		}
-		x = new Node<E>(element, newLevel);
+		curr = new Node<E>(element, newLevel);
 		for (int i = 0; i < level; i++) {
 			if (i > newLevel - 1)
 				update[i].dist[i]++;
 			else {
-				x.next[i] = update[i].next[i];
-				update[i].next[i] = x;
-				x.dist[i] = pos[i] + update[i].dist[i] - idx;
-				update[i].dist[i] = idx + 1 - pos[i];
+				curr.next[i] = update[i].next[i];
+				update[i].next[i] = curr;
+				curr.dist[i] = indices[i] + update[i].dist[i] - idx;
+				update[i].dist[i] = idx + 1 - indices[i];
 
 			}
 		}
-		x.prev = update[0];
-		x.next[0].prev = x;
+		curr.prev = update[0];
+		curr.next[0].prev = curr;
 		modCount++;
 		size++;
 		return true;
@@ -163,33 +200,17 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		checkNotNull(o);
 		final E element = (E) o;
 		final Node<E>[] update = new Node[MAX_LEVEL];
-		final int[] pos = new int[MAX_LEVEL];
-		Node<E> x = header;
-		int idx = 0;
+		Node<E> curr = header;
 		for (int i = level - 1; i >= 0; i--) {
-			while (x.next[i] != header
-					&& comparator.compare(x.next[i].element, element) < 0) {
-				idx += x.dist[i];
-				x = x.next[i];
-			}
-			update[i] = x;
-			pos[i] = idx;
+			while (curr.next[i] != header
+					&& comparator.compare(curr.next[i].element, element) < 0)
+				curr = curr.next[i];
+			update[i] = curr;
 		}
-		x = x.next[0];
-		if (x == header || comparator.compare(x.element, element) != 0)
+		curr = curr.next[0];
+		if (curr == header || comparator.compare(curr.element, element) != 0)
 			return false;
-		for (int i = 0; i < level; i++) {
-			if (update[i].next[i] == x) {
-				update[i].next[i] = x.next[i];
-				update[i].dist[i] += x.dist[i] - 1;
-			} else
-				update[i].dist[i]--;
-		}
-		x.next[0].prev = update[0];
-		while (header.next[level - 1] == header && level > 0)
-			level--;
-		size--;
-		modCount++;
+		delete(curr, update);
 		return true;
 	}
 
@@ -207,29 +228,42 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E get(int index) {
 		checkElementIndex(index, size);
-		return find(index).element;
+		return search(index).element;
 	}
 
 	@Override
 	public E remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		checkElementIndex(index, size);
+		final Node<E>[] update = new Node[level];
+		Node<E> curr = header;
+		int idx = 0;
+		for (int i = level - 1; i >= 0; i--) {
+			while (idx + curr.dist[i] <= index) {
+				idx += curr.dist[i];
+				curr = curr.next[i];
+			}
+			update[i] = curr;
+		}
+		curr = curr.next[0];
+		delete(curr, update);
+		return curr.element;
 	}
 
 	@Override
 	public int indexOf(Object o) {
 		if (o != null) {
-			Node<E> x = header;
+			Node<E> curr = header;
 			int idx = 0;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
-				while (x.next[i] != header
-						&& comparator.compare(x.next[i].element, element) < 0) {
-					idx += x.dist[i];
-					x = x.next[i];
+				while (curr.next[i] != header
+						&& comparator.compare(curr.next[i].element, element) < 0) {
+					idx += curr.dist[i];
+					curr = curr.next[i];
 				}
-			x = x.next[0];
-			if (x != header && comparator.compare(x.element, element) == 0)
+			curr = curr.next[0];
+			if (curr != header
+					&& comparator.compare(curr.element, element) == 0)
 				return idx;
 		}
 		return -1;
@@ -238,24 +272,18 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
-			Node<E> x = header;
+			Node<E> curr = header;
 			int idx = 0;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
-				while (x.next[i] != header
-						&& comparator.compare(x.next[i].element, element) < 0) {
-					idx += x.dist[i];
-					x = x.next[i];
+				while (curr.next[i] != header
+						&& comparator.compare(curr.next[i].element, element) <= 0) {
+					idx += curr.dist[i];
+					curr = curr.next[i];
 				}
-			x = x.next[0];
-			if (x != header && comparator.compare(x.element, element) == 0){
-				while(x.next[0] != header && comparator.compare(x.next[0].element, element) == 0){
-					x = x.next[0];
-					idx++;
-				}
+			if (curr != header
+					&& comparator.compare(curr.element, element) == 0)
 				return idx;
-			}
-				
 		}
 		return -1;
 	}
@@ -289,7 +317,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		}
 
 		private ListItor(final int index) {
-			node = find(index);
+			node = search(index);
 			offset = index;
 		}
 
@@ -300,12 +328,12 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 
 		@Override
 		public boolean hasNext() {
-			return index < size();
+			return index + offset < size();
 		}
 
 		@Override
 		public boolean hasPrevious() {
-			return index > 0;
+			return index + offset > 0;
 		}
 
 		@Override
@@ -321,7 +349,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 
 		@Override
 		public int nextIndex() {
-			return index;
+			return index + offset;
 		}
 
 		@Override
@@ -336,7 +364,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 
 		@Override
 		public int previousIndex() {
-			return index - 1;
+			return index + offset - 1;
 		}
 
 		@Override
@@ -377,27 +405,41 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		return randomLevel;
 	}
 
+	private void delete(final Node<E> node, final Node<E>[] update) {
+		for (int i = 0; i < level; i++)
+			if (update[i].next[i] == node) {
+				update[i].next[i] = node.next[i];
+				update[i].dist[i] += node.dist[i] - 1;
+			} else
+				update[i].dist[i]--;
+		node.next[0].prev = node.prev;
+		while (header.next[level - 1] == header && level > 0)
+			level--;
+		modCount++;
+		size--;
+	}
+
 	private Node<E> search(final E element) {
-		Node<E> x = header;
+		Node<E> curr = header;
 		for (int i = level - 1; i >= 0; i--)
-			while (x.next[i] != header
-					&& comparator.compare(x.next[i].element, element) < 0)
-				x = x.next[i];
-		x = x.next[0];
-		if (x != header && comparator.compare(x.element, element) == 0)
-			return x;
+			while (curr.next[i] != header
+					&& comparator.compare(curr.next[i].element, element) < 0)
+				curr = curr.next[i];
+		curr = curr.next[0];
+		if (curr != header && comparator.compare(curr.element, element) == 0)
+			return curr;
 		return null;
 	}
 
-	private Node<E> find(final int index) {
-		Node<E> x = header;
+	private Node<E> search(final int index) {
+		Node<E> curr = header;
 		int idx = -1;
 		for (int i = level - 1; i >= 0; i--)
-			while (idx + x.dist[i] <= index) {
-				idx = idx + x.dist[i];
-				x = x.next[i];
+			while (idx + curr.dist[i] <= index) {
+				idx = idx + curr.dist[i];
+				curr = curr.next[i];
 			}
-		return x;
+		return curr;
 	}
 
 }
