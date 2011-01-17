@@ -118,8 +118,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * </table>
  * <p>
  * The {@code headList}, {@code subList}, and {@code tailList} views exhibit
- * identical running time, except for the {@code clear()} operation which runs
- * in linear time proportional to the size of the view.
+ * identical time complexity, except for the {@code clear()} operation which
+ * runs in linear time proportional to the size of the view.
  * 
  * @author Zhenya Leonov
  * @param <E>
