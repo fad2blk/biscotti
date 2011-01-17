@@ -55,17 +55,17 @@ import com.google.common.collect.Ordering;
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally.
  * <p>
- * The underlying implementation is based on a <a
+ * This class implements an array-based <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
  * provide logarithmic running time for both insertion and removal operations
  * and linear list operations (e.g. get the element at the i<i>th</i> index).
  * <p>
- * A Skip List is a probabilistic data structure for maintaining items in sorted
+ * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh<a> in 1990, A
+ * Skip List is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
- * <p>
  * 
  * @author Zhenya Leonov
  * 
