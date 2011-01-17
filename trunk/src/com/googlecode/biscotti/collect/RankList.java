@@ -103,14 +103,14 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *     <td>
  *       {@link #add(Object) add(E)}
  *     </td>
- *     <td align="center" rowspan="8"><i>O(log n)</i></td>
+ *     <td align="center" rowspan="9"><i>O(log n)</i></td>
  *     <td align="center" rowspan="3"><i>O(1)</i></td>
  *     <td align="center"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #get(int)}</br>
- *       <td align="center" rowspan="4"><i>O(n)</i></td>
+ *       <td align="center" rowspan="5"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
@@ -122,12 +122,17 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *     <td>
  *       {@link #add(int, Object) add(int, E)}</br>
  *     </td>
- *     <td align="center" rowspan="5"><i>O(n)</i></td>
+ *     <td align="center" rowspan="6"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #remove(int)}
+ *     </td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #listIterator(int)}
  *     </td>
  *   </tr>
  *   <tr>
@@ -178,10 +183,24 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		header.prev = header;
 	}
 
+	/**
+	 * Creates a new {@code RankList}.
+	 * 
+	 * @return a new {@code RankList}
+	 */
 	public static <E extends Comparable<? super E>> RankList<E> create() {
 		return new RankList<E>();
 	}
 
+	/**
+	 * Creates a new {@code RankList} containing the elements of the specified
+	 * {@code Iterable}.
+	 * 
+	 * @param elements
+	 *            the iterable whose elements are to be placed into the list
+	 * @return a new {@code RankList} containing the elements of the specified
+	 *         iterable
+	 */
 	public static <E> RankList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		RankList<E> list = new RankList<E>();
@@ -234,7 +253,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E get(int index) {
 		checkElementIndex(index, size);
-		return search(index).element;
+		return find(index).element;
 
 	}
 
@@ -251,92 +270,13 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 
 	@Override
 	public ListIterator<E> listIterator() {
-		return new ListIterator<E>() {
-			private Node<E> node = header.next[0];
-			private Node<E> last = null;
-			private int index = 0;
-			private int expectedModCount = modCount;
-
-			@Override
-			public void add(E element) {
-				checkForConcurrentModification();
-				RankList.this.add(index++, element);
-				expectedModCount = modCount;
-				last = null;
-				node = node.next[0];
-			}
-
-			@Override
-			public boolean hasNext() {
-				return index < size();
-			}
-
-			@Override
-			public boolean hasPrevious() {
-				return index > 0;
-			}
-
-			@Override
-			public E next() {
-				checkForConcurrentModification();
-				if (!hasNext())
-					throw new NoSuchElementException();
-				index++;
-				last = node;
-				node = node.next[0];
-				return last.element;
-			}
-
-			@Override
-			public int nextIndex() {
-				return index;
-			}
-
-			@Override
-			public E previous() {
-				checkForConcurrentModification();
-				if (index == 0)
-					throw new NoSuchElementException();
-				index--;
-				last = node = node.prev;
-				return node.element;
-			}
-
-			@Override
-			public int previousIndex() {
-				return index - 1;
-			}
-
-			@Override
-			public void remove() {
-				checkForConcurrentModification();
-				checkState(last != null);
-				RankList.this.remove(--index);
-				expectedModCount = modCount;
-				last = null;
-			}
-
-			@Override
-			public void set(E element) {
-				checkForConcurrentModification();
-				checkState(last != null);
-				last.element = element;
-			}
-
-			private void checkForConcurrentModification() {
-				if (expectedModCount != modCount)
-					throw new ConcurrentModificationException();
-			}
-		};
+		return new ListItor();
 	}
 
 	@Override
 	public ListIterator<E> listIterator(int index) {
 		checkPositionIndex(index, size);
-		ListIterator<E> listIterator = listIterator();
-		for (int i = 0; i < index; i++)
-			listIterator.next();
-		return listIterator;
+		return new ListItor(index);
 	}
 
 	@Override
@@ -371,7 +311,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E set(int index, E element) {
 		checkElementIndex(index, size);
-		Node<E> node = search(index);
+		Node<E> node = find(index);
 		E e = node.element;
 		node.element = element;
 		return e;
@@ -431,6 +371,95 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 			add((E) ois.readObject());
 	}
 
+	private class ListItor implements ListIterator<E> {
+		private Node<E> node;
+		private Node<E> last = null;
+		private int offset;
+		private int index = 0;
+		private int expectedModCount = modCount;
+
+		private ListItor() {
+			node = header.next[0];
+			offset = 0;
+		}
+
+		private ListItor(final int index) {
+			node = find(index);
+			offset = index;
+		}
+
+		@Override
+		public void add(E element) {
+			checkForConcurrentModification();
+			RankList.this.add(index++ + offset, element);
+			expectedModCount = modCount;
+			last = null;
+			node = node.next[0];
+		}
+
+		@Override
+		public boolean hasNext() {
+			return index + offset < size();
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return index + offset > 0;
+		}
+
+		@Override
+		public E next() {
+			checkForConcurrentModification();
+			if (!hasNext())
+				throw new NoSuchElementException();
+			index++;
+			last = node;
+			node = node.next[0];
+			return last.element;
+		}
+
+		@Override
+		public int nextIndex() {
+			return index + offset;
+		}
+
+		@Override
+		public E previous() {
+			checkForConcurrentModification();
+			if (index == 0)
+				throw new NoSuchElementException();
+			index--;
+			last = node = node.prev;
+			return node.element;
+		}
+
+		@Override
+		public int previousIndex() {
+			return index + offset - 1;
+		}
+
+		@Override
+		public void remove() {
+			checkForConcurrentModification();
+			checkState(last != null);
+			RankList.this.remove(--index + offset);
+			expectedModCount = modCount;
+			last = null;
+		}
+
+		@Override
+		public void set(E element) {
+			checkForConcurrentModification();
+			checkState(last != null);
+			last.element = element;
+		}
+
+		private void checkForConcurrentModification() {
+			if (expectedModCount != modCount)
+				throw new ConcurrentModificationException();
+		}
+	}
+
 	// Skip List
 
 	private static class Node<E> {
@@ -446,7 +475,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		}
 	}
 
-	private Node<E> search(final int index) {
+	private Node<E> find(final int index) {
 		Node<E> curr = header;
 		int pos = -1;
 		for (int i = level - 1; i >= 0; i--)
