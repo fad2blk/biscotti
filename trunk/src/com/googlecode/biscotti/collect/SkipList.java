@@ -56,6 +56,11 @@ import com.google.common.collect.Ordering;
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally.
  * <p>
+ * <b>Implementation Note:</b> This implementation uses a comparator (whether or
+ * not one is explicitly provided) to perform all element comparisons. Two
+ * elements which are deemed equal by the comparator's {@code compare(E, E)}
+ * method are, from the standpoint of this list, equal.
+ * <p>
  * This class implements an array-based <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
  * provide logarithmic running time for both insertion and removal operations

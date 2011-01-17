@@ -62,12 +62,10 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally.
  * <p>
- * <b>Implementation Note:</b> The the ordering maintained by this list must be
- * <i>consistent with equals</i> if this it is to function correctly. This is so
- * because this implementation uses a comparator (whether or not one is
- * explicitly provided) to perform all element comparisons. Two elements which
- * are deemed equal by the comparator's {@code compare(E, E)} method are, from
- * the standpoint of this list, equal.
+ * <b>Implementation Note:</b> This implementation uses a comparator (whether or
+ * not one is explicitly provided) to perform all element comparisons. Two
+ * elements which are deemed equal by the comparator's {@code compare(E, E)}
+ * method are, from the standpoint of this list, equal.
  * <p>
  * The underlying red-black tree provides the following worst case running time
  * (where <i>n</i> is the size of this list, <i>k</i> is the highest number of
