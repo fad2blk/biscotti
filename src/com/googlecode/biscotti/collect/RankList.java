@@ -50,13 +50,14 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally.
  * <p>
- * The underlying implementation is based on a <a
+ * This class implements an array-based <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
- * provide logarithmic running time for all linear list operations (e.g. insert
- * an element at the i<i>th</i> index). Linear list operations are sometimes
+ * provide logarithmic running time for linear list operations (e.g. insert an
+ * element at the i<i>th</i> index). Linear list operations are sometimes
  * referred to as rank operations.
  * <p>
- * A Skip List is a probabilistic data structure for maintaining items in sorted
+ * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh<a> in 1990, A
+ * Skip List is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
@@ -67,96 +68,88 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * this list and <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
- *   <tr>
- *     <th align="center" rowspan="2">Method</th>
- *     <th align="center" colspan="3">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
- *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
- *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}
- *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
- *     <td align="center" colspan="2"><i>O(m)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #containsAll(Collection) containsAll(Collection)}
- *     </td>
- *     <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #retainAll(Collection) retainAll(Collection)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}
- *     </td>
- *     <td align="center" rowspan="9"><i>O(log n)</i></td>
- *     <td align="center" rowspan="3"><i>O(1)</i></td>
- *     <td align="center"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #get(int)}</br>
- *       <td align="center" rowspan="5"><i>O(n)</i></td>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #set(int, Object) set(int, E)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(int, Object) add(int, E)}</br>
- *     </td>
- *     <td align="center" rowspan="6"><i>O(n)</i></td>
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #remove(int)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #listIterator(int)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>{@link Iterator#remove()}</td>
- *     <td align="center" rowspan="3"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>{@link ListIterator#remove()}</td>
- *   </tr>
- *   <tr>
- *     <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
- *   </tr>
- *   <tr>
- *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
- *     <td align="center" colspan="3"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #contains(Object) contains(Object)}</br>
- *       {@link #indexOf(Object) indexOf(Object)}</br>
- *       {@link #lastIndexOf(Object)}</br>
- *       {@link #remove(Object) remove(Object)}
- *     </td>
- *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
+ * <tr>
+ * <th align="center" rowspan="2">Method</th>
+ * <th align="center" colspan="3">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td align="center"><b>RankList</b><br>
+ * (<i>expected</i>)</td>
+ * <td align="center"><b>ArrayList</b><br>
+ * (<i>amortized</i>)</td>
+ * <td align="center"><b>LinkedList</b><br>
+ * (<i>worst-case</i>)</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}</td>
+ * <td align="center"><i>O(m log n)</i></td>
+ * <td align="center" colspan="2"><i>O(m)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #containsAll(Collection) containsAll(Collection)}</td>
+ * <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #retainAll(Collection) retainAll(Collection)}</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</td>
+ * <td align="center" rowspan="9"><i>O(log n)</i></td>
+ * <td align="center" rowspan="3"><i>O(1)</i></td>
+ * <td align="center"><i>O(1)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #get(int)}</br>
+ * <td align="center" rowspan="5"><i>O(n)</i></td>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #set(int, Object) set(int, E)}</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(int, Object) add(int, E)}</br></td>
+ * <td align="center" rowspan="6"><i>O(n)</i></td>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #remove(int)}</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #listIterator(int)}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link Iterator#remove()}</td>
+ * <td align="center" rowspan="3"><i>O(1)</i></td>
+ * </tr>
+ * <tr>
+ * <td>{@link ListIterator#remove()}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
+ * <td align="center" colspan="3"><i>O(1)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #contains(Object) contains(Object)}</br> {@link #indexOf(Object)
+ * indexOf(Object)}</br> {@link #lastIndexOf(Object)}</br>
+ * {@link #remove(Object) remove(Object)}</td>
+ * <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * 
  * @author Zhenya Leonov
