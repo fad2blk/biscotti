@@ -65,7 +65,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to perform all element comparisons. Two
  * elements which are deemed equal by the comparator's {@code compare(E, E)}
- * method are, from the standpoint of this list, equal.
+ * method are, from the standpoint of this list, equal. Further, no guarantee is
+ * made as to the final order of equal elements. Ties are broken arbitrarily.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
  * (where <i>n</i> is the size of this list, <i>k</i> is the highest number of
