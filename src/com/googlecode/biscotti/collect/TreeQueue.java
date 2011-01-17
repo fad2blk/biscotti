@@ -36,7 +36,7 @@ import com.google.common.collect.Ordering;
 
 /**
  * An unbounded priority {@link Queue} based on a modified <a
- * href="http://en.wikipedia.org/wiki/Red-black_tree">red-black tree</a>. The
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
  * elements of this queue are sorted according to their <i>natural ordering</i>,
  * or by an explicit {@link Comparator} provided at creation. Attempting to
  * remove or insert {@code null} elements is prohibited. Querying for
@@ -64,7 +64,7 @@ import com.google.common.collect.Ordering;
  * that {@code c.compare(e1, e2) == 0} it is not necessarily true that
  * {@code e1.equals(e2) == true}.
  * <p>
- * The underlying red-black tree provides the following worst case running time
+ * The underlying Red-Black Tree provides the following worst case running time
  * (where <i>n</i> is the size of this queue, <i>k</i> is the highest number of
  * duplicate elements of each other, and <i>m</i> is the size of the specified
  * collection):
