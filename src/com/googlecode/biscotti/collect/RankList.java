@@ -52,11 +52,11 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * <p>
  * The underlying implementation is based on a <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
- * provide logarithmic running time for all linear list operations (e.g., insert
+ * provide logarithmic running time for all linear list operations (e.g. insert
  * an element at the i<i>th</i> index). Linear list operations are sometimes
  * referred to as rank operations.
  * <p>
- * A Skip List is probabilistic data structure for maintaining items in sorted
+ * A Skip List is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
@@ -162,7 +162,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * @author Zhenya Leonov
  * 
  * @param <E>
- * the type of elements maintained by this list
+ *            the type of elements maintained by this list
  */
 public final class RankList<E> extends AbstractList<E> implements List<E>,
 		Serializable, Cloneable {
@@ -253,7 +253,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E get(int index) {
 		checkElementIndex(index, size);
-		return find(index).element;
+		return search(index).element;
 
 	}
 
@@ -311,7 +311,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E set(int index, E element) {
 		checkElementIndex(index, size);
-		Node<E> node = find(index);
+		Node<E> node = search(index);
 		E e = node.element;
 		node.element = element;
 		return e;
@@ -384,7 +384,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		}
 
 		private ListItor(final int index) {
-			node = find(index);
+			node = search(index);
 			offset = index;
 		}
 
@@ -475,7 +475,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		}
 	}
 
-	private Node<E> find(final int index) {
+	private Node<E> search(final int index) {
 		Node<E> curr = header;
 		int pos = -1;
 		for (int i = level - 1; i >= 0; i--)
