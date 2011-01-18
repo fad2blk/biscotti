@@ -63,9 +63,9 @@ import com.google.common.collect.Ordering;
  * <p>
  * This class implements an array-based <a
  * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
- * provide logarithmic running time for both insertion and removal operations
- * and <a href="http://en.wikipedia.org/wiki/Random_access">random access</a>
- * lookup operations (e.g. get the element at the i<i>th</i> index).
+ * provide logarithmic running time for insertion, removal, and <a
+ * href="http://en.wikipedia.org/wiki/Random_access">random access</a> lookup
+ * operations (e.g. get the element at the i<i>th</i> index).
  * <p>
  * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh</a> in 1990, A
  * Skip List is a probabilistic data structure for maintaining items in sorted
