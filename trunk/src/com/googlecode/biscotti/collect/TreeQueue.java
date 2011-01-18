@@ -113,6 +113,7 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements held in this queue
+ * @see TreeDeque
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {

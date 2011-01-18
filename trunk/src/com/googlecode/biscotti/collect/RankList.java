@@ -167,7 +167,6 @@ import com.google.common.collect.Iterables;
  * of the view.
  * 
  * @author Zhenya Leonov
- * 
  * @param <E>
  *            the type of elements maintained by this list
  */
