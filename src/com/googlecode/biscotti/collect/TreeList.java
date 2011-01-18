@@ -70,9 +70,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * broken arbitrarily.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * (where <i>n</i> is the size of this list, <i>k</i> is the highest number of
- * duplicate elements of each other, and <i>m</i> is the size of the specified
- * collection):
+ * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
+ * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -86,14 +85,15 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *     <td align="center"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #indexOf(Object)}</br>
  *       {@link #lastIndexOf(Object)}</br>
  *       {@link #get(int)}</br>
- *       {@link #remove(int)}
+ *       {@link #remove(int)}</br>
+ *       {@link #listIterator(int)}
  *     </td>
  *     <td align="center"><i>O(n)</i></td>
  *   </tr>
@@ -103,7 +103,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link #contains(Object)}</br>
  *       {@link #remove(Object)}
  *     </td>
- *     <td align="center"><i>O(lg(n - k) + k)</i></td>
+ *     <td align="center"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>

@@ -65,9 +65,8 @@ import com.google.common.collect.Ordering;
  * {@code e1.equals(e2) == true}.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * (where <i>n</i> is the size of this queue, <i>k</i> is the highest number of
- * duplicate elements of each other, and <i>m</i> is the size of the specified
- * collection):
+ * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
+ * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -81,7 +80,7 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m(lg(n - k) + k))</i></td>
+ *     <td align="center"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -90,7 +89,7 @@ import com.google.common.collect.Ordering;
  *       {@link #offer(Object) offer(E)}</br>
  *       {@link #remove(Object)}
  *     </td>
- *     <td align="center"><i>O(lg(n - k) + k)</i></td>
+ *     <td align="center"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -108,7 +107,8 @@ import com.google.common.collect.Ordering;
  * <p>
  * Note: This queue uses the same ordering rules as
  * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
- * provides identical functionality and ordered traversals via its iterators.
+ * offers identical functionality, ordered traversals via its iterators, and
+ * faster overall running time.
  * 
  * @author Zhenya Leonov
  * @param <E>
