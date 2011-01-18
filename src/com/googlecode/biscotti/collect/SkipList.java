@@ -67,7 +67,7 @@ import com.google.common.collect.Ordering;
  * and <a href="http://en.wikipedia.org/wiki/Random_access">random access</a>
  * lookup operations (e.g. get the element at the i<i>th</i> index).
  * <p>
- * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh<a> in 1990, A
+ * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh</a> in 1990, A
  * Skip List is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
@@ -104,8 +104,8 @@ import com.google.common.collect.Ordering;
  *       {@link #remove(int)}</br>
  *       {@link #listIterator(int)}
  *     </td>
- *     <td align="center"><i>O(n)</i></td>
- *     <td align="center"><i>O(log n)</i></td>
+ *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td align="center" bgcolor="FFCCCC"><i>O(n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -132,9 +132,9 @@ import com.google.common.collect.Ordering;
  * of the view.
  * 
  * @author Zhenya Leonov
- * 
  * @param <E>
  *            the type of elements maintained by this list
+ * @see TreeList
  */
 public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		SortedCollection<E>, Serializable, Cloneable {

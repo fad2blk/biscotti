@@ -124,6 +124,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
+ * @see SkipList
  */
 public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		Cloneable, Serializable {
