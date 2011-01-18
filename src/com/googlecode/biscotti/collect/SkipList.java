@@ -73,6 +73,63 @@ import com.google.common.collect.Ordering;
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
+ * <p>
+ * The following table summarizes the performance of this class compared to a
+ * {@link TreeList} (where n is the size of the list and m is the size of the
+ * specified collection):
+ * <p>
+ * <table border cellpadding="3" cellspacing="1">
+ *   <tr>
+ *     <th align="center" rowspan="2">Method</th>
+ *     <th align="center" colspan="2">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td align="center"><b>SkipList</b><br>(<i>expected</i>)</td>
+ *     <td align="center"><b>TreeList</b><br>(<i>worst-case</i>)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}</br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td align="center" colspan="2"><i>O(m log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #indexOf(Object)}</br>
+ *       {@link #lastIndexOf(Object)}</br>
+ *       {@link #get(int)}</br>
+ *       {@link #remove(int)}</br>
+ *       {@link #listIterator(int)}
+ *     </td>
+ *     <td align="center"><i>O(n)</i></td>
+ *     <td align="center"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #contains(Object)}</br>
+ *       {@link #remove(Object)}
+ *     </td>
+ *     <td align="center" colspan="2"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #size()}</br>
+ *       {@link Iterator#remove()}</br>
+ *       {@link ListIterator#remove()}
+ *     </td>
+ *     <td align="center" colspan="2"><i>O(1)</i></td>
+ *   </tr>
+ * </table>
+ * <p>
+ * The {@code subList} view exhibits identical time complexity, except for the
+ * {@code clear()} operation which runs in linear time proportional to the size
+ * of the view.
  * 
  * @author Zhenya Leonov
  * 
