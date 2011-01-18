@@ -77,6 +77,20 @@ public final class Collections3 {
 	}
 
 	/**
+	 * Creates a {@code RankList} containing the specified initial elements.
+	 * 
+	 * @param elements
+	 *            the elements this list should contain
+	 * @return a {@code RankList} containing the specified initial elements
+	 */
+	public static <E> RankList<E> newRankList(final E... elements) {
+		checkNotNull(elements);
+		RankList<E> rankList = RankList.create();
+		Collections.addAll(rankList, elements);
+		return rankList;
+	}
+
+	/**
 	 * Creates an empty {@code ArrayDeque} with an initial capacity sufficient
 	 * to hold 16 elements.
 	 * 
@@ -274,6 +288,23 @@ public final class Collections3 {
 		TreeDeque<E> d = TreeDeque.create();
 		Collections.addAll(d, elements);
 		return d;
+	}
+
+	/**
+	 * Creates a {@code SkipList} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be stored in this list
+	 * @return a {@code SkipList} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> SkipList<E> newSkipList(
+			final E... elements) {
+		checkNotNull(elements);
+		SkipList<E> l = SkipList.create();
+		Collections.addAll(l, elements);
+		return l;
 	}
 
 	/**
