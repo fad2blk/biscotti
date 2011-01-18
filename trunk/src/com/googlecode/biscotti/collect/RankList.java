@@ -194,7 +194,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	 * 
 	 * @return a new {@code RankList}
 	 */
-	public static <E extends Comparable<? super E>> RankList<E> create() {
+	public static <E> RankList<E> create() {
 		return new RankList<E>();
 	}
 
