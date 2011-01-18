@@ -63,9 +63,8 @@ import com.google.common.collect.Ordering;
  * {@code e1.equals(e2) == true}.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * (where <i>n</i> is the size of this deque, <i>k</i> is the highest number of
- * duplicate elements of each other, and <i>m</i> is the size of the specified
- * collection):
+ * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
+ * specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
@@ -80,7 +79,7 @@ import com.google.common.collect.Ordering;
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td align="center">
- *       <i>O(m(lg(n - k) + k))</i>
+ *       <i>O(m log n)</i>
  *     </td>
  *   </tr>
  *   <tr>
@@ -91,7 +90,7 @@ import com.google.common.collect.Ordering;
  *       {@link #remove(Object) remove(Object)}
  *     </td>
  *     <td align="center">
- *       <i>O(lg(n - k) + k)</i></td>
+ *       <i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
