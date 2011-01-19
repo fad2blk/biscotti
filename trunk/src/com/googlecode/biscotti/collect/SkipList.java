@@ -130,7 +130,7 @@ import com.google.common.collect.Ordering;
  *       {@link ListIterator#remove()}
  *     </td>
  *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
- *     <td align="center" bgcolor="FFCCCC"><i>O(n)</i></td>
+ *     <td align="center" bgcolor="FFCCCC"><i>O(1)</i></td>
  *   </tr>
  * </table>
  * <p>
