@@ -19,6 +19,7 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.AbstractList;
@@ -120,10 +121,16 @@ import com.google.common.collect.Ordering;
  *       {@link #clear() clear()}</br>
  *       {@link #isEmpty() isEmpty()}</br>
  *       {@link #size()}</br>
+ *     </td>
+ *     <td align="center" colspan="2"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
  *       {@link Iterator#remove()}</br>
  *       {@link ListIterator#remove()}
  *     </td>
- *     <td align="center" colspan="2"><i>O(1)</i></td>
+ *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td align="center" bgcolor="FFCCCC"><i>O(n)</i></td>
  *   </tr>
  * </table>
  * <p>
@@ -147,6 +154,8 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
+	transient Node<E>[] update = new Node[MAX_LEVEL];
+	transient int[] index = new int[MAX_LEVEL];
 
 	private SkipList(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
@@ -240,36 +249,35 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public boolean add(E e) {
 		checkNotNull(e);
-		final Node<E>[] update = new Node[MAX_LEVEL];
-		final int newLevel = randomLevel();
-		final int[] indices = new int[MAX_LEVEL];
+		final int newLevel = randomLevel();		
 		Node<E> curr = head;
+		int i;
 		int idx = 0;
-		for (int i = level - 1; i >= 0; i--) {
+		for (i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, e) < 0) {
 				idx += curr.dist[i];
 				curr = curr.next[i];
 			}
 			update[i] = curr;
-			indices[i] = idx;
+			index[i] = idx;
 		}
 		if (newLevel > level) {
-			for (int i = level; i < newLevel; i++) {
+			for (i = level; i < newLevel; i++) {
 				head.dist[i] = size + 1;
 				update[i] = head;
 			}
 			level = newLevel;
 		}
 		curr = new Node<E>(e, newLevel);
-		for (int i = 0; i < level; i++) {
+		for (i = 0; i < level; i++) {
 			if (i > newLevel - 1)
 				update[i].dist[i]++;
 			else {
 				curr.next[i] = update[i].next[i];
 				update[i].next[i] = curr;
-				curr.dist[i] = indices[i] + update[i].dist[i] - idx;
-				update[i].dist[i] = idx + 1 - indices[i];
+				curr.dist[i] = index[i] + update[i].dist[i] - idx;
+				update[i].dist[i] = idx + 1 - index[i];
 
 			}
 		}
@@ -402,7 +410,6 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public E remove(int index) {
 		checkElementIndex(index, size);
-		final Node<E>[] update = new Node[level];
 		Node<E> curr = head;
 		int idx = 0;
 		for (int i = level - 1; i >= 0; i--) {
@@ -488,6 +495,8 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			head.next[i] = head;
 			head.dist[i] = 1;
 		}
+		update = new Node[MAX_LEVEL];
+		index = new int[MAX_LEVEL];
 		head.prev = head;
 		random = new Random();
 		level = 1;
@@ -561,7 +570,11 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 
 		@Override
 		public void remove() {
-			throw new UnsupportedOperationException();
+			checkForConcurrentModification();
+			checkState(last != null);
+			SkipList.this.remove(--index + offset);
+			expectedModCount = modCount;
+			last = null;
 		}
 
 		@Override
