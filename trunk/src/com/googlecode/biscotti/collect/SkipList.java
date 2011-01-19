@@ -250,16 +250,18 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	public boolean add(E e) {
 		checkNotNull(e);
 		final int newLevel = randomLevel();		
-		Node<E> curr = head;
+		Node<E> x = head;
+		Node<E> y = head;
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
-			while (curr.next[i] != head
-					&& comparator.compare(curr.next[i].element, e) < 0) {
-				idx += curr.dist[i];
-				curr = curr.next[i];
+			while (x.next[i] != y
+					&& comparator.compare(x.next[i].element, e) < 0) {
+				idx += x.dist[i];
+				x = x.next[i];
 			}
-			update[i] = curr;
+			y = x.next[i];
+			update[i] = x;
 			index[i] = idx;
 		}
 		if (newLevel > level) {
@@ -269,20 +271,20 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			}
 			level = newLevel;
 		}
-		curr = new Node<E>(e, newLevel);
+		x = new Node<E>(e, newLevel);
 		for (i = 0; i < level; i++) {
 			if (i > newLevel - 1)
 				update[i].dist[i]++;
 			else {
-				curr.next[i] = update[i].next[i];
-				update[i].next[i] = curr;
-				curr.dist[i] = index[i] + update[i].dist[i] - idx;
+				x.next[i] = update[i].next[i];
+				update[i].next[i] = x;
+				x.dist[i] = index[i] + update[i].dist[i] - idx;
 				update[i].dist[i] = idx + 1 - index[i];
 
 			}
 		}
-		curr.prev = update[0];
-		curr.next[0].prev = curr;
+		x.prev = update[0];
+		x.next[0].prev = x;
 		modCount++;
 		size++;
 		return true;
