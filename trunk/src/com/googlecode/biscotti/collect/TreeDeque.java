@@ -19,6 +19,7 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Deque;
@@ -192,6 +193,23 @@ public final class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return new TreeDeque<E>(comparator, elements);
+	}
+	
+	/**
+	 * Creates a {@code TreeQueue} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be placed in this deque
+	 * @return a {@code TreeQueue} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeDeque<E> create(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeDeque<E> d = TreeDeque.create();
+		Collections.addAll(d, elements);
+		return d;
 	}
 
 	/**

@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -230,6 +231,23 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return new SkipList<E>(comparator, elements);
 	}
+	
+	/**
+	 * Creates a {@code SkipList} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be placed in this list
+	 * @return a {@code SkipList} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> SkipList<E> create(
+			final E... elements) {
+		checkNotNull(elements);
+		SkipList<E> l = SkipList.create();
+		Collections.addAll(l, elements);
+		return l;
+	}
 
 	/**
 	 * Returns the comparator used to order the elements in this list. If one
@@ -394,7 +412,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		final E element = (E) o;
-		final Node<E>[] update = new Node[MAX_LEVEL];
+//		final Node<E>[] update = new Node[MAX_LEVEL];
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head

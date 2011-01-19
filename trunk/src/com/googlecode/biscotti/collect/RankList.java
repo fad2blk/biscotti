@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -212,6 +213,20 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		RankList<E> list = new RankList<E>();
 		Iterables.addAll(list, elements);
 		return list;
+	}
+	
+	/**
+	 * Creates a {@code RankList} containing the specified initial elements.
+	 * 
+	 * @param elements
+	 *            the elements to be placed into the list
+	 * @return a {@code RankList} containing the specified initial elements
+	 */
+	public static <E> RankList<E> create(final E... elements) {
+		checkNotNull(elements);
+		RankList<E> rankList = RankList.create();
+		Collections.addAll(rankList, elements);
+		return rankList;
 	}
 
 	@Override
