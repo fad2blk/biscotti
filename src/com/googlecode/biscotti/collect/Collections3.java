@@ -77,20 +77,6 @@ public final class Collections3 {
 	}
 
 	/**
-	 * Creates a {@code RankList} containing the specified initial elements.
-	 * 
-	 * @param elements
-	 *            the elements this list should contain
-	 * @return a {@code RankList} containing the specified initial elements
-	 */
-	public static <E> RankList<E> newRankList(final E... elements) {
-		checkNotNull(elements);
-		RankList<E> rankList = RankList.create();
-		Collections.addAll(rankList, elements);
-		return rankList;
-	}
-
-	/**
 	 * Creates an empty {@code ArrayDeque} with an initial capacity sufficient
 	 * to hold 16 elements.
 	 * 
@@ -244,7 +230,6 @@ public final class Collections3 {
 	public static <E> TreeSet<E> newTreeSet(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		Comparator<? super E> c = null;
-
 		if (elements instanceof SortedSet<?>)
 			c = ((SortedSet) elements).comparator();
 		else if (elements instanceof java.util.PriorityQueue<?>)
@@ -255,58 +240,7 @@ public final class Collections3 {
 		Iterables.addAll(treeSet, elements);
 		return treeSet;
 	}
-
-	/**
-	 * Creates a {@code TreeQueue} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this queue
-	 * @return a {@code TreeQueue} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> TreeQueue<E> newTreeQueue(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeQueue<E> q = TreeQueue.create();
-		Collections.addAll(q, elements);
-		return q;
-	}
-
-	/**
-	 * Creates a {@code TreeQueue} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this deque
-	 * @return a {@code TreeQueue} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> TreeDeque<E> newTreeDeque(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeDeque<E> d = TreeDeque.create();
-		Collections.addAll(d, elements);
-		return d;
-	}
-
-	/**
-	 * Creates a {@code SkipList} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this list
-	 * @return a {@code SkipList} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> SkipList<E> newSkipList(
-			final E... elements) {
-		checkNotNull(elements);
-		SkipList<E> l = SkipList.create();
-		Collections.addAll(l, elements);
-		return l;
-	}
-
+	
 	/**
 	 * Creates a {@code TreeList} containing the specified initial elements
 	 * sorted according to their <i>natural ordering</i>.
