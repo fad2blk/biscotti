@@ -155,8 +155,8 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
-	transient Node<E>[] update = new Node[MAX_LEVEL];
-	transient int[] index = new int[MAX_LEVEL];
+	private transient Node<E>[] update = new Node[MAX_LEVEL];
+	private transient int[] index = new int[MAX_LEVEL];
 
 	private SkipList(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
