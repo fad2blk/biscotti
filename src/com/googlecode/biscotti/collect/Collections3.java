@@ -217,10 +217,9 @@ public final class Collections3 {
 	/**
 	 * Creates a {@code TreeSet} containing the elements of the specified
 	 * iterable. If the iterable is an instance of a {@link SortedSet},
-	 * {@link PriorityQueue java.util.PriorityQueue}, or
-	 * {@link SortedCollection}, this set will be sorted according to the same
-	 * ordering. Otherwise, this set will be sorted according to the <i>natural
-	 * ordering</i> of its elements.
+	 * {@link PriorityQueue PriorityQueue}, or {@link SortedCollection}, this
+	 * set will be sorted according to the same ordering. Otherwise, this set
+	 * will be sorted according to the <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into this set
@@ -240,7 +239,7 @@ public final class Collections3 {
 		Iterables.addAll(treeSet, elements);
 		return treeSet;
 	}
-	
+
 	/**
 	 * Creates a {@code TreeList} containing the specified initial elements
 	 * sorted according to their <i>natural ordering</i>.
