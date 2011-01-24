@@ -58,7 +58,7 @@ import com.google.common.collect.Iterables;
  * element at the i<i>th</i> index). Linear list operations are sometimes
  * referred to as rank operations.
  * <p>
- * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh<a> in 1990, A
+ * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh</a> in 1990, A
  * Skip List is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
