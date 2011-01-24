@@ -106,10 +106,9 @@ import com.google.common.collect.Ordering;
  * </tr>
  * </table>
  * <p>
- * Note: This queue uses the same ordering rules as
- * {@link java.util.PriorityQueue java.util.PriorityQueue}. In comparison it
- * offers identical functionality, ordered traversals via its iterators, and
- * faster overall running time.
+ * Note: This queue uses the same ordering rules as {@link PriorityQueue
+ * java.util.PriorityQueue}. In comparison it offers identical functionality,
+ * ordered traversals via its iterators, and faster overall running time.
  * 
  * @author Zhenya Leonov
  * @param <E>
