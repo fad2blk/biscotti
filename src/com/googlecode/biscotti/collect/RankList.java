@@ -23,10 +23,12 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -64,7 +66,7 @@ import com.google.common.collect.Iterables;
  * probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class compared to an
- * {@code ArrayList} and a {@code LinkedList} (where n is the size of the list
+ * {@link ArrayList} and a {@link LinkedList} (where n is the size of the list
  * and m is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
