@@ -302,7 +302,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			}
 		}
 		x.prev = update[0];
-		x.next[0].prev = x;
+		x.next().prev = x;
 		modCount++;
 		size++;
 		return true;
@@ -355,7 +355,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 					idx += curr.dist[i];
 					curr = curr.next[i];
 				}
-			curr = curr.next[0];
+			curr = curr.next();
 			if (curr != head && comparator.compare(curr.element, element) == 0)
 				return idx;
 		}
@@ -412,7 +412,6 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		final E element = (E) o;
-//		final Node<E>[] update = new Node[MAX_LEVEL];
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head
@@ -420,7 +419,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 				curr = curr.next[i];
 			update[i] = curr;
 		}
-		curr = curr.next[0];
+		curr = curr.next();
 		if (curr == head || comparator.compare(curr.element, element) != 0)
 			return false;
 		delete(curr, update);
@@ -439,7 +438,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			}
 			update[i] = curr;
 		}
-		curr = curr.next[0];
+		curr = curr.next();
 		delete(curr, update);
 		return curr.element;
 	}
@@ -533,7 +532,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		private int expectedModCount = modCount;
 
 		private ListItor() {
-			node = head.next[0];
+			node = head.next();
 			offset = 0;
 		}
 
@@ -564,7 +563,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 				throw new NoSuchElementException();
 			index++;
 			last = node;
-			node = node.next[0];
+			node = node.next();
 			return last.element;
 		}
 
@@ -621,6 +620,10 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			next = new Node[size];
 			dist = new int[size];
 		}
+		
+		private Node<E> next(){
+			return next[0];
+		}
 	}
 
 	private int randomLevel() {
@@ -637,7 +640,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 				update[i].dist[i] += node.dist[i] - 1;
 			} else
 				update[i].dist[i]--;
-		node.next[0].prev = node.prev;
+		node.next().prev = node.prev;
 		while (head.next[level - 1] == head && level > 0)
 			level--;
 		modCount++;
@@ -650,7 +653,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
 				curr = curr.next[i];
-		curr = curr.next[0];
+		curr = curr.next();
 		if (curr != head && comparator.compare(curr.element, element) == 0)
 			return curr;
 		return null;
