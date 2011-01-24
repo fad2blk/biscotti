@@ -163,9 +163,9 @@ import com.google.common.collect.Iterables;
  *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * <p>
- * The {@code subList} view exhibits identical time complexity, except for the
- * {@code clear()} operation which runs in linear time proportional to the size
- * of the view.
+ * The {@code subList} view exhibits identical time complexity, with the
+ * exception of the {@code clear()} operation which runs in linear time
+ * proportional to the size of the view.
  * 
  * @author Zhenya Leonov
  * @param <E>
