@@ -514,7 +514,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 				update[i].dist[i] += node.dist[i] - 1;
 			} else
 				update[i].dist[i]--;
-		while (head.next[level - 1] == head && level > 0)
+		while (head.next[level - 1] == head && level > 1)
 			level--;
 		modCount++;
 		size--;
