@@ -641,7 +641,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			} else
 				update[i].dist[i]--;
 		node.next().prev = node.prev;
-		while (head.next[level - 1] == head && level > 0)
+		while (head.next[level - 1] == head && level > 1)
 			level--;
 		modCount++;
 		size--;
