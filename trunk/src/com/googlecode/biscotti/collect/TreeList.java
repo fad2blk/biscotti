@@ -29,7 +29,6 @@ import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
