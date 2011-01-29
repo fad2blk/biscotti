@@ -29,6 +29,7 @@ import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -204,6 +205,23 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return new TreeList<E>(comparator, elements);
+	}
+	
+	/**
+	 * Creates a {@code TreeList} containing the specified initial elements
+	 * sorted according to their <i>natural ordering</i>.
+	 * 
+	 * @param elements
+	 *            the initial elements to be placed in this queue
+	 * @return a {@code TreeList} containing the specified initial elements
+	 *         sorted according to their <i>natural ordering</i>
+	 */
+	public static <E extends Comparable<? super E>> TreeQueue<E> create(
+			final E... elements) {
+		checkNotNull(elements);
+		TreeQueue<E> q = TreeQueue.create();
+		Collections.addAll(q, elements);
+		return q;
 	}
 
 	/**
@@ -546,7 +564,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		private int size;
 		private Node min;
 		private Node max;
-
+		private int modCount;
+		
 		private void checkForConcurrentModification() {
 			if (modCount != l.modCount)
 				throw new ConcurrentModificationException();
@@ -578,6 +597,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		@Override
 		public boolean add(E e) {
+			checkForConcurrentModification();
 			if (comparator.compare(e, fromElement) < 0
 					|| comparator.compare(e, toElement) >= 0)
 				throw new IllegalArgumentException("element out of range");
@@ -607,8 +627,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 
 		@Override
 		public E get(int index) {
-			checkElementIndex(index, size);
 			checkForConcurrentModification();
+			checkElementIndex(index, size);
 			return l.get(index + offset);
 		}
 
@@ -723,6 +743,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		
 		@Override
 		public void clear() {
+			checkForConcurrentModification();
 			removeRange(0, size());
 		}
 
