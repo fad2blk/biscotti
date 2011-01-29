@@ -180,7 +180,7 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 	public boolean offer(E e) {
 		if (size() == maxSize)
 			if (comparator().compare(e, min.element) < 0)
-				remove(max);
+				delete(max);
 			else
 				return false;
 		return super.offer(e);
