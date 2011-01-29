@@ -232,22 +232,22 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		return new SkipList<E>(comparator, elements);
 	}
 	
-	/**
-	 * Creates a {@code SkipList} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be placed in this list
-	 * @return a {@code SkipList} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> SkipList<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		SkipList<E> l = SkipList.create();
-		Collections.addAll(l, elements);
-		return l;
-	}
+//	/**
+//	 * Creates a {@code SkipList} containing the specified initial elements
+//	 * sorted according to their <i>natural ordering</i>.
+//	 * 
+//	 * @param elements
+//	 *            the initial elements to be placed in this list
+//	 * @return a {@code SkipList} containing the specified initial elements
+//	 *         sorted according to their <i>natural ordering</i>
+//	 */
+//	public static <E extends Comparable<? super E>> SkipList<E> create(
+//			final E... elements) {
+//		checkNotNull(elements);
+//		SkipList<E> l = SkipList.create();
+//		Collections.addAll(l, elements);
+//		return l;
+//	}
 
 	/**
 	 * Returns the comparator used to order the elements in this list. If one

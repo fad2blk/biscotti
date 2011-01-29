@@ -217,19 +217,19 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		return list;
 	}
 	
-	/**
-	 * Creates a {@code RankList} containing the specified initial elements.
-	 * 
-	 * @param elements
-	 *            the elements to be placed into the list
-	 * @return a {@code RankList} containing the specified initial elements
-	 */
-	public static <E> RankList<E> create(final E... elements) {
-		checkNotNull(elements);
-		RankList<E> rankList = RankList.create();
-		Collections.addAll(rankList, elements);
-		return rankList;
-	}
+//	/**
+//	 * Creates a {@code RankList} containing the specified initial elements.
+//	 * 
+//	 * @param elements
+//	 *            the elements to be placed into the list
+//	 * @return a {@code RankList} containing the specified initial elements
+//	 */
+//	public static <E> RankList<E> create(final E... elements) {
+//		checkNotNull(elements);
+//		RankList<E> rankList = RankList.create();
+//		Collections.addAll(rankList, elements);
+//		return rankList;
+//	}
 
 	@Override
 	public Iterator<E> iterator() {
