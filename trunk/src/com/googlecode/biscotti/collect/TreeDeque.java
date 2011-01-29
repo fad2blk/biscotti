@@ -196,22 +196,22 @@ public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 		return new TreeDeque<E>(comparator, elements);
 	}
 	
-	/**
-	 * Creates a {@code TreeDeque} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be placed in this deque
-	 * @return a {@code TreeDeque} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> TreeDeque<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeDeque<E> d = TreeDeque.create();
-		Collections.addAll(d, elements);
-		return d;
-	}
+//	/**
+//	 * Creates a {@code TreeDeque} containing the specified initial elements
+//	 * sorted according to their <i>natural ordering</i>.
+//	 * 
+//	 * @param elements
+//	 *            the initial elements to be placed in this deque
+//	 * @return a {@code TreeDeque} containing the specified initial elements
+//	 *         sorted according to their <i>natural ordering</i>
+//	 */
+//	public static <E extends Comparable<? super E>> TreeDeque<E> create(
+//			final E... elements) {
+//		checkNotNull(elements);
+//		TreeDeque<E> d = TreeDeque.create();
+//		Collections.addAll(d, elements);
+//		return d;
+//	}
 
 	/**
 	 * Guaranteed to throw an {@code UnsupportedOperationException} exception

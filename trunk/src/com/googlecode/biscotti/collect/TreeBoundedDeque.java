@@ -20,10 +20,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
@@ -68,7 +72,17 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 	private TreeBoundedDeque(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		super(comparator);
-		checkArgument(Iterables.addAll(this, elements));
+		for (E e : elements)
+			super.offer(e);
+		checkArgument(size > 0);
+		this.maxSize = size;
+	}
+
+	private TreeBoundedDeque(final Comparator<? super E> comparator,
+			final E element, final E... elements) {
+		super(comparator);
+		this.add(element);
+		Collections.addAll(this, elements);
 		this.maxSize = size;
 	}
 
@@ -145,6 +159,33 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 		TreeBoundedDeque<E> q = new TreeBoundedDeque<E>(comparator, elements);
 		return q;
 	}
+
+//	/**
+//	 * Creates a new {@code TreeBoundedDeque} containing the specified initial
+//	 * elements sorted according to their <i>natural ordering</i> and having the
+//	 * maximum size equal to the number of elements.
+//	 * 
+//	 * @param e1
+//	 *            the first element to be placed in this deque
+//	 * @param e2
+//	 *            the second element to be placed in this deque
+//	 * @param elements
+//	 *            the rest of the elements to be placed in this deque
+//	 * @return a {@code TreeBoundedDeque} containing the specified initial
+//	 *         elements sorted according to their <i>natural ordering</i>
+//	 */
+//	public static <E extends Comparable<? super E>> TreeBoundedDeque<E> create(
+//			final E e1, final E e2, final E... elements) {
+//		checkNotNull(e1);
+//		checkNotNull(e2);
+//		checkNotNull(elements);
+//		TreeBoundedDeque<E> d = new TreeBoundedDeque<E>(elements.length + 2,
+//				Ordering.natural());
+//		d.add(e1);
+//		d.add(e2);
+//		Collections.addAll(d, elements);
+//		return d;
+//	}
 
 	/**
 	 * Inserts the specified element into this deque if it is possible to do so
