@@ -124,16 +124,16 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this deque
  */
-public final class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
+public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
 	private static final long serialVersionUID = 1L;
-	private Node max = nil;
+	transient Node max = nil;
 
-	private TreeDeque(final Comparator<? super E> comparator) {
+	TreeDeque(final Comparator<? super E> comparator) {
 		super(comparator);
 	}
 
-	private TreeDeque(final Comparator<? super E> comparator,
+	TreeDeque(final Comparator<? super E> comparator,
 			Iterable<? extends E> elements) {
 		super(comparator, elements);
 	}
@@ -197,12 +197,12 @@ public final class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 	}
 	
 	/**
-	 * Creates a {@code TreeQueue} containing the specified initial elements
+	 * Creates a {@code TreeDeque} containing the specified initial elements
 	 * sorted according to their <i>natural ordering</i>.
 	 * 
 	 * @param elements
 	 *            the initial elements to be placed in this deque
-	 * @return a {@code TreeQueue} containing the specified initial elements
+	 * @return a {@code TreeDeque} containing the specified initial elements
 	 *         sorted according to their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeDeque<E> create(

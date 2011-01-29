@@ -28,44 +28,44 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
- * An implementation of {@link BoundedQueue} backed by a {@link TreeQueue}. The
- * elements of this queue are sorted according to their <i>natural ordering</i>,
+ * An implementation of {@link BoundedQueue} backed by a {@link TreeDeque}. The
+ * elements of this deque are sorted according to their <i>natural ordering</i>,
  * or by an explicit {@link Comparator} provided at creation. Inserting
  * {@code null} elements is prohibited. Attempting to insert non-comparable
  * elements will result in a {@code ClassCastException}.
  * <p>
- * The first element (the head) of this queue is considered to be the
+ * The first element (the head) of this deque is considered to be the
  * <i>least</i> element with respect to the specified ordering. Elements with
  * equal priority are ordered according to their insertion order.
  * <p>
- * When the queue is full the {@code add(E)}, {@code offer(E)}, and
+ * When the deque is full the {@code add(E)}, {@code offer(E)}, and
  * {@code addAll(Collection)} operations behave according to the following
  * policy: if the element to be added is greater than the element with the
  * <i>lowest</i> priority, the <i>lowest</i> element is removed and the new
  * element is added; else the new element is rejected.
  * <p>
- * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
+ * This deque is not <i>thread-safe</i>. If multiple threads modify this deque
  * concurrently it must be synchronized externally.
  * <p>
- * Refer to {@link TreeQueue} for details of the underlying implementation.
+ * Refer to {@link TreeDeque} for details of the underlying implementation.
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this queue
+ *            the type of elements held in this deque
  */
-public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
+public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 		BoundedQueue<E> {
 
 	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
-	private TreeBoundedQueue(final int maxSize,
+	private TreeBoundedDeque(final int maxSize,
 			final Comparator<? super E> comparator) {
 		super(comparator);
 		this.maxSize = maxSize;
 	}
 
-	private TreeBoundedQueue(final Comparator<? super E> comparator,
+	private TreeBoundedDeque(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		super(comparator);
 		checkArgument(Iterables.addAll(this, elements));
@@ -73,64 +73,64 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeBoundedQueue} having the specified maximum size.
+	 * Creates a new {@code TreeBoundedDeque} having the specified maximum size.
 	 * 
 	 * @param maxSize
-	 *            the maximum size (the bound) of this queue
-	 * @return returns a new {@code TreeBoundedQueue} having the specified
+	 *            the maximum size (the bound) of this deque
+	 * @return returns a new {@code TreeBoundedDeque} having the specified
 	 *         maximum size
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
+	public static <E extends Comparable<? super E>> TreeBoundedDeque<E> create(
 			final int maxSize) {
 		checkArgument(maxSize > 0);
-		return new TreeBoundedQueue<E>(maxSize, Ordering.natural());
+		return new TreeBoundedDeque<E>(maxSize, Ordering.natural());
 	}
 
 	/**
-	 * Creates a new empty {@code TreeBoundedQueue} having the specified maximum
+	 * Creates a new empty {@code TreeBoundedDeque} having the specified maximum
 	 * size and comparator.
 	 * 
 	 * @param maxSize
-	 *            the maximum size (the bound) of this queue
+	 *            the maximum size (the bound) of this deque
 	 * @param comparator
-	 *            the comparator that will be used to order this queue
-	 * @return returns a new {@code TreeBoundedQueue} having the specified
+	 *            the comparator that will be used to order this deque
+	 * @return returns a new {@code TreeBoundedDeque} having the specified
 	 *         maximum size
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E> TreeBoundedQueue<E> create(final int maxSize,
+	public static <E> TreeBoundedDeque<E> create(final int maxSize,
 			final Comparator<? super E> comparator) {
 		checkArgument(maxSize > 0);
 		checkNotNull(comparator);
-		return new TreeBoundedQueue<E>(maxSize, comparator);
+		return new TreeBoundedDeque<E>(maxSize, comparator);
 	}
 
 	/**
-	 * Creates a new {@code TreeBoundedQueue} containing the elements of and
+	 * Creates a new {@code TreeBoundedDeque} containing the elements of and
 	 * having the maximum size equal to the number of elements in the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection}
-	 * this queue will be ordered according to the same ordering. Otherwise,
-	 * this queue will be ordered according to the <i>natural ordering</i> of
+	 * this deque will be ordered according to the same ordering. Otherwise,
+	 * this deque will be ordered according to the <i>natural ordering</i> of
 	 * its elements.
 	 * 
 	 * @param elements
-	 *            the iterable whose elements are to be placed into the queue
-	 * @return a new {@code TreeBoundedQueue} containing the elements of the
+	 *            the iterable whose elements are to be placed into the deque
+	 * @return a new {@code TreeBoundedDeque} containing the elements of the
 	 *         specified iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
-	 *             one another according to the priority queue's ordering
+	 *             one another according to the priority deque's ordering
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 * @throws IllegalArgumentException
 	 *             if the specified iterable is empty
 	 */
-	public static <E> TreeBoundedQueue<E> create(
+	public static <E> TreeBoundedDeque<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -142,29 +142,39 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(comparator, elements);
+		TreeBoundedDeque<E> q = new TreeBoundedDeque<E>(comparator, elements);
 		return q;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Inserts the specified element into this deque if it is possible to do so
+	 * immediately without violating capacity restrictions, returning
+	 * {@code true} upon success and throwing an {@code IllegalStateException}
+	 * if no space is currently available.
+	 * <p>
+	 * This implementation returns {@code true} if {@code offer} succeeds, else
+	 * throws an {@code IllegalStateException}.
 	 * 
 	 * @throws IllegalStateException
-	 *             if this queue is full and the element to be added has equal
-	 *             or lower priority than the element at the tail of this queue
+	 *             if this deque is full and the element to be added has equal
+	 *             or lower priority than the element at the tail of this deque
 	 */
 	@Override
 	public boolean add(E e) {
-		checkState(offer(e), "Queue full");
+		checkState(offer(e), "Deque full");
 		return true;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Inserts the specified element into this deque if it is possible to do so
+	 * immediately without violating capacity restrictions. When using a
+	 * capacity-restricted deque, this method is generally preferable to
+	 * {@link #add}, which can fail to insert an element only by throwing an
+	 * exception.
 	 * 
-	 * @return {@inheritDoc} if this queue is full and the element to be added
-	 *         has equal or lower priority than the element at the head of this
-	 *         queue
+	 * @return {@code true} if the element was added to this queue, if this
+	 *         deque is full and the element to be added has equal or lower
+	 *         priority than the element at the head of this deque
 	 */
 	@Override
 	public boolean offer(E e) {
@@ -175,11 +185,6 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 				return false;
 		return super.offer(e);
 	}
-
-	// @Override
-	// public boolean addAll(Collection<? extends E> c) {
-	// return super.addAll(c);
-	// }
 
 	@Override
 	public int maxSize() {
