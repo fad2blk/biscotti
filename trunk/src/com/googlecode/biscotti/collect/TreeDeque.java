@@ -19,7 +19,6 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Deque;
@@ -31,7 +30,8 @@ import java.util.SortedSet;
 import com.google.common.collect.Ordering;
 
 /**
- * An unbounded priority {@link Deque} based on a modified <a
+ * An unbounded double-ended priority queue (also known as a {@link Deque})
+ * based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
  * elements of this deque are sorted according to their <i>natural ordering</i>,
  * or by an explicit {@link Comparator} provided at creation. Inserting
