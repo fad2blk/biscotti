@@ -194,22 +194,22 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		return new TreeQueue<E>(comparator, elements);
 	}
 
-	/**
-	 * Creates a {@code TreeQueue} containing the specified initial elements
-	 * sorted according to their <i>natural ordering</i>.
-	 * 
-	 * @param elements
-	 *            the initial elements to be placed in this queue
-	 * @return a {@code TreeQueue} containing the specified initial elements
-	 *         sorted according to their <i>natural ordering</i>
-	 */
-	public static <E extends Comparable<? super E>> TreeQueue<E> create(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeQueue<E> q = TreeQueue.create();
-		Collections.addAll(q, elements);
-		return q;
-	}
+//	/**
+//	 * Creates a {@code TreeQueue} containing the specified initial elements
+//	 * sorted according to their <i>natural ordering</i>.
+//	 * 
+//	 * @param elements
+//	 *            the initial elements to be placed in this queue
+//	 * @return a {@code TreeQueue} containing the specified initial elements
+//	 *         sorted according to their <i>natural ordering</i>
+//	 */
+//	public static <E extends Comparable<? super E>> TreeQueue<E> create(
+//			final E... elements) {
+//		checkNotNull(elements);
+//		TreeQueue<E> q = TreeQueue.create();
+//		Collections.addAll(q, elements);
+//		return q;
+//	}
 	
 	/**
 	 * Returns the comparator used to order the elements in this queue. If one
