@@ -40,11 +40,10 @@ import com.google.common.collect.Ordering;
  * When the deque is full the {@code add(E)}, {@code offer(E)}, and
  * {@code addAll(Collection)} operations behave according to the following
  * policy: if the element to be added has higher priority than the lowest
- * priority element currently in the deque (the tail), the new element is added
- * and the lowest priority element is removed; else the new element is rejected
- * (performance note: this implementation maintains references to the highest
- * and lowest elements in the deque; rejecting an element is an <i>O(1)</i>
- * operation).
+ * priority element currently in the deque, the new element is added and the
+ * lowest priority element is removed; else the new element is rejected. This
+ * implementation maintains references to the highest and lowest elements in the
+ * deque; rejecting an element is an <i>O(1)</i> operation.
  * <p>
  * Bounded priority queues are useful when implementing <i>n-best</i> algorithms
  * (e.g. finding the <i>best</i> <i>n</i> elements in an arbitrary collection).
