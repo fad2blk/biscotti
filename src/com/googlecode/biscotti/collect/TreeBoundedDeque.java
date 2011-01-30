@@ -20,15 +20,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -44,9 +39,10 @@ import com.google.common.collect.Ordering;
  * <p>
  * When the deque is full the {@code add(E)}, {@code offer(E)}, and
  * {@code addAll(Collection)} operations behave according to the following
- * policy: if the element to be added is greater than the element with the
- * <i>lowest</i> priority, the <i>lowest</i> element is removed and the new
- * element is added; else the new element is rejected.
+ * policy: if the element to be added has higher priority than the <i>least</i>
+ * element (the head) of the queue, the <i>lowest</i> priority element (the
+ * tail) is removed and the new element is added; else the new element is
+ * rejected.
  * <p>
  * This deque is not <i>thread-safe</i>. If multiple threads modify this deque
  * concurrently it must be synchronized externally.
@@ -78,13 +74,13 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 		this.maxSize = size;
 	}
 
-	private TreeBoundedDeque(final Comparator<? super E> comparator,
-			final E element, final E... elements) {
-		super(comparator);
-		this.add(element);
-		Collections.addAll(this, elements);
-		this.maxSize = size;
-	}
+//	private TreeBoundedDeque(final Comparator<? super E> comparator,
+//			final E element, final E... elements) {
+//		super(comparator);
+//		this.add(element);
+//		Collections.addAll(this, elements);
+//		this.maxSize = size;
+//	}
 
 	/**
 	 * Creates a new {@code TreeBoundedDeque} having the specified maximum size.
@@ -160,32 +156,34 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 		return q;
 	}
 
-//	/**
-//	 * Creates a new {@code TreeBoundedDeque} containing the specified initial
-//	 * elements sorted according to their <i>natural ordering</i> and having the
-//	 * maximum size equal to the number of elements.
-//	 * 
-//	 * @param e1
-//	 *            the first element to be placed in this deque
-//	 * @param e2
-//	 *            the second element to be placed in this deque
-//	 * @param elements
-//	 *            the rest of the elements to be placed in this deque
-//	 * @return a {@code TreeBoundedDeque} containing the specified initial
-//	 *         elements sorted according to their <i>natural ordering</i>
-//	 */
-//	public static <E extends Comparable<? super E>> TreeBoundedDeque<E> create(
-//			final E e1, final E e2, final E... elements) {
-//		checkNotNull(e1);
-//		checkNotNull(e2);
-//		checkNotNull(elements);
-//		TreeBoundedDeque<E> d = new TreeBoundedDeque<E>(elements.length + 2,
-//				Ordering.natural());
-//		d.add(e1);
-//		d.add(e2);
-//		Collections.addAll(d, elements);
-//		return d;
-//	}
+	// /**
+	// * Creates a new {@code TreeBoundedDeque} containing the specified initial
+	// * elements sorted according to their <i>natural ordering</i> and having
+	// the
+	// * maximum size equal to the number of elements.
+	// *
+	// * @param e1
+	// * the first element to be placed in this deque
+	// * @param e2
+	// * the second element to be placed in this deque
+	// * @param elements
+	// * the rest of the elements to be placed in this deque
+	// * @return a {@code TreeBoundedDeque} containing the specified initial
+	// * elements sorted according to their <i>natural ordering</i>
+	// */
+	// public static <E extends Comparable<? super E>> TreeBoundedDeque<E>
+	// create(
+	// final E e1, final E e2, final E... elements) {
+	// checkNotNull(e1);
+	// checkNotNull(e2);
+	// checkNotNull(elements);
+	// TreeBoundedDeque<E> d = new TreeBoundedDeque<E>(elements.length + 2,
+	// Ordering.natural());
+	// d.add(e1);
+	// d.add(e2);
+	// Collections.addAll(d, elements);
+	// return d;
+	// }
 
 	/**
 	 * Inserts the specified element into this deque if it is possible to do so
