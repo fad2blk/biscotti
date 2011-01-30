@@ -39,10 +39,15 @@ import com.google.common.collect.Ordering;
  * <p>
  * When the deque is full the {@code add(E)}, {@code offer(E)}, and
  * {@code addAll(Collection)} operations behave according to the following
- * policy: if the element to be added has higher priority than the <i>least</i>
- * element (the head) of the queue, the <i>lowest</i> priority element (the
- * tail) is removed and the new element is added; else the new element is
- * rejected.
+ * policy: if the element to be added has higher priority than the lowest
+ * priority element currently in the deque (the tail), the new element is added
+ * and the lowest priority element is removed; else the new element is rejected
+ * (performance note: this implementation maintains references to the highest
+ * and lowest elements in the deque; rejecting an element is an <i>O(1)</i>
+ * operation).
+ * <p>
+ * Bounded priority queues are useful when implementing <i>n-best</i> algorithms
+ * (e.g. finding the <i>best</i> <i>n</i> elements in an arbitrary collection).
  * <p>
  * This deque is not <i>thread-safe</i>. If multiple threads modify this deque
  * concurrently it must be synchronized externally.
@@ -74,13 +79,13 @@ public final class TreeBoundedDeque<E> extends TreeDeque<E> implements
 		this.maxSize = size;
 	}
 
-//	private TreeBoundedDeque(final Comparator<? super E> comparator,
-//			final E element, final E... elements) {
-//		super(comparator);
-//		this.add(element);
-//		Collections.addAll(this, elements);
-//		this.maxSize = size;
-//	}
+	// private TreeBoundedDeque(final Comparator<? super E> comparator,
+	// final E element, final E... elements) {
+	// super(comparator);
+	// this.add(element);
+	// Collections.addAll(this, elements);
+	// this.maxSize = size;
+	// }
 
 	/**
 	 * Creates a new {@code TreeBoundedDeque} having the specified maximum size.
