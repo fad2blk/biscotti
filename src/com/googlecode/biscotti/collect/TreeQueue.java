@@ -65,13 +65,17 @@ import com.google.common.collect.Ordering;
  * {@code e1.equals(e2) == true}.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
- * specified collection):
+ * compared to {@link PriorityQueue java.util.PriorityQueue} (where <i>n</i> is
+ * the size of this list and <i>m</i> is the size of the specified collection):
  * <p>
  * <table border cellpadding="3" cellspacing="1">
  *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
+ *     <th align="center" rowspan="2">Method</th>
+ *     <th align="center" colspan="2">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <th align="center">TreeQueue</th>
+ *     <th align="center">PriorityQueue</th>
  *   </tr>
  *   <tr>
  *     <td>
@@ -80,34 +84,54 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
+ *     <td align="center" colspan="2"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
  *       {@link #offer(Object) offer(E)}</br>
  *       {@link #remove(Object)}
  *     </td>
- *     <td align="center"><i>O(log n)</i></td>
+ *     <td align="center" colspan="2"><i>O(log n)</i></td>
  *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #contains(Object)}
+ *     </td>
+ *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td align="center" bgcolor="FFCCCC" rowspan="2"><i>O(n)</i></td>
+ *   </tr>
+ *   
+ *   <tr>
+ *     <td>
+ *       {@link #clear()}
+ *     </td>
+ *     <td align="center" bgcolor="FFCC99" rowspan="2"><i>O(1)</i></td>
+ *   </tr>
+ *   
+ *   <tr>
+ *     <td>
+ *       {@link #poll()}</br>
+ *       {@link #remove() remove()}</br>
+ *     </td>
+ *     <td align="center" bgcolor="FFCCCC"><i>O(log n)</i></td>
+ *   </tr>
+
  *   <tr>
  *     <td>
  *       {@link #element() element()}</br>
  *       {@link #isEmpty() isEmpty()}</br>
  *       {@link #peek()}</br>
- *       {@link #poll()}</br>
- *       {@link #remove() remove()}</br>
- *       {@link #size()}</br>
- *       {@link #clear()}
- *   </td>
- *   <td align="center"><i>O(1)</i></td>
- * </tr>
+ *       {@link #size()}
+ *     </td>
+ *     <td align="center" colspan="2"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * <p>
- * Note: This queue uses the same ordering rules as {@link PriorityQueue
- * java.util.PriorityQueue}. In comparison it offers identical functionality,
- * ordered traversals via its iterators, and faster overall running time.
+ * Note: This queue uses the same ordering rules as
+ * {@code java.util.PriorityQueue}. In comparison it offers identical
+ * functionality, ordered traversals via its iterators, and faster overall
+ * running time.
  * 
  * @author Zhenya Leonov
  * @param <E>

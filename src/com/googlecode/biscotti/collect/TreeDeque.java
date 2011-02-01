@@ -116,9 +116,13 @@ import com.google.common.collect.Ordering;
  *   </tr>
  * </table>
  * <p>
- * Note: This deque uses the same ordering rules as {@link PriorityQueue
- * java.util.PriorityQueue}. In comparison it offers element operations at both
- * ends, ordered traversals via its iterators, and faster overall running time.
+ * Refer to {@link TreeQueue} for a comparison with {@link PriorityQueue
+ * java.util.PriorityQueue}.
+ * <p>
+ * Note: This deque uses the same ordering rules as
+ * {@code java.util.PriorityQueue}. In comparison it offers element operations
+ * at both ends, ordered traversals via its iterators, and faster overall
+ * running time.
  * 
  * @author Zhenya Leonov
  * @param <E>
