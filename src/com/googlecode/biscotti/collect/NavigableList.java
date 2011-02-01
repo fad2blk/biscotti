@@ -3,6 +3,7 @@ package com.googlecode.biscotti.collect;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NavigableSet;
 
 /**
  * A {@link List} extended with navigation methods reporting closest matches for
@@ -10,11 +11,11 @@ import java.util.ListIterator;
  * {@code ceiling(E)}, and {@code higher(E)} return views containing elements
  * respectively less than, less than or equal, greater than or equal, and
  * greater than a given element, returning {@code null} if no matches can be
- * found.
+ * found. This interface is the {@code List} analog of {@link NavigableSet}.
  * <p>
  * A {@code NavigableList} may be accessed and traversed in either ascending or
  * descending order. The {@code descendingList()} method returns a view of the
- * list with the senses of all relational and directional methods.
+ * list with the senses of all relational and directional methods inverted.
  * <p>
  * The performance of ascending operations and views is likely to be faster than
  * that of descending ones.
@@ -26,59 +27,58 @@ import java.util.ListIterator;
 public interface NavigableList<E> extends List<E> {
 
 	/**
-	 * Returns the greatest elements in this list strictly less than the given
+	 * Returns a view of the greatest elements in this list strictly less than the given
 	 * element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return the greatest elements less than {@code e}, or {@code null} if
+	 * @return a view of greatest elements less than {@code e}, or {@code null} if
 	 *         there is no such elements
 	 */
 	NavigableList<E> lower(E e);
 
 	/**
-	 * Returns the greatest elements in this list less than or equal to the
+	 * Returns a view of the greatest elements in this list less than or equal to the
 	 * given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return the greatest elements less than or equal to {@code e}, or
+	 * @return a view of greatest elements less than or equal to {@code e}, or
 	 *         {@code null} if there is no such elements
 	 */
 	NavigableList<E> floor(E e);
 
 	/**
-	 * Returns the least elements in this list greater than or equal to the
-	 * given element, or {@code null} if there is no such elements.
+	 * Returns a view of the least elements in this list greater than or equal
+	 * to the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return the least elements greater than or equal to {@code e}, or
+	 * @return a view of least elements greater than or equal to {@code e}, or
 	 *         {@code null} if there is no such elements
 	 */
 	NavigableList<E> ceiling(E e);
 
 	/**
-	 * Returns the least elements in this list strictly greater than the given
+	 * Returns a view of the least elements in this list strictly greater than the given
 	 * element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return the least elements greater than {@code e}, or {@code null} if
+	 * @return a view of least elements greater than {@code e}, or {@code null} if
 	 *         there is no such elements
 	 */
 	NavigableList<E> higher(E e);
 
 	/**
 	 * Returns a list iterator of the elements in this list, in descending
-	 * order. Equivalent in
-	 * effect to {@code descendingList().ListIterator()}.
+	 * order. Equivalent in effect to {@code descendingList().ListIterator()}.
 	 * 
 	 * @return a list iterator of the elements in this list, in descending
 	 *         order.
 	 */
 	ListIterator<E> descendingListIterator();
-	
+
 	/**
 	 * Returns a list iterator of the elements in this list, in descending
 	 * order, starting at the specified position in this list. Equivalent in

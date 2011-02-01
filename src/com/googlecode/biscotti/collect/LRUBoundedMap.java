@@ -35,47 +35,48 @@ import com.google.common.base.Preconditions;
  *            the type of keys maintained by this map
  * @param <V>
  *            the type of mapped values
- * @see FIFOMap
+ * @see FIFOBoundedMap
  */
-public final class LRUMap<K, V> extends LinkedHashMap<K, V> implements
+public final class LRUBoundedMap<K, V> extends LinkedHashMap<K, V> implements
 		BoundedMap<K, V> {
 
 	private static final long serialVersionUID = 1L;
 	private final int maxSize;
 
-	private LRUMap(final int maxSize, final int initialCapacity,
+	private LRUBoundedMap(final int maxSize, final int initialCapacity,
 			final float loadFactor) {
 		super(initialCapacity, loadFactor, true);
 		this.maxSize = maxSize;
 	}
 
 	/**
-	 * Creates a new {@code LRUMap} having the specified maximum size.
+	 * Creates a new {@code LRUBoundedMap} having the specified maximum size.
 	 * 
 	 * @param maxSize
 	 *            the maximum size of this map
-	 * @return a new {@code LRUMap} having the specified maximum size
+	 * @return a new {@code LRUBoundedMap} having the specified maximum size
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <K, V> LRUMap<K, V> create(final int maxSize) {
+	public static <K, V> LRUBoundedMap<K, V> create(final int maxSize) {
 		Preconditions.checkArgument(maxSize > 0);
-		return new LRUMap<K, V>(maxSize, 16, .75F);
+		return new LRUBoundedMap<K, V>(maxSize, 16, .75F);
 	}
 
 	/**
-	 * Creates a new {@code LRUMap} with the same mappings, iteration order, and
-	 * having the maximum size equal to the size specified map.
+	 * Creates a new {@code LRUBoundedMap} with the same mappings, iteration
+	 * order, and having the maximum size equal to the size specified map.
 	 * 
 	 * @param m
 	 *            the map whose mappings are to be placed in this map
-	 * @return a new {@code LRUMap} with the same mappings, iteration order, and
-	 *         having the maximum size equal to the size specified map
+	 * @return a new {@code LRUBoundedMap} with the same mappings, iteration
+	 *         order, and having the maximum size equal to the size specified
+	 *         map
 	 */
-	public static <K, V> LRUMap<K, V> create(
+	public static <K, V> LRUBoundedMap<K, V> create(
 			final Map<? extends K, ? extends V> m) {
 		checkNotNull(m);
-		LRUMap<K, V> map = new LRUMap<K, V>(m.size(), m.size(), .75F);
+		LRUBoundedMap<K, V> map = new LRUBoundedMap<K, V>(m.size(), m.size(), .75F);
 		map.putAll(m);
 		return map;
 	}
