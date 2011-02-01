@@ -71,8 +71,8 @@ public interface NavigableList<E> extends List<E> {
 	NavigableList<E> higher(E e);
 
 	/**
-	 * Returns a list iterator of the elements in this list, in descending
-	 * order. Equivalent in effect to {@code descendingList().ListIterator()}.
+	 * Returns a list iterator over the elements in this list, in descending
+	 * order.
 	 * 
 	 * @return a list iterator of the elements in this list, in descending
 	 *         order.
@@ -80,13 +80,10 @@ public interface NavigableList<E> extends List<E> {
 	ListIterator<E> descendingListIterator();
 
 	/**
-	 * Returns a list iterator of the elements in this list, in descending
-	 * order, starting at the specified position in this list. Equivalent in
-	 * effect to {@code descendingList().ListIterator(int)}. The specified index
-	 * indicates the first element that would be returned by an initial call to
-	 * {@link ListIterator#next next()}. An initial call to
-	 * {@link ListIterator#previous previous()} would return the element with
-	 * the specified index plus one.
+	 * Returns a list iterator over the elements in this list, in descending
+	 * order, starting at the specified position in this list. The specified
+	 * index indicates the first element that would be returned by an initial
+	 * call to {@link ListIterator#next next()}.
 	 * 
 	 * @param index
 	 *            index of first element to be returned from the list iterator
