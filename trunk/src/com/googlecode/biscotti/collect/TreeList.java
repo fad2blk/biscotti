@@ -556,7 +556,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 	}
 
 	private class SubList extends TreeList<E> {
-		private final TreeList<E> l;
+		private final TreeList<E> parent;
 		private final int offset;
 		private final E fromElement;
 		private final E toElement;
@@ -566,17 +566,17 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		private int modCount;
 		
 		private void checkForConcurrentModification() {
-			if (modCount != l.modCount)
+			if (modCount != parent.modCount)
 				throw new ConcurrentModificationException();
 		}
 
-		public SubList(TreeList<E> l, int fromIndex, int toIndex,
+		public SubList(TreeList<E> parent, int fromIndex, int toIndex,
 				E fromElement, E toElement) {
-			super(l.comparator);
-			this.l = l;
-			min = l.min;
+			super(parent.comparator);
+			this.parent = parent;
+			min = parent.min;
 			offset = fromIndex;
-			modCount = l.modCount;
+			modCount = parent.modCount;
 			size = toIndex - fromIndex;
 			int i = 0;
 			for (; i < fromIndex; i++)
@@ -600,8 +600,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			if (comparator.compare(e, fromElement) < 0
 					|| comparator.compare(e, toElement) >= 0)
 				throw new IllegalArgumentException("element out of range");
-			l.add(e);
-			modCount = l.modCount;
+			parent.add(e);
+			modCount = parent.modCount;
 			size++;
 			if (comparator.compare(max.element, e) <= 0)
 				max = successor(max);
@@ -628,7 +628,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 		public E get(int index) {
 			checkForConcurrentModification();
 			checkElementIndex(index, size);
-			return l.get(index + offset);
+			return parent.get(index + offset);
 		}
 
 		@Override
@@ -641,7 +641,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			checkForConcurrentModification();
 			checkPositionIndex(index, size);
 			return new ListIterator<E>() {
-				private ListIterator<E> i = l.listIterator(index + offset);
+				private ListIterator<E> i = parent.listIterator(index + offset);
 
 				@Override
 				public boolean hasNext() {
@@ -682,7 +682,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				@Override
 				public void remove() {
 					i.remove();
-					modCount = l.modCount;
+					modCount = parent.modCount;
 					size--;
 				}
 
@@ -709,8 +709,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				max = predecessor(max);
 			if (node == min)
 				min = successor(min);
-			l.delete(node);
-			modCount = l.modCount;
+			parent.delete(node);
+			modCount = parent.modCount;
 			size--;
 			return true;
 		}
@@ -723,8 +723,8 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 				min = successor(min);
 			if (index == size - 1)
 				max = predecessor(max);
-			E e = l.remove(index + offset);
-			modCount = l.modCount;
+			E e = parent.remove(index + offset);
+			modCount = parent.modCount;
 			size--;
 			return e;
 		}
@@ -774,7 +774,7 @@ public class TreeList<E> extends AbstractList<E> implements SortedList<E>,
 			else if (j == 0)
 				return max;
 			else
-				return l.search(e);
+				return parent.search(e);
 		}
 	}
 
