@@ -27,19 +27,19 @@ import java.util.NavigableSet;
 public interface NavigableList<E> extends List<E> {
 
 	/**
-	 * Returns a view of the greatest elements in this list strictly less than the given
-	 * element, or {@code null} if there is no such elements.
+	 * Returns a view of the greatest elements in this list strictly less than
+	 * the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return a view of greatest elements less than {@code e}, or {@code null} if
-	 *         there is no such elements
+	 * @return a view of greatest elements less than {@code e}, or {@code null}
+	 *         if there is no such elements
 	 */
 	NavigableList<E> lower(E e);
 
 	/**
-	 * Returns a view of the greatest elements in this list less than or equal to the
-	 * given element, or {@code null} if there is no such elements.
+	 * Returns a view of the greatest elements in this list less than or equal
+	 * to the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
@@ -60,13 +60,13 @@ public interface NavigableList<E> extends List<E> {
 	NavigableList<E> ceiling(E e);
 
 	/**
-	 * Returns a view of the least elements in this list strictly greater than the given
-	 * element, or {@code null} if there is no such elements.
+	 * Returns a view of the least elements in this list strictly greater than
+	 * the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
-	 * @return a view of least elements greater than {@code e}, or {@code null} if
-	 *         there is no such elements
+	 * @return a view of least elements greater than {@code e}, or {@code null}
+	 *         if there is no such elements
 	 */
 	NavigableList<E> higher(E e);
 
@@ -94,8 +94,8 @@ public interface NavigableList<E> extends List<E> {
 	 * @return a list iterator of the elements in this list, in descending
 	 *         order, starting at the specified position in this list
 	 * @throws IndexOutOfBoundsException
-	 *             if the index is out of range (
-	 *             <tt>index &lt; 0 || index &gt; size()</tt>)
+	 *             if the index is out of range
+	 *             ({@code  index < 0 || index > size()})
 	 */
 	ListIterator<E> descendingListIterator(int index);
 
@@ -202,7 +202,8 @@ public interface NavigableList<E> extends List<E> {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @throws IndexOutOfBoundsException {@inheritDoc}
+	 * @throws IndexOutOfBoundsException
+	 *             {@inheritDoc}
 	 */
 	@Override
 	NavigableList<E> subList(int fromIndex, int toIndex);
