@@ -201,6 +201,8 @@ public interface NavigableList<E> extends List<E> {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws IndexOutOfBoundsException {@inheritDoc}
 	 */
 	@Override
 	NavigableList<E> subList(int fromIndex, int toIndex);
