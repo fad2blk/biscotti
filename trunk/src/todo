@@ -1,0 +1,40 @@
+no need to create new node in treelist in iterators (also check other iterators)
+
+treelist lastIndexOf (instead start from last node goto first)???;
+
+
+make sure in rankList add/delete methods are optimized (maybe without using update array)
+
+explore reverse(list);
+
+check why fascinating skip list is so slow;
+
+improve merging of skiplist/tree XXXX to logarithmic
+
+document Iterator.remove, Iterator.add, Iterator.set
+document xxxAll in rankList running time
+
+fix TreeList.clear to be O(1) --> have to rewrite SubList.clear to be O(n) in that case
+
+Why does google collections check for nulls sometimes but not other times (Iterators.addAll(xxx, null)??
+
+should "nil" node be static? should "nil" node be "newed" when cloned and serialized?
+
+test treelist.supblist.remove
+
+wtf is with the way sun wrote the toArray methods in abstarct collection. FinishToArray? return it.next? 
+
+print int Array using Iterators.forArray and Iterators.toString
+
+safe toString
+
+using curr. and prev. nodes isntead of .next.next.prev in a loop faster?
+
+why comparator transient in jdk collection?
+
+ranklist listiterator(i) should run in logarithmic time also for skiplist
+
+BIG!!!! test the insert operation of TreeQueue vs TreeList? equals vs comparator?
+running time? they can't be the same
+
+tree collections iterators.remove? double check what the hell its doing
