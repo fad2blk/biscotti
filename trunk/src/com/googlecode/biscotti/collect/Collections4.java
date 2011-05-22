@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.SortedMap;
@@ -33,6 +35,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -47,6 +50,61 @@ import com.google.common.collect.Sets;
 public final class Collections4 {
 
 	private Collections4() {
+	}
+
+	/**
+	 * Returns the index of the first occurrence in the specified list of an
+	 * element which satisfies the given predicate, or -1 if there is no such
+	 * element.
+	 * <p>
+	 * Note: If the specified list allows {@code null} elements the given
+	 * predicate must be able to handle {@code null} elements as well to avoid a
+	 * {@code NullPointerException}.
+	 * 
+	 * @param list
+	 *            the specified list
+	 * @param predicate
+	 *            the given predicate
+	 * @return the index of the first occurrence in the specified list of an
+	 *         element which satisfies the given predicate, or -1 if there is no
+	 *         such element
+	 */
+	public static <E> int indexOf(List<E> list, Predicate<? super E> predicate) {
+		checkNotNull(list);
+		checkNotNull(predicate);
+		final ListIterator<E> e = list.listIterator();
+		while (e.hasNext())
+			if (predicate.apply(e.next()))
+				return e.previousIndex();
+		return -1;
+	}
+
+	/**
+	 * Returns the index of the last occurrence in the specified list of an
+	 * element which satisfies the given predicate, or -1 if there is no such
+	 * element.
+	 * <p>
+	 * Note: If the specified list allows {@code null} elements the given
+	 * predicate must be able to handle {@code null} elements as well to avoid a
+	 * {@code NullPointerException}.
+	 * 
+	 * @param list
+	 *            the specified list
+	 * @param predicate
+	 *            the given predicate
+	 * @return the last of the first occurrence in the specified list of an
+	 *         element which satisfies the given predicate, or -1 if there is no
+	 *         such element
+	 */
+	public static <E> int lastIndexOf(List<E> list,
+			Predicate<? super E> predicate) {
+		checkNotNull(list);
+		checkNotNull(predicate);
+		final ListIterator<E> e = list.listIterator(list.size());
+		while (e.hasPrevious())
+			if (predicate.apply(e.next()))
+				return e.previousIndex();
+		return -1;
 	}
 
 	/**
