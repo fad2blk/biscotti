@@ -23,7 +23,7 @@ import java.util.Map;
  * exceed the maximum number of entries (the bound) specified at creation.
  * Besides to the regular {@link Map#put(Object, Object) put(K, V)} and
  * {@link Map#putAll(Map) putAll(Map)} operations, this interface defines an
- * addition {@link #offer(Object, Object) offer(K, V)} operation, because
+ * additional {@link #offer(Object, Object) offer(K, V)} operation, because
  * failure is a normal, rather than exceptional occurrence, when attempting to
  * store a new entry into a full map.
  * <p>
