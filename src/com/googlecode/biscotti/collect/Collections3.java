@@ -62,7 +62,6 @@ import com.google.common.collect.Sets;
 public final class Collections3 {
 
 	private Collections3() {
-
 	}
 
 	/**
@@ -105,7 +104,7 @@ public final class Collections3 {
 	 *            the specified list
 	 * @param predicate
 	 *            the given predicate
-	 * @return the last of the first occurrence in the specified list of an
+	 * @return the index of the last occurrence in the specified list of an
 	 *         element which satisfies the given predicate, or -1 if there is no
 	 *         such element
 	 */
