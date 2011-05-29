@@ -69,7 +69,7 @@ public final class Iterables2 {
 	 * @return the number of elements in {@code iterable} which do not satisfy
 	 *         {@code predicate}
 	 */
-	public static <E> int countyIfNot(final Iterable<E> iterable,
+	public static <E> int countIfNot(final Iterable<E> iterable,
 			final Predicate<? super E> predicate) {
 		Preconditions.checkNotNull(iterable);
 		Preconditions.checkNotNull(predicate);
