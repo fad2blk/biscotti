@@ -24,7 +24,7 @@ import java.util.NavigableSet;
  * @param <E>
  *            the type of elements contained in this list
  */
-public interface NavigableList<E> extends List<E> {
+interface NavigableList<E> extends List<E> {
 
 	/**
 	 * Returns a view of the greatest elements in this list strictly less than
