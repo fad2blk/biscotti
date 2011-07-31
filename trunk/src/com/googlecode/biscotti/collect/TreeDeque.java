@@ -67,10 +67,10 @@ import com.google.common.collect.Ordering;
  * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
  * specified collection):
  * <p>
- * <table border cellpadding="3" cellspacing="1">
+ * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
+ *     <th style="text-align:center;">Method</th>
+ *     <th style="text-align:center;">Running Time</th>
  *   </tr>
  *   <tr>
  *     <td>
@@ -79,7 +79,7 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center">
+ *     <td style="text-align:center;">
  *       <i>O(m log n)</i>
  *     </td>
  *   </tr>
@@ -90,7 +90,7 @@ import com.google.common.collect.Ordering;
  *       {@link #offer(Object) offer(E)}</br>
  *       {@link #remove(Object) remove(Object)}
  *     </td>
- *     <td align="center">
+ *     <td style="text-align:center;">
  *       <i>O(log n)</i></td>
  *   </tr>
  *   <tr>
@@ -112,7 +112,7 @@ import com.google.common.collect.Ordering;
  *       {@link #removeLast() removeLast()}</br>
  *       {@link #clear()}
  *     </td>
- *     <td align="center"><i>O(1)</i></td>
+ *     <td style="text-align:center;"><i>O(1)</i></td>
  *   </tr>
  * </table>
  * <p>

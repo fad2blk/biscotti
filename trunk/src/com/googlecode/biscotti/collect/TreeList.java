@@ -73,10 +73,10 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
  * specified collection):
  * <p>
- * <table border cellpadding="3" cellspacing="1">
+ * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
- *     <th align="center">Method</th>
- *     <th align="center">Running Time</th>
+ *     <th style="text-align:center;">Method</th>
+ *     <th style="text-align:center;">Running Time</th>
  *   </tr>
  *   <tr>
  *     <td>
@@ -85,7 +85,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
+ *     <td style="text-align:center;"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -95,7 +95,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link #remove(int)}</br>
  *       {@link #listIterator(int)}
  *     </td>
- *     <td align="center"><i>O(n)</i></td>
+ *     <td style="text-align:center;"><i>O(n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -103,7 +103,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link #contains(Object)}</br>
  *       {@link #remove(Object)}
  *     </td>
- *     <td align="center"><i>O(log n)</i></td>
+ *     <td style="text-align:center;"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -113,7 +113,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *       {@link Iterator#remove()}</br>
  *       {@link ListIterator#remove()}
  *     </td>
- *     <td align="center"><i>O(1)</i></td>
+ *     <td style="text-align:center;"><i>O(1)</i></td>
  *   </tr>
  * </table>
  * <p>
