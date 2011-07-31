@@ -79,14 +79,14 @@ import com.google.common.collect.Ordering;
  * {@link TreeList} (where n is the size of the list and m is the size of the
  * specified collection):
  * <p>
- * <table border cellpadding="3" cellspacing="1">
+ * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
- *     <th align="center" rowspan="2">Method</th>
- *     <th align="center" colspan="2">Running Time</th>
+ *     <th style="text-align:center;" rowspan="2">Method</th>
+ *     <th style="text-align:center;" colspan="2">Running Time</th>
  *   </tr>
  *   <tr>
- *     <td align="center"><b>SkipList</b><br>(<i>expected</i>)</td>
- *     <td align="center"><b>TreeList</b><br>(<i>worst-case</i>)</td>
+ *     <td style="text-align:center;"><b>SkipList</b><br>(<i>expected</i>)</td>
+ *     <td style="text-align:center;"><b>TreeList</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -95,7 +95,7 @@ import com.google.common.collect.Ordering;
  *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td align="center" colspan="2"><i>O(m log n)</i></td>
+ *     <td style="text-align:center;" colspan="2"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -105,8 +105,8 @@ import com.google.common.collect.Ordering;
  *       {@link #remove(int)}</br>
  *       {@link #listIterator(int)}
  *     </td>
- *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
- *     <td align="center" bgcolor="FFCCCC"><i>O(n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCCCC"><i>O(n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -114,7 +114,7 @@ import com.google.common.collect.Ordering;
  *       {@link #contains(Object)}</br>
  *       {@link #remove(Object)}
  *     </td>
- *     <td align="center" colspan="2"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" colspan="2"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -122,15 +122,15 @@ import com.google.common.collect.Ordering;
  *       {@link #isEmpty() isEmpty()}</br>
  *       {@link #size()}</br>
  *     </td>
- *     <td align="center" colspan="2"><i>O(1)</i></td>
+ *     <td style="text-align:center;" colspan="2"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link Iterator#remove()}</br>
  *       {@link ListIterator#remove()}
  *     </td>
- *     <td align="center" bgcolor="FFCC99"><i>O(log n)</i></td>
- *     <td align="center" bgcolor="FFCCCC"><i>O(1)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCCCC"><i>O(1)</i></td>
  *   </tr>
  * </table>
  * <p>

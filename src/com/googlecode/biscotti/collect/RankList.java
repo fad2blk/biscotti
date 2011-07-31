@@ -68,28 +68,28 @@ import com.google.common.collect.Iterables;
  * {@link ArrayList} and a {@link LinkedList} (where n is the size of the list
  * and m is the size of the specified collection):
  * <p>
- * <table border cellpadding="3" cellspacing="1">
+ * <table border cellpadding="3" cellspacing="1" style="width:450px;">
  *   <tr>
- *     <th align="center" rowspan="2">Method</th>
- *     <th align="center" colspan="3">Running Time</th>
+ *     <th style="text-align:center;" rowspan="2">Method</th>
+ *     <th style="text-align:center;" colspan="3">Running Time</th>
  *   </tr>
  *   <tr>
- *     <td align="center"><b>RankList</b><br>(<i>expected</i>)</td>
- *     <td align="center"><b>ArrayList</b><br>(<i>amortized</i>)</td>
- *     <td align="center"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
+ *     <td style="text-align:center;"><b>RankList</b><br>(<i>expected</i>)</td>
+ *     <td style="text-align:center;"><b>ArrayList</b><br>(<i>amortized</i>)</td>
+ *     <td style="text-align:center;"><b>LinkedList</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #addAll(Collection) addAll(Collection)}
  *     </td>
- *     <td align="center"><i>O(m log n)</i></td>
- *     <td align="center" colspan="2"><i>O(m)</i></td>
+ *     <td style="text-align:center;"><i>O(m log n)</i></td>
+ *     <td style="text-align:center;" colspan="2"><i>O(m)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #containsAll(Collection) containsAll(Collection)}
  *     </td>
- *     <td align="center" colspan="3" rowspan="3"><i>O(m * n)</i></td>
+ *     <td style="text-align:center;" colspan="3" rowspan="3"><i>O(m * n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -105,14 +105,14 @@ import com.google.common.collect.Iterables;
  *     <td>
  *       {@link #add(Object) add(E)}
  *     </td>
- *     <td align="center" rowspan="9"><i>O(log n)</i></td>
- *     <td align="center" rowspan="3"><i>O(1)</i></td>
- *     <td align="center"><i>O(1)</i></td>
+ *     <td style="text-align:center;" rowspan="9"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" rowspan="3"><i>O(1)</i></td>
+ *     <td style="text-align:center;"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #get(int)}</br>
- *       <td align="center" rowspan="5"><i>O(n)</i></td>
+ *       <td style="text-align:center;" rowspan="5"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
@@ -124,7 +124,7 @@ import com.google.common.collect.Iterables;
  *     <td>
  *       {@link #add(int, Object) add(int, E)}</br>
  *     </td>
- *     <td align="center" rowspan="6"><i>O(n)</i></td>
+ *     <td style="text-align:center;" rowspan="6"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
@@ -139,7 +139,7 @@ import com.google.common.collect.Iterables;
  *   </tr>
  *   <tr>
  *     <td>{@link Iterator#remove()}</td>
- *     <td align="center" rowspan="3"><i>O(1)</i></td>
+ *     <td style="text-align:center;" rowspan="3"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>{@link ListIterator#remove()}</td>
@@ -149,7 +149,7 @@ import com.google.common.collect.Iterables;
  *   </tr>
  *   <tr>
  *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
- *     <td align="center" colspan="3" rowspan="2"><i>O(1)</i></td>
+ *     <td style="text-align:center;" colspan="3" rowspan="2"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>{@link #clear()}</td>
@@ -161,7 +161,7 @@ import com.google.common.collect.Iterables;
  *       {@link #lastIndexOf(Object)}</br>
  *       {@link #remove(Object) remove(Object)}
  *     </td>
- *     <td align="center" rowspan="4" colspan="3"><i>O(n)</i></td>
+ *     <td style="text-align:center;" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * <p>
  * The {@code subList} view exhibits identical time complexity, with the
