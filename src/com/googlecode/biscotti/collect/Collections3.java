@@ -339,8 +339,8 @@ public final class Collections3 {
 	 * their <i>access-order</i>, with enough capacity to hold the specified
 	 * number of entries without rehashing.
 	 * 
-	 * @param initialCapacity
-	 *            the initial capacity
+	 * @param expectedSize
+	 *            the expected size
 	 * @return an empty {@code LinkedHashMap} which orders its keys according to
 	 *         their <i>access-order</i>, with enough capacity to hold the
 	 *         specified number of entries without rehashing
