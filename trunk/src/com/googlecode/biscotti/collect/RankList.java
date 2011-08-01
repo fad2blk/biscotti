@@ -82,8 +82,9 @@ import com.google.common.collect.Iterables;
  *     <td>
  *       {@link #addAll(Collection) addAll(Collection)}
  *     </td>
- *     <td style="text-align:center;"><i>O(m log n)</i></td>
- *     <td style="text-align:center;" colspan="2"><i>O(m)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(m log n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCCCC"><i>O(m)</i></td>
+ *     <td style="text-align:center;" bgcolor="9999CC"><i>O(m)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -105,14 +106,14 @@ import com.google.common.collect.Iterables;
  *     <td>
  *       {@link #add(Object) add(E)}
  *     </td>
- *     <td style="text-align:center;" rowspan="9"><i>O(log n)</i></td>
- *     <td style="text-align:center;" rowspan="3"><i>O(1)</i></td>
- *     <td style="text-align:center;"><i>O(1)</i></td>
+ *     <td style="text-align:center;" rowspan="9" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" rowspan="3" bgcolor="FFCCCC"><i>O(1)</i></td>
+ *     <td style="text-align:center;" bgcolor="9999CC"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #get(int)}</br>
- *       <td style="text-align:center;" rowspan="5"><i>O(n)</i></td>
+ *       <td style="text-align:center;" rowspan="5" bgcolor="9999CC"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
@@ -124,7 +125,7 @@ import com.google.common.collect.Iterables;
  *     <td>
  *       {@link #add(int, Object) add(int, E)}</br>
  *     </td>
- *     <td style="text-align:center;" rowspan="6"><i>O(n)</i></td>
+ *     <td style="text-align:center;" rowspan="6" bgcolor="FFCCCC"><i>O(n)</i></td>
  *     </td>
  *   </tr>
  *   <tr>
@@ -139,7 +140,7 @@ import com.google.common.collect.Iterables;
  *   </tr>
  *   <tr>
  *     <td>{@link Iterator#remove()}</td>
- *     <td style="text-align:center;" rowspan="3"><i>O(1)</i></td>
+ *     <td style="text-align:center;" rowspan="3" bgcolor="9999CC"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>{@link ListIterator#remove()}</td>
