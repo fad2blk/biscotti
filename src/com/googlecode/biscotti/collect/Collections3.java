@@ -19,6 +19,9 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -372,4 +375,387 @@ public final class Collections3 {
 				true);
 	}
 
+	/**
+	 * Returns an unmodifiable view of the specified sorted list. This method
+	 * allows modules to provide users with "read-only" access to internal
+	 * sorted lists. Query operations on the returned list "read through" to the
+	 * specified list, and attempts to modify the returned sorted list, whether
+	 * direct or via its iterator, result in an
+	 * {@code UnsupportedOperationException}.
+	 * <p>
+	 * The returned list will be serializable if the specified list is
+	 * serializable.
+	 * <p>
+	 * Note: The returned list does not implement {@code RandomAccess}.
+	 * 
+	 * @param sortedList
+	 *            the list for which an unmodifiable view is to be returned
+	 * @return an unmodifiable view of the specified sorted list
+	 */
+	public static <E> SortedList<E> unmodifiable(
+			SortedList<? extends E> sortedList) {
+		return new UnmodifiableSortedList<E>(sortedList);
+	}
+
+	private static class UnmodifiableSortedList<E> extends
+			ForwardingSortedList<E> implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		final SortedList<E> sortedList;
+
+		UnmodifiableSortedList(final SortedList<? extends E> sortedList) {
+			checkNotNull(sortedList);
+			this.sortedList = (SortedList<E>) sortedList;
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			return Iterators.unmodifiableIterator(sortedList.iterator());
+		}
+
+		@Override
+		public boolean add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E set(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(int index, E element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E remove(int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return Iterators2.unmodifiable(sortedList.listIterator());
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			return Iterators2.unmodifiable(sortedList.listIterator(index));
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement) {
+			return new UnmodifiableSortedList<E>(sortedList.headList(toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, E toElement) {
+			return new UnmodifiableSortedList<E>(sortedList.subList(
+					fromElement, toElement));
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			return new UnmodifiableSortedList<E>(sortedList.subList(fromIndex,
+					toIndex));
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement) {
+			return new UnmodifiableSortedList<E>(
+					sortedList.tailList(fromElement));
+		}
+
+		@Override
+		protected SortedList<E> delegate() {
+			return sortedList;
+		}
+	}
+
+	/**
+	 * Returns a synchronized (thread-safe) {@code SortedList} backed by the
+	 * specified sorted list. In order to guarantee serial access, it is
+	 * critical that <b>all</b> access to the backing list is accomplished
+	 * through the returned list.
+	 * <p>
+	 * It is imperative that the user manually synchronize on the returned list
+	 * when iterating over it or its views:
+	 * 
+	 * <pre>
+	 *  SortedList sortedList = Collections3.synchronize(...);
+	 *      ...
+	 *  synchronized(sortedList) {
+	 *     for(Object o: sortedList)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * or:
+	 * 
+	 * <pre>
+	 *  SortedList sortedList = Collections3.synchronize(...);
+	 *  List subList = sortedList.subList(...)
+	 *      ...
+	 *  synchronized(sortedList) { // Note: sortedList not subList
+	 *     for(Object o: subList)  // Must be in synchronized block
+	 *        foo(o);
+	 *  }
+	 * </pre>
+	 * 
+	 * Failure to follow this advice may result in non-deterministic behavior.
+	 * <p>
+	 * The returned list will be serializable if the specified list is
+	 * serializable.
+	 * 
+	 * @param sortedList
+	 *            the sorted list to be "wrapped" in a synchronized sorted list
+	 * @return a synchronized view of the specified sorted list
+	 */
+	public static <E> SortedList<E> synchronize(final SortedList<E> sortedList) {
+		return new SynchronizedSortedList<E>(sortedList);
+	}
+
+	static class SynchronizedSortedList<E> implements SortedList<E> {
+
+		final SortedList<E> sortedList;
+		final Object mutex;
+
+		SynchronizedSortedList(SortedList<E> sortedList) {
+			checkNotNull(sortedList);
+			this.sortedList = sortedList;
+			mutex = this;
+		}
+
+		SynchronizedSortedList(SortedList<E> sortedList, Object mutex) {
+			checkNotNull(sortedList);
+			this.sortedList = sortedList;
+			this.mutex = mutex;
+		}
+
+		public boolean equals(Object o) {
+			synchronized (mutex) {
+				return sortedList.equals(o);
+			}
+		}
+
+		public int hashCode() {
+			synchronized (mutex) {
+				return sortedList.hashCode();
+			}
+		}
+
+		public E get(int index) {
+			synchronized (mutex) {
+				return sortedList.get(index);
+			}
+		}
+
+		public E set(int index, E element) {
+			synchronized (mutex) {
+				return sortedList.set(index, element);
+			}
+		}
+
+		public void add(int index, E element) {
+			synchronized (mutex) {
+				sortedList.add(index, element);
+			}
+		}
+
+		public E remove(int index) {
+			synchronized (mutex) {
+				return sortedList.remove(index);
+			}
+		}
+
+		public int indexOf(Object o) {
+			synchronized (mutex) {
+				return sortedList.indexOf(o);
+			}
+		}
+
+		public int lastIndexOf(Object o) {
+			synchronized (mutex) {
+				return sortedList.lastIndexOf(o);
+			}
+		}
+
+		public boolean addAll(int index, Collection<? extends E> c) {
+			synchronized (mutex) {
+				return sortedList.addAll(index, c);
+			}
+		}
+
+		public ListIterator<E> listIterator() {
+			return sortedList.listIterator();
+		}
+
+		public ListIterator<E> listIterator(int index) {
+			return sortedList.listIterator(index);
+		}
+
+		public int size() {
+			synchronized (mutex) {
+				return sortedList.size();
+			}
+		}
+
+		public boolean isEmpty() {
+			synchronized (mutex) {
+				return sortedList.isEmpty();
+			}
+		}
+
+		public boolean contains(Object o) {
+			synchronized (mutex) {
+				return sortedList.contains(o);
+			}
+		}
+
+		public Object[] toArray() {
+			synchronized (mutex) {
+				return sortedList.toArray();
+			}
+		}
+
+		public <T> T[] toArray(T[] a) {
+			synchronized (mutex) {
+				return sortedList.toArray(a);
+			}
+		}
+
+		public Iterator<E> iterator() {
+			return sortedList.iterator();
+		}
+
+		public boolean add(E e) {
+			synchronized (mutex) {
+				return sortedList.add(e);
+			}
+		}
+
+		public boolean remove(Object o) {
+			synchronized (mutex) {
+				return sortedList.remove(o);
+			}
+		}
+
+		public void clear() {
+			synchronized (mutex) {
+				sortedList.clear();
+			}
+		}
+
+		public String toString() {
+			synchronized (mutex) {
+				return sortedList.toString();
+			}
+		}
+
+		public boolean containsAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return sortedList.containsAll(coll);
+			}
+		}
+
+		public boolean addAll(Collection<? extends E> coll) {
+			synchronized (mutex) {
+				return sortedList.addAll(coll);
+			}
+		}
+
+		public boolean removeAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return sortedList.removeAll(coll);
+			}
+		}
+
+		public boolean retainAll(Collection<?> coll) {
+			synchronized (mutex) {
+				return sortedList.retainAll(coll);
+			}
+		}
+
+		private void writeObject(ObjectOutputStream s) throws IOException {
+			synchronized (mutex) {
+				s.defaultWriteObject();
+			}
+		}
+
+		@Override
+		public Comparator<? super E> comparator() {
+			synchronized (mutex) {
+				return sortedList.comparator();
+			}
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(
+						sortedList.headList(toElement), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, E toElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sortedList.subList(
+						fromElement, toElement), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, int toIndex) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(sortedList.subList(
+						fromIndex, toIndex), mutex);
+			}
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement) {
+			synchronized (mutex) {
+				return new SynchronizedSortedList<E>(
+						sortedList.tailList(fromElement), mutex);
+			}
+		}
+
+	}
 }
