@@ -110,14 +110,19 @@ public final class Collections3 {
 	/**
 	 * Creates a {@code LinkedList} containing the specified initial elements.
 	 * 
-	 * @param elements
-	 *            the elements this list should contain
+	 * @param first
+	 *            the first element
+	 * @param rest
+	 *            an array of additional elements, possibly empty
 	 * @return a {@code LinkedList} containing the specified initial elements
 	 */
-	public static <E> LinkedList<E> newLinkedList(final E... elements) {
-		checkNotNull(elements);
-		LinkedList<E> linkedList = Lists.newLinkedList();
-		Collections.addAll(linkedList, elements);
+	public static <E> LinkedList<E> newLinkedList(final E first,
+			final E... rest) {
+		checkNotNull(first);
+		checkNotNull(rest);
+		final LinkedList<E> linkedList = Lists.newLinkedList();
+		linkedList.add(first);
+		Collections.addAll(linkedList, rest);
 		return linkedList;
 	}
 
@@ -149,14 +154,19 @@ public final class Collections3 {
 	/**
 	 * Creates an {@code ArrayDeque} containing the specified initial elements.
 	 * 
-	 * @param elements
-	 *            the elements this deque should contain
+	 * @param first
+	 *            the first element
+	 * @param rest
+	 *            an array of additional elements, possibly empty
 	 * @return an {@code ArrayDeque} containing the specified initial elements
 	 */
-	public static <E> ArrayDeque<E> newArrayDeque(final E... elements) {
-		checkNotNull(elements);
-		ArrayDeque<E> arrayDeque = new ArrayDeque<E>(elements.length);
-		Collections.addAll(arrayDeque, elements);
+	public static <E> ArrayDeque<E> newArrayDeque(final E first,
+			final E... rest) {
+		checkNotNull(first);
+		checkNotNull(rest);
+		final ArrayDeque<E> arrayDeque = new ArrayDeque<E>(rest.length + 1);
+		arrayDeque.add(first);
+		Collections.addAll(arrayDeque, rest);
 		return arrayDeque;
 	}
 
@@ -190,7 +200,7 @@ public final class Collections3 {
 	public static <E> ArrayDeque<E> newArrayDeque(
 			final Iterator<? extends E> elements) {
 		checkNotNull(elements);
-		ArrayDeque<E> arrayDeque = new ArrayDeque<E>();
+		final ArrayDeque<E> arrayDeque = new ArrayDeque<E>();
 		Iterators.addAll(arrayDeque, elements);
 		return arrayDeque;
 	}
@@ -228,16 +238,20 @@ public final class Collections3 {
 	 * Creates a {@code TreeSet} containing the specified initial elements
 	 * sorted according to their <i>natural ordering</i>.
 	 * 
-	 * @param elements
-	 *            the elements this tree set should contain
+	 * @param first
+	 *            the first element
+	 * @param rest
+	 *            an array of additional elements, possibly empty
 	 * @return a {@code TreeSet} containing the specified initial elements
 	 *         sorted according to their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
-			final E... elements) {
-		checkNotNull(elements);
-		TreeSet<E> treeSet = Sets.newTreeSet();
-		Collections.addAll(treeSet, elements);
+			final E first, final E... rest) {
+		checkNotNull(first);
+		checkNotNull(rest);
+		final TreeSet<E> treeSet = Sets.newTreeSet();
+		treeSet.add(first);
+		Collections.addAll(treeSet, rest);
 		return treeSet;
 	}
 
@@ -254,7 +268,7 @@ public final class Collections3 {
 	public static <E extends Comparable<? super E>> TreeSet<E> newTreeSet(
 			final Iterator<? extends E> elements) {
 		checkNotNull(elements);
-		TreeSet<E> treeSet = Sets.newTreeSet();
+		final TreeSet<E> treeSet = Sets.newTreeSet();
 		Iterators.addAll(treeSet, elements);
 		return treeSet;
 	}
@@ -280,7 +294,8 @@ public final class Collections3 {
 			c = ((java.util.PriorityQueue) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
 			c = ((SortedCollection) elements).comparator();
-		TreeSet<E> treeSet = c == null ? new TreeSet<E>() : new TreeSet<E>(c);
+		final TreeSet<E> treeSet = c == null ? new TreeSet<E>()
+				: new TreeSet<E>(c);
 		Iterables.addAll(treeSet, elements);
 		return treeSet;
 	}
@@ -297,9 +312,9 @@ public final class Collections3 {
 	public static <E extends Comparable<? super E>> TreeList<E> newTreeList(
 			final E... elements) {
 		checkNotNull(elements);
-		TreeList<E> l = TreeList.create();
-		Collections.addAll(l, elements);
-		return l;
+		final TreeList<E> treeList = TreeList.create();
+		Collections.addAll(treeList, elements);
+		return treeList;
 	}
 
 	/**
@@ -328,7 +343,7 @@ public final class Collections3 {
 	public static <K, V> Map<K, V> newAccessOrderMap(
 			final Map<? extends K, ? extends V> m) {
 		checkNotNull(m);
-		Map<K, V> map = new LinkedHashMap<K, V>(Math.max(
+		final Map<K, V> map = new LinkedHashMap<K, V>(Math.max(
 				(int) (m.size() / .75F) + 1, 16), .75F, true);
 		map.putAll(m);
 		return map;
