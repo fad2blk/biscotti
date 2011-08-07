@@ -556,13 +556,14 @@ public final class Collections3 {
 		final SortedList<E> sortedList;
 		final Object mutex;
 
-		SynchronizedSortedList(SortedList<E> sortedList) {
+		SynchronizedSortedList(final SortedList<E> sortedList) {
 			checkNotNull(sortedList);
 			this.sortedList = sortedList;
 			mutex = this;
 		}
 
-		SynchronizedSortedList(SortedList<E> sortedList, Object mutex) {
+		SynchronizedSortedList(final SortedList<E> sortedList,
+				final Object mutex) {
 			checkNotNull(sortedList);
 			this.sortedList = sortedList;
 			this.mutex = mutex;
