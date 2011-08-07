@@ -304,16 +304,20 @@ public final class Collections3 {
 	 * Creates a {@code TreeList} containing the specified initial elements
 	 * sorted according to their <i>natural ordering</i>.
 	 * 
-	 * @param elements
-	 *            the initial elements to be stored in this list
+	 * @param first
+	 *            the first element
+	 * @param rest
+	 *            an array of additional elements, possibly empty
 	 * @return a {@code TreeList} containing the specified initial elements
 	 *         sorted according to their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeList<E> newTreeList(
-			final E... elements) {
-		checkNotNull(elements);
+			final E first, final E... rest) {
+		checkNotNull(first);
+		checkNotNull(rest);
 		final TreeList<E> treeList = TreeList.create();
-		Collections.addAll(treeList, elements);
+		treeList.add(first);
+		Collections.addAll(treeList, rest);
 		return treeList;
 	}
 
