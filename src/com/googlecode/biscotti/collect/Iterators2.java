@@ -19,6 +19,7 @@ package com.googlecode.biscotti.collect;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -293,6 +294,8 @@ public final class Iterators2 {
 	 * Returns an immutable empty {@code ListIterator}.
 	 * 
 	 * @return an immutable empty {@code ListIterator}
+	 * @deprecated {@link Collections#emptyListIterator()} is provided in Java
+	 *             SE 7 API.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> ListIterator<E> emptyListIterator() {
