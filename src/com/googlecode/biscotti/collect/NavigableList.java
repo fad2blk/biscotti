@@ -91,8 +91,8 @@ interface NavigableList<E> extends List<E> {
 	 * @return a list iterator of the elements in this list, in descending
 	 *         order, starting at the specified position in this list
 	 * @throws IndexOutOfBoundsException
-	 *             if the index is out of range
-	 *             ({@code  index < 0 || index > size()})
+	 *             if the index is out of range (
+	 *             {@code  index < 0 || index > size()})
 	 */
 	ListIterator<E> descendingListIterator(int index);
 
