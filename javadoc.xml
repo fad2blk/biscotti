@@ -1,0 +1,39 @@
+<project name="palamida-libraries-javadoc" default="javadoc">
+	
+	<property name="common"			value="C:\Users\Administrator\WorkspaceEE64\common"/>
+	<property name="java.src"		value="C:\Program Files\Java\jdk1.7.0_01\src"/>
+	<property name="guava.src"		value="${common}\src\guava-10.0.1"/>
+	<property name="poi.src"		value="${common}\src\poi-3.7"/>
+	
+	<property name="src.home"		value="${basedir}/src"/>
+	<property name="docs.home"		value="${basedir}/javadoc"/>
+	
+	<property name="poi.docs"		value="http://poi.apache.org/apidocs/"/>
+	<property name="java.docs"		value="http://download.oracle.com/javase/7/docs/api/"/>
+	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
+	
+	<property name="base"			value="com.googlecode.biscotti.base"/>
+	<property name="base"			value="com.googlecode.biscotti.collect"/>
+	
+	<target name="javadoc">
+        <javadoc access="public"
+        	   author="true"
+        	   classpath=""
+        	   destdir="${docs.home}"
+    	       nodeprecated="false"
+    	       nodeprecatedlist="false"
+    	       noindex="false"
+    	       nonavbar="false"
+    	       notree="false"
+    	       packagenames="${base},${util},${poi},${web},${err.web}"
+    	       source="1.7"
+    	       sourcepath="${src.home};${java.src};${guava.src};${poi.src};${web.src};"
+    	       splitindex="true"
+    	       use="true"
+    	       version="true">
+            <link href="${java.docs}"/>
+            <link href="${guava.docs}"/>
+        	<link href="${poi.docs}"/>
+        </javadoc>
+    </target>
+</project>
