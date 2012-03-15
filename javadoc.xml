@@ -13,7 +13,7 @@
 	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
 	
 	<property name="base"			value="com.googlecode.biscotti.base"/>
-	<property name="base"			value="com.googlecode.biscotti.collect"/>
+	<property name="collect"		value="com.googlecode.biscotti.collect"/>
 	
 	<target name="javadoc">
         <javadoc access="public"
@@ -25,9 +25,9 @@
     	       noindex="false"
     	       nonavbar="false"
     	       notree="false"
-    	       packagenames="${base},${util},${poi},${web},${err.web}"
+    	       packagenames="${base},${collect}"
     	       source="1.7"
-    	       sourcepath="${src.home};${java.src};${guava.src};${poi.src};${web.src};"
+    	       sourcepath="${src.home};${java.src};${guava.src};"
     	       splitindex="true"
     	       use="true"
     	       version="true">
