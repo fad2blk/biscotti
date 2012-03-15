@@ -12,8 +12,8 @@
 	<property name="compile.debug"			value="true"										/>
 	<property name="compile.deprecation"	value="false"										/>
 	<property name="compile.optimize"		value="true"										/>
-	<property name="compile.source.ver"		value="1.6"											/>
-	<property name="compile.target.ver"		value="1.6"											/>
+	<property name="compile.source.ver"		value="1.7"											/>
+	<property name="compile.target.ver"		value="1.7"											/>
 		
 	<!-- Compilation Classpath  -->
 
