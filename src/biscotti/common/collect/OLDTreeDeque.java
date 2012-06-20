@@ -256,7 +256,7 @@ public class OLDTreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 			@Override
 			public void remove() {
 				checkForConcurrentModification();
-				if (last == null)
+				if (last == nil)
 					throw new IllegalStateException();
 				if (last.left != nil && last.right != nil)
 					next = last;

@@ -16,7 +16,7 @@
 
 package biscotti.common.collect;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -27,9 +27,12 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
+ * <pre>
  * An unbounded double-ended priority queue (also known as a {@link Deque})
  * based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
@@ -128,65 +131,67 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this deque
  */
-public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
+public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
+		SortedCollection<E> {
 
-	private static final long serialVersionUID = 1L;
-	transient Node max = nil;
-
-	TreeDeque(final Comparator<? super E> comparator) {
+	private TreeDeque(final Comparator<? super E> comparator) {
 		super(comparator);
 	}
 
-	TreeDeque(final Comparator<? super E> comparator,
-			Iterable<? extends E> elements) {
-		super(comparator, elements);
+	private TreeDeque(final Comparator<? super E> comparator,
+			final Iterable<? extends E> elements) {
+		super(comparator);
+		Iterables.addAll(this, elements);
 	}
 
 	/**
-	 * Creates a new {@code TreeDeque} that orders its elements according to
+	 * Creates a new {@code TreeQueue} that orders its elements according to
 	 * their <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code TreeDeque} that orders its elements according to
+	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> TreeDeque<E> create() {
-		return new TreeDeque<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> OLDTreeQueue<E> create() {
+		return new OLDTreeQueue<E>(Ordering.natural());
 	}
 
 	/**
-	 * Creates a new {@code TreeDeque} that orders its elements according to the
+	 * Creates a new {@code TreeQueue} that orders its elements according to the
 	 * specified comparator.
 	 * 
 	 * @param comparator
-	 *            the comparator that will be used to order this deque
-	 * @return a new {@code TreeDeque} that orders its elements according to
+	 *            the comparator that will be used to order this queue
+	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> TreeDeque<E> create(final Comparator<? super E> comparator) {
+	public static <E> OLDTreeQueue<E> create(
+			final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeDeque<E>(comparator);
+		return new OLDTreeQueue<E>(comparator);
 	}
 
 	/**
-	 * Creates a new {@code TreeDeque} containing the elements of the specified
+	 * Creates a new {@code TreeQueue} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link PriorityQueue} or {@link SortedCollection} this
-	 * deque will be ordered according to the same ordering. Otherwise, this
-	 * deque will be ordered according to the <i>natural ordering</i> of its
-	 * elements.
+	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection}
+	 * this queue will be ordered according to the same ordering. Otherwise,
+	 * this queue will be ordered according to the <i>natural ordering</i> of
+	 * its elements.
 	 * 
 	 * @param elements
-	 *            the iterable whose elements are to be placed into the deque
-	 * @return a new {@code TreeDeque} containing the elements of the specified
+	 *            the iterable whose elements are to be placed into the queue
+	 * @return a new {@code TreeQueue} containing the elements of the specified
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
-	 *             one another according to the this deque's ordering
+	 *             one another according to this queue's ordering
 	 * @throws NullPointerException
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <E> OLDTreeQueue<E> create(
+			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -197,25 +202,100 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeDeque<E>(comparator, elements);
+		return new OLDTreeQueue<E>(comparator, elements);
 	}
-	
-//	/**
-//	 * Creates a {@code TreeDeque} containing the specified initial elements
-//	 * sorted according to their <i>natural ordering</i>.
-//	 * 
-//	 * @param elements
-//	 *            the initial elements to be placed in this deque
-//	 * @return a {@code TreeDeque} containing the specified initial elements
-//	 *         sorted according to their <i>natural ordering</i>
-//	 */
-//	public static <E extends Comparable<? super E>> TreeDeque<E> create(
-//			final E... elements) {
-//		checkNotNull(elements);
-//		TreeDeque<E> d = TreeDeque.create();
-//		Collections.addAll(d, elements);
-//		return d;
-//	}
+
+	@Override
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	@Override
+	public Object[] toArray() {
+		// is this correct?
+		return ImmutableList.copyOf(this).toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		// is this correct?
+		checkNotNull(a);
+		return ImmutableList.copyOf(this).toArray(a);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		checkNotNull(c);
+		if (c != this)
+			for (Object e : c)
+				if (!contains(e))
+					return false;
+		return true;
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		checkNotNull(c);
+		checkArgument(c != this);
+		boolean mod = false;
+		for (E e : c)
+			if (add(e))
+				mod = true;
+		return mod;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		checkNotNull(c);
+		checkArgument(c != this);
+		// rewrite
+		boolean flag = false;
+		Iterator<E> it = iterator();
+		while (it.hasNext()) {
+			if (c.contains(it.next())) {
+				it.remove();
+				flag = true;
+			}
+		}
+		return flag;
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		checkNotNull(c);
+		// rewrite
+		boolean flag = false;
+		if (c != this) {
+			Iterator<E> it = iterator();
+			while (it.hasNext())
+				if (!c.contains(it.next())) {
+					it.remove();
+					flag = true;
+				}
+		}
+		return flag;
+	}
+
+	@Override
+	public void clear() {
+		modCount++;
+		root = nil;
+		min = nil;
+		max = nil;
+		size = 0;
+	}
+
+	/**
+	 * Returns the comparator used to order the elements in this deque. If one
+	 * was not explicitly provided a <i>natural order</i> comparator is
+	 * returned.
+	 * 
+	 * @return the comparator used to order this queue
+	 */
+	@Override
+	public Comparator<? super E> comparator() {
+		return comparator;
+	}
 
 	/**
 	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
@@ -239,62 +319,6 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	@Override
 	public void addLast(E e) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<E> descendingIterator() {
-		return new Iterator<E>() {
-			private Node next = max;
-			private Node last = nil;
-			private int expectedModCount = modCount;
-
-			@Override
-			public boolean hasNext() {
-				return next != null;
-			}
-
-			@Override
-			public void remove() {
-				checkForConcurrentModification();
-				if (last == null)
-					throw new IllegalStateException();
-				if (last.left != nil && last.right != nil)
-					next = last;
-				delete(last);
-				expectedModCount = modCount;
-				last = nil;
-			}
-
-			@Override
-			public E next() {
-				checkForConcurrentModification();
-				Node node = next;
-				if (node == nil)
-					throw new NoSuchElementException();
-				next = predecessor(node);
-				last = node;
-				return node.element;
-			}
-
-			private void checkForConcurrentModification() {
-				if (modCount != expectedModCount)
-					throw new ConcurrentModificationException();
-			}
-		};
-	}
-
-	@Override
-	public E getFirst() {
-		return element();
-	}
-
-	@Override
-	public E getLast() {
-		E e = peekLast();
-		if (e != null)
-			return e;
-		else
-			throw new NoSuchElementException();
 	}
 
 	/**
@@ -322,15 +346,28 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	}
 
 	@Override
-	public E peekFirst() {
-		return peek();
+	public boolean remove(Object o) {
+		checkNotNull(o);
+		@SuppressWarnings("unchecked")
+		final Node<E> node = search((E) o);
+		if (node == null)
+			return false;
+		delete(node);
+		return true;
 	}
 
 	@Override
-	public E peekLast() {
-		if (isEmpty())
-			return null;
-		return max.element;
+	public E removeFirst() {
+		return remove();
+	}
+
+	@Override
+	public E removeLast() {
+		final E e = pollLast();
+		if (e != null)
+			return e;
+		else
+			throw new NoSuchElementException();
 	}
 
 	@Override
@@ -342,14 +379,104 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	public E pollLast() {
 		if (isEmpty())
 			return null;
-		E e = max.element;
+		final E e = max.element;
 		delete(max);
 		return e;
 	}
 
 	@Override
-	public E pop() {
-		return remove();
+	public E getFirst() {
+		return element();
+	}
+
+	@Override
+	public E getLast() {
+		final E e = peekLast();
+		if (e != null)
+			return e;
+		else
+			throw new NoSuchElementException();
+	}
+
+	@Override
+	public E peekFirst() {
+		return peek();
+	}
+
+	@Override
+	public E peekLast() {
+		if (isEmpty())
+			return null;
+		return max.element;
+	}
+
+	/**
+	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
+	 * and leave the underlying data unmodified.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
+	public boolean removeFirstOccurrence(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
+	 * and leave the underlying data unmodified.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
+	public boolean removeLastOccurrence(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean add(E e) {
+		if (offer(e))
+			return true;
+		else
+			throw new IllegalStateException();
+	}
+
+	@Override
+	public boolean offer(E e) {
+		checkNotNull(e);
+		final Node<E> newNode = new Node<E>(e);
+		insert(newNode);
+		return true;
+	}
+
+	@Override
+	public E poll() {
+		if (isEmpty())
+			return null;
+		final E e = min.element;
+		delete(min);
+		return e;
+	}
+
+	@Override
+	public E remove() {
+		if (isEmpty())
+			throw new NoSuchElementException();
+		return poll();
+	}
+
+	@Override
+	public E element() {
+		final E e = peek();
+		if (e == null)
+			throw new NoSuchElementException();
+		return e;
+	}
+
+	@Override
+	public E peek() {
+		if (isEmpty())
+			return null;
+		return min.element;
 	}
 
 	/**
@@ -365,112 +492,128 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	}
 
 	@Override
-	public E removeFirst() {
+	public E pop() {
 		return remove();
 	}
 
-	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
-	 */
-	public boolean removeFirstOccurrence(Object o) {
-		throw new UnsupportedOperationException();
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean contains(Object o) {
+		return o != null && search((E) o) != null;
 	}
 
 	@Override
-	public E removeLast() {
-		E e = pollLast();
-		if (e != null)
-			return e;
-		else
-			throw new NoSuchElementException();
+	public int size() {
+		return size;
 	}
 
 	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
+	 * Returns an iterator over the elements of this deque in priority order
+	 * from first (head) to last (tail).
 	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
+	 * @return an iterator over the elements of this deque in priority order
 	 */
-	public boolean removeLastOccurrence(Object o) {
-		throw new UnsupportedOperationException();
-	}
-
 	@Override
-	public void clear() {
-		super.clear();
-		max = nil;
+	public Iterator<E> iterator() {
+		return new Iterator<E>() {
+			private Node<E> next = min;
+			private Node<E> last = nil;
+			private int expectedModCount = modCount;
+
+			@Override
+			public boolean hasNext() {
+				return next != nil;
+			}
+
+			@Override
+			public void remove() {
+				checkForConcurrentModification();
+				if (last == nil)
+					throw new IllegalStateException();
+				if (last.left != nil && last.right != nil)
+					next = last;
+				delete(last);
+				expectedModCount = modCount;
+				last = nil;
+			}
+
+			@Override
+			public E next() {
+				checkForConcurrentModification();
+				if (next == nil)
+					throw new NoSuchElementException();
+				last = next;
+				next = successor(next);
+				return last.element;
+			}
+
+			private void checkForConcurrentModification() {
+				if (modCount != expectedModCount)
+					throw new ConcurrentModificationException();
+			}
+		};
 	}
 
 	/**
-	 * Returns a shallow copy of this {@code TreeDeque}. The elements themselves
-	 * are not cloned.
+	 * Returns an iterator over the elements of this deque in reverse order from
+	 * last (tail) to first (head).
 	 * 
-	 * @return a shallow copy of this deque
+	 * @return an iterator over the elements of this deque in reverse order
 	 */
 	@Override
-	public TreeDeque<E> clone() {
-		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
-		clone.nil = new Node();
-		clone.modCount = 0;
-		clone.root = clone.nil;
-		clone.min = clone.nil;
-		clone.max = clone.nil;
-		clone.size = 0;
-		clone.addAll(this);
-		return clone;
-	}
+	public Iterator<E> descendingIterator() {
+		return new Iterator<E>() {
+			private Node<E> next = max;
+			private Node<E> last = nil;
+			private int expectedModCount = modCount;
 
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
-		ois.defaultReadObject();
-		nil = new Node();
-		root = nil;
-		max = nil;
-		min = nil;
-		int size = ois.readInt();
-		for (int i = 0; i < size; i++)
-			add((E) ois.readObject());
-	}
+			@Override
+			public boolean hasNext() {
+				return next != null;
+			}
 
-	/*
-	 * Red-Black Tree
-	 */
+			@Override
+			public void remove() {
+				checkForConcurrentModification();
+				if (last == null)
+					throw new IllegalStateException();
+				if (last.left != nil && last.right != nil)
+					next = last;
+				delete(last);
+				expectedModCount = modCount;
+				last = nil;
+			}
+
+			@Override
+			public E next() {
+				checkForConcurrentModification();
+				if (next == nil)
+					throw new NoSuchElementException();
+				last = next;
+				next = predecessor(next);
+				return last.element;
+			}
+
+			private void checkForConcurrentModification() {
+				if (modCount != expectedModCount)
+					throw new ConcurrentModificationException();
+			}
+		};
+	}
 
 	@Override
-	void insert(final Node z) {
-		super.insert(z);
-		if (max == nil || comparator.compare(z.element, max.element) >= 0)
-			max = z;
-	}
-
-	@Override
-	void delete(final Node z) {
-		if (max == z)
-			max = predecessor(z);
-		super.delete(z);
-	}
-
-	private Node predecessor(Node x) {
-		Node y;
-		if (x == nil)
-			return nil;
-		if (x.left != nil) {
-			y = x.left;
-			while (y.right != nil)
-				y = y.right;
-			return y;
+	Node<E> search(final E e) {
+		Node<E> n = root;
+		while (n != nil) {
+			int cmp = comparator.compare(e, n.element);
+			if (e.equals(n.element))
+				return n;
+			if (cmp < 0)
+				n = n.left;
+			else
+				n = n.right;
 		}
-		y = x.parent;
-		while (y != nil && x == y.left) {
-			x = y;
-			y = y.left;
-		}
-		return y;
+		return null;
 	}
 
 }
