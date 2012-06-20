@@ -16,20 +16,12 @@
 
 package biscotti.common.collect;
 
-import static biscotti.common.collect.TreeCollection.Color.BLACK;
-import static biscotti.common.collect.TreeCollection.Color.RED;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static biscotti.common.collect.RBTreeBase.Color.BLACK;
+import static biscotti.common.collect.RBTreeBase.Color.RED;
 
-import java.util.AbstractCollection;
 import java.util.Comparator;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
-import com.google.common.collect.Iterables;
-
-class TreeCollection<E> extends AbstractCollection<E> implements
-		SortedCollection<E> {
+abstract class RBTreeBase<E> {
 
 	transient int size = 0;
 	transient Node<E> nil = new Node<E>();
@@ -39,94 +31,8 @@ class TreeCollection<E> extends AbstractCollection<E> implements
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	TreeCollection(final Comparator<? super E> comparator) {
+	private RBTreeBase(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
-	}
-
-	TreeCollection(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
-		this(comparator);
-		Iterables.addAll(this, elements);
-	}
-
-	@Override
-	public Comparator<? super E> comparator() {
-		return comparator;
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		return o != null && search((E) o) != null;
-	}
-
-	/**
-	 * Returns an iterator over the elements of this collection in sorted order.
-	 * 
-	 * @return an iterator over the elements of this collection in sorted order
-	 */
-	@Override
-	public Iterator<E> iterator() {
-		return new Iterator<E>() {
-			private Node<E> next = min;
-			private Node<E> last = nil;
-			private int expectedModCount = modCount;
-
-			@Override
-			public boolean hasNext() {
-				return next != nil;
-			}
-
-			@Override
-			public void remove() {
-				checkForConcurrentModification();
-				if (last == nil)
-					throw new IllegalStateException();
-				if (last.left != nil && last.right != nil)
-					next = last;
-				delete(last);
-				expectedModCount = modCount;
-				last = nil;
-			}
-
-			@Override
-			public E next() {
-				checkForConcurrentModification();
-				Node<E> node = next;
-				if (node == nil)
-					throw new NoSuchElementException();
-				next = successor(node);
-				last = node;
-				return node.element;
-			}
-
-			private void checkForConcurrentModification() {
-				if (modCount != expectedModCount)
-					throw new ConcurrentModificationException();
-			}
-		};
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		checkNotNull(o);
-		Node<E> node = search((E) o);
-		if (node == null)
-			return false;
-		delete(node);
-		return true;
-	}
-
-	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
-	public void clear() {
-		modCount++;
-		root = nil;
-		min = nil;
-		size = 0;
 	}
 
 	/*
@@ -154,19 +60,7 @@ class TreeCollection<E> extends AbstractCollection<E> implements
 		}
 	}
 
-	Node<E> search(final E e) {
-		Node<E> n = root;
-		while (n != nil) {
-			int cmp = comparator.compare(e, n.element);
-			if (cmp == 0)
-				return n;
-			if (cmp < 0)
-				n = n.left;
-			else
-				n = n.right;
-		}
-		return null;
-	}
+	abstract Node<E> search(final E e);
 
 	/**
 	 * Introduction to Algorithms (CLR) Second Edition
@@ -191,11 +85,11 @@ class TreeCollection<E> extends AbstractCollection<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	void insert(final Node<E> z) {
+	void insert(Node<E> z) {
 		size++;
 		modCount++;
-		Node<E> y = nil;
 		Node<E> x = root;
+		Node<E> y = nil;
 		while (x != nil) {
 			y = x;
 			if (comparator.compare(z.element, x.element) < 0)
@@ -217,30 +111,6 @@ class TreeCollection<E> extends AbstractCollection<E> implements
 			min = z;
 	}
 
-	/**
-	 * Introduction to Algorithms (CLR) Second Edition
-	 * 
-	 * <pre>
-	 * RB-DELETE-FIXUP(T, z)
-	 * if left[z] = nil[T] or right[z] = nil[T]
-	 *    then y = z
-	 *    else y = TREE-SUCCESSOR(z)
-	 * if left[y] != nil[T]
-	 *    then x = left[y]
-	 *    else x = right[y]
-	 * p[x] = p[y]
-	 * if p[y] = nil[T]
-	 *    then root[T] = x
-	 *    else if y = left[p[y]]
-	 *            then left[p[y]] = x
-	 *            else right[p[y]] = x
-	 * if y != z
-	 *    then key[z] = key[y]
-	 *         copy y's satellite data into z
-	 * if color[y] = BLACK
-	 *    then RB-DELETE-FIXUP(T, x)
-	 * return y
-	 */
 	void delete(Node<E> z) {
 		size--;
 		modCount++;
@@ -299,7 +169,7 @@ class TreeCollection<E> extends AbstractCollection<E> implements
 		}
 		return y;
 	}
-	
+
 	private Node<E> predecessor(Node<E> x) {
 		if (x == nil)
 			return nil;

@@ -17,8 +17,8 @@
 package biscotti.common.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static biscotti.common.collect.TreeQueue.Color.BLACK;
-import static  biscotti.common.collect.TreeQueue.Color.RED;
+import static biscotti.common.collect.OLDTreeQueue.Color.BLACK;
+import static  biscotti.common.collect.OLDTreeQueue.Color.RED;
 
 import java.io.Serializable;
 import java.util.AbstractQueue;
@@ -133,9 +133,9 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements held in this queue
- * @see TreeDeque
+ * @see OLDTreeDeque
  */
-public class TreeQueue<E> extends AbstractQueue<E> implements
+public class OLDTreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -146,11 +146,11 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	TreeQueue(final Comparator<? super E> comparator) {
+	OLDTreeQueue(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
-	TreeQueue(final Comparator<? super E> comparator,
+	OLDTreeQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		this(comparator);
 		Iterables.addAll(this, elements);
@@ -163,8 +163,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
-		return new TreeQueue<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> OLDTreeQueue<E> create() {
+		return new OLDTreeQueue<E>(Ordering.natural());
 	}
 
 	/**
@@ -176,9 +176,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> TreeQueue<E> create(final Comparator<? super E> comparator) {
+	public static <E> OLDTreeQueue<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeQueue<E>(comparator);
+		return new OLDTreeQueue<E>(comparator);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
+	public static <E> OLDTreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -211,7 +211,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeQueue<E>(comparator, elements);
+		return new OLDTreeQueue<E>(comparator, elements);
 	}
 
 //	/**
@@ -350,10 +350,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * @return a shallow copy of this queue
 	 */
 	@Override
-	public TreeQueue<E> clone() {
-		TreeQueue<E> clone;
+	public OLDTreeQueue<E> clone() {
+		OLDTreeQueue<E> clone;
 		try {
-			clone = (TreeQueue<E>) super.clone();
+			clone = (OLDTreeQueue<E>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError();
 		}
