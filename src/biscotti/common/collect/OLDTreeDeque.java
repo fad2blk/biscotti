@@ -128,16 +128,16 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this deque
  */
-public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
+public class OLDTreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 
 	private static final long serialVersionUID = 1L;
 	transient Node max = nil;
 
-	TreeDeque(final Comparator<? super E> comparator) {
+	OLDTreeDeque(final Comparator<? super E> comparator) {
 		super(comparator);
 	}
 
-	TreeDeque(final Comparator<? super E> comparator,
+	OLDTreeDeque(final Comparator<? super E> comparator,
 			Iterable<? extends E> elements) {
 		super(comparator, elements);
 	}
@@ -149,8 +149,8 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	 * @return a new {@code TreeDeque} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> TreeDeque<E> create() {
-		return new TreeDeque<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> OLDTreeDeque<E> create() {
+		return new OLDTreeDeque<E>(Ordering.natural());
 	}
 
 	/**
@@ -162,9 +162,9 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	 * @return a new {@code TreeDeque} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> TreeDeque<E> create(final Comparator<? super E> comparator) {
+	public static <E> OLDTreeDeque<E> create(final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new TreeDeque<E>(comparator);
+		return new OLDTreeDeque<E>(comparator);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> TreeDeque<E> create(final Iterable<? extends E> elements) {
+	public static <E> OLDTreeDeque<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -197,7 +197,7 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeDeque<E>(comparator, elements);
+		return new OLDTreeDeque<E>(comparator, elements);
 	}
 	
 //	/**
@@ -413,8 +413,8 @@ public class TreeDeque<E> extends OLDTreeQueue<E> implements Deque<E> {
 	 * @return a shallow copy of this deque
 	 */
 	@Override
-	public TreeDeque<E> clone() {
-		TreeDeque<E> clone = (TreeDeque<E>) super.clone();
+	public OLDTreeDeque<E> clone() {
+		OLDTreeDeque<E> clone = (OLDTreeDeque<E>) super.clone();
 		clone.nil = new Node();
 		clone.modCount = 0;
 		clone.root = clone.nil;
