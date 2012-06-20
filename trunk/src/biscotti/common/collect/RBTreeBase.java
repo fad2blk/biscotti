@@ -31,7 +31,7 @@ abstract class RBTreeBase<E> {
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	private RBTreeBase(final Comparator<? super E> comparator) {
+	RBTreeBase(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
@@ -43,16 +43,18 @@ abstract class RBTreeBase<E> {
 		BLACK, RED;
 	}
 
-	private static class Node<E> {
-		private E element = null;
-		private Node<E> parent, left, right;
+	static class Node<E> {
+		E element = null;
+		private Node<E> parent;
+		Node<E> left;
+		Node<E> right;
 		private Color color = BLACK;
 
 		private Node() {
 			this(null);
 		}
 
-		private Node(final E element) {
+		Node(final E element) {
 			this.element = element;
 			parent = this;
 			right = this;
@@ -153,7 +155,7 @@ abstract class RBTreeBase<E> {
 	 *       y = p[y]
 	 * return y
 	 */
-	private Node<E> successor(Node<E> x) {
+	Node<E> successor(Node<E> x) {
 		if (x == nil)
 			return nil;
 		if (x.right != nil) {
@@ -170,7 +172,7 @@ abstract class RBTreeBase<E> {
 		return y;
 	}
 
-	private Node<E> predecessor(Node<E> x) {
+	Node<E> predecessor(Node<E> x) {
 		if (x == nil)
 			return nil;
 		if (x.left != nil) {
