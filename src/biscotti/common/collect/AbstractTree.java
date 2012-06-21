@@ -16,12 +16,12 @@
 
 package biscotti.common.collect;
 
-import static biscotti.common.collect.RBTreeBase.Color.BLACK;
-import static biscotti.common.collect.RBTreeBase.Color.RED;
+import static biscotti.common.collect.AbstractTree.Color.BLACK;
+import static biscotti.common.collect.AbstractTree.Color.RED;
 
 import java.util.Comparator;
 
-abstract class RBTreeBase<E> {
+abstract class AbstractTree<E> {
 
 	transient int size = 0;
 	transient Node<E> nil = new Node<E>();
@@ -31,7 +31,7 @@ abstract class RBTreeBase<E> {
 	transient int modCount = 0;
 	final Comparator<? super E> comparator;
 
-	RBTreeBase(final Comparator<? super E> comparator) {
+	AbstractTree(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 

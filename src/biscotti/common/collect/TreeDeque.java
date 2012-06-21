@@ -131,7 +131,7 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this deque
  */
-public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
+public class TreeDeque<E> extends AbstractTree<E> implements Deque<E>,
 		SortedCollection<E> {
 
 	private TreeDeque(final Comparator<? super E> comparator) {
@@ -151,8 +151,8 @@ public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
 	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> OLDTreeQueue<E> create() {
-		return new OLDTreeQueue<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> TreeDeque<E> create() {
+		return new TreeDeque<E>(Ordering.natural());
 	}
 
 	/**
@@ -164,10 +164,10 @@ public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
 	 * @return a new {@code TreeQueue} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E> OLDTreeQueue<E> create(
+	public static <E> TreeDeque<E> create(
 			final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new OLDTreeQueue<E>(comparator);
+		return new TreeDeque<E>(comparator);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
 	 *             iterable itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <E> OLDTreeQueue<E> create(
+	public static <E> TreeDeque<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -202,7 +202,7 @@ public class TreeDeque<E> extends RBTreeBase<E> implements Deque<E>,
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new OLDTreeQueue<E>(comparator, elements);
+		return new TreeDeque<E>(comparator, elements);
 	}
 
 	@Override
