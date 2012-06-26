@@ -16,7 +16,7 @@ import java.util.SortedSet;
  * @param <E>
  *            the type of elements held in this list
  */
-public interface Sortedlist<E> extends SortedCollection<E> {
+public interface SortedList<E> extends SortedCollection<E> {
 
 	/**
 	 * Returns the element at the specified position.
@@ -120,7 +120,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             {@code fromElement} or {@code toElement} lies outside the
 	 *             bounds of the range
 	 */
-	Sortedlist<E> sublist(E fromElement, boolean fromInclusive, E toElement,
+	SortedList<E> subList(E fromElement, boolean fromInclusive, E toElement,
 			boolean toInclusive);
 
 	/**
@@ -144,7 +144,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             if this sorted-list itself has a restricted range, and
 	 *             {@code toElement} lies outside the bounds of the range
 	 */
-	Sortedlist<E> headlist(E toElement, boolean inclusive);
+	SortedList<E> headList(E toElement, boolean inclusive);
 
 	/**
 	 * Returns a view of the portion of this sorted-list whose elements are
@@ -167,7 +167,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             if this sorted-list itself has a restricted range, and
 	 *             {@code fromElement} lies outside the bounds of the range
 	 */
-	Sortedlist<E> taillist(E fromElement, boolean inclusive);
+	SortedList<E> tailList(E fromElement, boolean inclusive);
 
 	/**
 	 * Returns a view of the portion of this sorted-list whose elements range
@@ -191,7 +191,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             if this sorted-list itself has a restricted range, and
 	 *             {@code fromElement} lies outside the bounds of the range
 	 */
-	public Sortedlist<E> sublist(int fromIndex, boolean fromInclusive,
+	public SortedList<E> subList(int fromIndex, boolean fromInclusive,
 			int toIndex, boolean toInclusive);
 
 }
