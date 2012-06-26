@@ -143,7 +143,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see TreeList
  */
-public final class Skiplist<E> extends AbstractList<E> implements List<E>,
+public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		SortedCollection<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
@@ -157,7 +157,7 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
 
-	private Skiplist(final Comparator<? super E> comparator) {
+	private SkipList(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			head.next[i] = head;
@@ -166,7 +166,7 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 		head.prev = head;
 	}
 
-	private Skiplist(final Comparator<? super E> comparator,
+	private SkipList(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		this(comparator);
 		Iterables.addAll(this, elements);
@@ -179,8 +179,8 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 	 * @return a new {@code SkipList} that orders its elements according to
 	 *         their natural ordering
 	 */
-	public static <E extends Comparable<? super E>> Skiplist<E> create() {
-		return new Skiplist<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> SkipList<E> create() {
+		return new SkipList<E>(Ordering.natural());
 	}
 
 	/**
@@ -192,10 +192,10 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 	 * @return a new {@code SkipList} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E extends Comparable<? super E>> Skiplist<E> create(
+	public static <E extends Comparable<? super E>> SkipList<E> create(
 			final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new Skiplist<E>(comparator);
+		return new SkipList<E>(comparator);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	public static <E> Skiplist<E> create(final Iterable<? extends E> elements) {
+	public static <E> SkipList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -228,7 +228,7 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new Skiplist<E>(comparator, elements);
+		return new SkipList<E>(comparator, elements);
 	}
 	
 //	/**
@@ -477,10 +477,10 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 	 * @return a shallow copy of this list
 	 */
 	@Override
-	public Skiplist<E> clone() {
-		Skiplist<E> clone;
+	public SkipList<E> clone() {
+		SkipList<E> clone;
 		try {
-			clone = (Skiplist<E>) super.clone();
+			clone = (SkipList<E>) super.clone();
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
@@ -590,7 +590,7 @@ public final class Skiplist<E> extends AbstractList<E> implements List<E>,
 		public void remove() {
 			checkForConcurrentModification();
 			checkState(last != null);
-			Skiplist.this.remove(--index + offset);
+			SkipList.this.remove(--index + offset);
 			expectedModCount = modCount;
 			last = null;
 		}
