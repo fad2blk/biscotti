@@ -20,6 +20,7 @@ import static biscotti.common.collect.TreeQueue.Color.BLACK;
 import static biscotti.common.collect.TreeQueue.Color.RED;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.Serializable;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Comparator;
@@ -71,7 +72,7 @@ import com.google.common.collect.Ordering;
  * concurrently it must be synchronized externally.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * compared to {@link PriorityQueue java.util.PriorityQueue} (where <i>n</i> is
+ * compared to a {@link PriorityQueue PriorityQueue} (where <i>n</i> is
  * the size of this list and <i>m</i> is the size of the specified collection):
  * <p>
  * 
@@ -138,17 +139,18 @@ import com.google.common.collect.Ordering;
  * the type of elements held in this queue
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
-		SortedCollection<E> {
+		SortedCollection<E>, Cloneable, Serializable {
 
-	private transient int size = 0;
+	private static final long serialVersionUID = 1L;
+	transient int size = 0;
 	private transient Node<E> nil = new Node<E>();
-	private transient Node<E> min = nil;
-	private transient Node<E> max = nil;
+	transient Node<E> min = nil;
+	transient Node<E> max = nil;
 	private transient Node<E> root = nil;
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
-	private TreeQueue(final Comparator<? super E> comparator) {
+	TreeQueue(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
@@ -422,6 +424,50 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		};
 	}
 
+	/**
+	 * Returns a shallow copy of this {@code TreeQueue}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this queue
+	 */
+	@Override
+	public TreeQueue<E> clone() {
+		TreeQueue<E> clone;
+		try {
+			clone = (TreeQueue<E>) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError();
+		}
+		clone.nil = new Node<E>();
+		clone.modCount = 0;
+		clone.root = clone.nil;
+		clone.min = clone.nil;
+		clone.max = clone.nil;
+		clone.size = 0;
+		clone.addAll(this);
+		return clone;
+	}
+
+	private void writeObject(java.io.ObjectOutputStream oos)
+			throws java.io.IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(size);
+		for (E e : this)
+			oos.writeObject(e);
+	}
+
+	private void readObject(java.io.ObjectInputStream ois)
+			throws java.io.IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		nil = new Node<E>();
+		root = nil;
+		max = nil;
+		min = nil;
+		int size = ois.readInt();
+		for (int i = 0; i < size; i++)
+			add((E) ois.readObject());
+	}
+
 	/*
 	 * Red-Black Tree
 	 */
@@ -430,8 +476,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		BLACK, RED;
 	}
 
-	private static class Node<E> {
-		private E element = null;
+	static class Node<E> {
+		E element = null;
 		private Node<E> parent;
 		private Node<E> left;
 		private Node<E> right;
@@ -498,7 +544,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			min = z;
 	}
 
-	private void delete(Node<E> z) {
+	void delete(Node<E> z) {
 		size--;
 		modCount++;
 		Node<E> x, y;

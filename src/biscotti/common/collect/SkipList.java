@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
-import java.util.AbstractList;
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -36,6 +36,7 @@ import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
+import com.googlecode.biscotti.collect.TreeList;
 
 /**
  * A {@link List} whose elements are sorted from <i>least</i> to <i>greatest</i>
@@ -143,8 +144,8 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see TreeList
  */
-public final class SkipList<E> extends AbstractList<E> implements List<E>,
-		SortedCollection<E>, Serializable, Cloneable {
+public final class SkipList<E> extends AbstractCollection<E> implements
+		SortedList<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
@@ -156,6 +157,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	private final Comparator<? super E> comparator;
 	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
+	private transient int modCount = 0;
 
 	private SkipList(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
@@ -230,23 +232,23 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return new SkipList<E>(comparator, elements);
 	}
-	
-//	/**
-//	 * Creates a {@code SkipList} containing the specified initial elements
-//	 * sorted according to their <i>natural ordering</i>.
-//	 * 
-//	 * @param elements
-//	 *            the initial elements to be placed in this list
-//	 * @return a {@code SkipList} containing the specified initial elements
-//	 *         sorted according to their <i>natural ordering</i>
-//	 */
-//	public static <E extends Comparable<? super E>> SkipList<E> create(
-//			final E... elements) {
-//		checkNotNull(elements);
-//		SkipList<E> l = SkipList.create();
-//		Collections.addAll(l, elements);
-//		return l;
-//	}
+
+	// /**
+	// * Creates a {@code SkipList} containing the specified initial elements
+	// * sorted according to their <i>natural ordering</i>.
+	// *
+	// * @param elements
+	// * the initial elements to be placed in this list
+	// * @return a {@code SkipList} containing the specified initial elements
+	// * sorted according to their <i>natural ordering</i>
+	// */
+	// public static <E extends Comparable<? super E>> SkipList<E> create(
+	// final E... elements) {
+	// checkNotNull(elements);
+	// SkipList<E> l = SkipList.create();
+	// Collections.addAll(l, elements);
+	// return l;
+	// }
 
 	/**
 	 * Returns the comparator used to order the elements in this list. If one
@@ -266,7 +268,7 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 	@Override
 	public boolean add(E e) {
 		checkNotNull(e);
-		final int newLevel = randomLevel();		
+		final int newLevel = randomLevel();
 		Node<E> x = head;
 		Node<E> y = head;
 		int i;
@@ -305,30 +307,6 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		modCount++;
 		size++;
 		return true;
-	}
-
-	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
-	 */
-	@Override
-	public void add(int index, E element) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
-	 */
-	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -384,27 +362,15 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		return listIterator();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
-	 */
 	@Override
 	public ListIterator<E> listIterator() {
-		return new ListItor();
+		return new ListIteratorImpl();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
-	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
 		checkPositionIndex(index, size);
-		return new ListItor(index);
+		return new ListIteratorImpl(index);
 	}
 
 	@Override
@@ -440,18 +406,6 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 		curr = curr.next();
 		delete(curr, update);
 		return curr.element;
-	}
-
-	/**
-	 * Guaranteed to throw an {@code UnsupportedOperationException} exception
-	 * and leave the underlying data unmodified.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             always
-	 */
-	@Override
-	public E set(int index, E element) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -523,19 +477,19 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			add((E) ois.readObject());
 	}
 
-	private class ListItor implements ListIterator<E> {
+	private class ListIteratorImpl implements ListIterator<E> {
 		private Node<E> node;
 		private Node<E> last = null;
 		private int offset;
 		private int index = 0;
 		private int expectedModCount = modCount;
 
-		private ListItor() {
+		private ListIteratorImpl() {
 			node = head.next();
 			offset = 0;
 		}
 
-		private ListItor(final int index) {
+		private ListIteratorImpl(final int index) {
 			node = search(index);
 			offset = index;
 		}
@@ -619,8 +573,8 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 			next = new Node[size];
 			dist = new int[size];
 		}
-		
-		private Node<E> next(){
+
+		private Node<E> next() {
 			return next[0];
 		}
 	}
@@ -667,6 +621,28 @@ public final class SkipList<E> extends AbstractList<E> implements List<E>,
 				curr = curr.next[i];
 			}
 		return curr;
+	}
+
+	@Override
+	public SortedList<E> subList(E fromElement, boolean fromInclusive,
+			E toElement, boolean toInclusive) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SortedList<E> headList(E toElement, boolean inclusive) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SortedList<E> tailList(E fromElement, boolean inclusive) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SortedList<E> subList(int fromIndex, boolean fromInclusive,
+			int toIndex, boolean toInclusive) {
+		throw new UnsupportedOperationException();
 	}
 
 }
