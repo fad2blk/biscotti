@@ -5,10 +5,13 @@ import java.util.SortedSet;
 
 /**
  * A <i>list-like</i> {@link SortedCollection}. This interface is the
- * <i>list</i> analog of {@link SortedSet}.
+ * <i>list</i> analog of {@link SortedSet}. Like a sorted set a a sorted-list
+ * maintains its elements in sorted order according to their <i>natural
+ * ordering</i> or by a given {@code Comparator}. Unlike a sorted set a
+ * sorted-list accepts duplicate elements and allows users to access and remove
+ * elements by their integer index.
  * <p>
- * Users of this interface can access and remove elements by their integer
- * index. To take advantage of the specified ordering the
+ * To take advantage of the specified ordering optional
  * {@link Sortedlist#headList headList(E)}, {@link Sortedlist#subList subList(E,
  * E)}, {@link tailList#headList tailList(E)} operations are provided.
  * 

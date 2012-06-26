@@ -62,10 +62,10 @@ import com.google.common.collect.Ordering;
  * <p>
  * The {@link #iterator() iterator()} and {@link #descendingIterator()} methods
  * return <i>fail-fast</i> iterators which are guaranteed to traverse the
- * elements of the queue in priority and reverse priority order, respectively.
- * Attempts to modify the elements in this queue at any time after an iterator
- * is created, in any way except through the iterator's own remove method, will
- * result in a {@code ConcurrentModificationException}.
+ * elements of the queue in ascending and descending priority order,
+ * respectively. Attempts to modify the elements in this queue at any time after
+ * an iterator is created, in any way except through the iterator's own remove
+ * method, will result in a {@code ConcurrentModificationException}.
  * <p>
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally.
@@ -74,6 +74,8 @@ import com.google.common.collect.Ordering;
  * compared to {@link PriorityQueue java.util.PriorityQueue} (where <i>n</i> is
  * the size of this list and <i>m</i> is the size of the specified collection):
  * <p>
+ * 
+ * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
@@ -133,7 +135,7 @@ import com.google.common.collect.Ordering;
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this queue
+ * the type of elements held in this queue
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E> {
