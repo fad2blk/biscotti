@@ -144,7 +144,7 @@ import com.googlecode.biscotti.collect.TreeList;
  *            the type of elements maintained by this list
  * @see TreeList
  */
-public final class SkipList<E> extends AbstractCollection<E> implements
+public class SkipList<E> extends AbstractCollection<E> implements
 		SortedList<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
@@ -155,6 +155,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
+	@SuppressWarnings("unchecked")
 	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
 	private transient int modCount = 0;
@@ -219,6 +220,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <E> SkipList<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -232,23 +234,6 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return new SkipList<E>(comparator, elements);
 	}
-
-	// /**
-	// * Creates a {@code SkipList} containing the specified initial elements
-	// * sorted according to their <i>natural ordering</i>.
-	// *
-	// * @param elements
-	// * the initial elements to be placed in this list
-	// * @return a {@code SkipList} containing the specified initial elements
-	// * sorted according to their <i>natural ordering</i>
-	// */
-	// public static <E extends Comparable<? super E>> SkipList<E> create(
-	// final E... elements) {
-	// checkNotNull(elements);
-	// SkipList<E> l = SkipList.create();
-	// Collections.addAll(l, elements);
-	// return l;
-	// }
 
 	/**
 	 * Returns the comparator used to order the elements in this list. If one
@@ -310,6 +295,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean contains(Object o) {
 		return o != null && search((E) o) != null;
 	}
@@ -320,6 +306,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 		return search(index).element;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public int indexOf(Object o) {
 		if (o != null) {
@@ -339,6 +326,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 		return -1;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
@@ -373,6 +361,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 		return new ListIteratorImpl(index);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		checkNotNull(o);
@@ -430,6 +419,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 	 * 
 	 * @return a shallow copy of this list
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public SkipList<E> clone() {
 		SkipList<E> clone;
@@ -459,6 +449,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 			oos.writeObject(e);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
@@ -568,6 +559,7 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 		private final Node<E>[] next;
 		private final int[] dist;
 
+		@SuppressWarnings("unchecked")
 		private Node(final E element, final int size) {
 			this.element = element;
 			next = new Node[size];
@@ -645,4 +637,11 @@ public final class SkipList<E> extends AbstractCollection<E> implements
 		throw new UnsupportedOperationException();
 	}
 
+	private static class SubList<E> extends SkipList<E>{
+		
+		public SubList(final Comparator<? super E> comparator){
+			super(comparator);
+		}
+		
+	}
 }
