@@ -68,6 +68,8 @@ import com.google.common.collect.Iterables;
  * {@link ArrayList} and a {@link LinkedList} (where n is the size of the list
  * and m is the size of the specified collection):
  * <p>
+ * 
+ * <pre>
  * <table border cellpadding="3" cellspacing="1" style="width:450px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
@@ -216,20 +218,20 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		Iterables.addAll(list, elements);
 		return list;
 	}
-	
-//	/**
-//	 * Creates a {@code RankList} containing the specified initial elements.
-//	 * 
-//	 * @param elements
-//	 *            the elements to be placed into the list
-//	 * @return a {@code RankList} containing the specified initial elements
-//	 */
-//	public static <E> RankList<E> create(final E... elements) {
-//		checkNotNull(elements);
-//		RankList<E> rankList = RankList.create();
-//		Collections.addAll(rankList, elements);
-//		return rankList;
-//	}
+
+	// /**
+	// * Creates a {@code RankList} containing the specified initial elements.
+	// *
+	// * @param elements
+	// * the elements to be placed into the list
+	// * @return a {@code RankList} containing the specified initial elements
+	// */
+	// public static <E> RankList<E> create(final E... elements) {
+	// checkNotNull(elements);
+	// RankList<E> rankList = RankList.create();
+	// Collections.addAll(rankList, elements);
+	// return rankList;
+	// }
 
 	@Override
 	public Iterator<E> iterator() {
@@ -302,6 +304,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		return new ListItor(index);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public E remove(int index) {
 		checkElementIndex(index, size);
@@ -346,6 +349,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 	 * 
 	 * @return a shallow copy of this list
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public RankList<E> clone() {
 		RankList<E> clone;
@@ -375,6 +379,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 			oos.writeObject(e);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
@@ -488,6 +493,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		private final Node<E>[] next;
 		private final int[] dist;
 
+		@SuppressWarnings("unchecked")
 		private Node(final E element, final int size) {
 			this.element = element;
 			next = new Node[size];
