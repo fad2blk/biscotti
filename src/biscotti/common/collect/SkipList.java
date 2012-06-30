@@ -638,9 +638,171 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	}
 
 	private static class SubList<E> extends SkipList<E>{
+		private final SkipList<E> list; 
 		
-		public SubList(final Comparator<? super E> comparator){
-			super(comparator);
+		
+		public SubList(final SkipList<E> list, final int fromIndex, final int toIndex,
+				final E fromElement, final E toElement) {
+			super(list.comparator);
+			this.list = list;
+//			min = parent.min;
+//			offset = fromIndex;
+//			modCount = parent.modCount;
+//			size = toIndex - fromIndex;
+//			int i = 0;
+//			for (; i < fromIndex; i++)
+//				min = successor(min);
+//			max = min;
+//			for (; i < toIndex - 1; i++)
+//				max = successor(max);
+//			if (fromElement != null)
+//				this.fromElement = fromElement;
+//			else
+//				this.fromElement = min.element;
+//			if (toElement != null)
+//				this.toElement = toElement;
+//			else
+//				this.toElement = max.element;
+		}
+		
+		@Override
+		public int size() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean contains(Object o) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object[] toArray() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public <T> T[] toArray(T[] a) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean add(E e) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void clear() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public E get(int index) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public E remove(int index) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ListIterator<E> listIterator(int index) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public SortedList<E> subList(E fromElement, boolean fromInclusive,
+				E toElement, boolean toInclusive) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public SortedList<E> headList(E toElement, boolean inclusive) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public SortedList<E> tailList(E fromElement, boolean inclusive) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public SortedList<E> subList(int fromIndex, boolean fromInclusive,
+				int toIndex, boolean toInclusive) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}
