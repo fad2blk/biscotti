@@ -637,8 +637,11 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		throw new UnsupportedOperationException();
 	}
 
-	private static class SubList<E> extends SkipList<E>{
-		private final SkipList<E> list; 
+	private class SubList<E> extends SkipList<E>{
+		private final SkipList<E> list;
+		private final E fromElement;
+		private final E toElement;
+		private int fromIndex;
 		
 		
 		public SubList(final SkipList<E> list, final int fromIndex, final int toIndex,
@@ -647,9 +650,12 @@ public class SkipList<E> extends AbstractCollection<E> implements
 			this.list = list;
 //			min = parent.min;
 //			offset = fromIndex;
-//			modCount = parent.modCount;
-//			size = toIndex - fromIndex;
-//			int i = 0;
+			modCount = list.modCount;
+			size = toIndex - fromIndex;
+			this.fromElement = fromElement;
+			this.toElement = toElement;
+			this.fromIndex = fromIndex;
+			int i = 0;
 //			for (; i < fromIndex; i++)
 //				min = successor(min);
 //			max = min;
