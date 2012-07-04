@@ -19,6 +19,7 @@ package biscotti.common.collect;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -36,11 +36,10 @@ import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
-import com.googlecode.biscotti.collect.TreeList;
 
 /**
- * A {@link List} whose elements are sorted from <i>least</i> to <i>greatest</i>
- * according to their <i>natural ordering</i>, or by an explicit
+ * A {@link Sortedlist} whose elements are sorted from <i>least</i> to
+ * <i>greatest</i> according to their <i>natural ordering</i>, or by an explicit
  * {@link Comparator} provided at creation. Attempting to remove or insert
  * {@code null} elements is prohibited. Querying for {@code null} elements is
  * allowed. Inserting non-comparable elements will result in a
@@ -80,6 +79,8 @@ import com.googlecode.biscotti.collect.TreeList;
  * {@link TreeList} (where n is the size of the list and m is the size of the
  * specified collection):
  * <p>
+ * 
+ * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
@@ -144,8 +145,8 @@ import com.googlecode.biscotti.collect.TreeList;
  *            the type of elements maintained by this list
  * @see TreeList
  */
-public class SkipList<E> extends AbstractCollection<E> implements
-		SortedList<E>, Serializable, Cloneable {
+public class Skiplist<E> extends AbstractCollection<E> implements
+		Sortedlist<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
@@ -160,7 +161,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	private transient int[] index = new int[MAX_LEVEL];
 	private transient int modCount = 0;
 
-	private SkipList(final Comparator<? super E> comparator) {
+	private Skiplist(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			head.next[i] = head;
@@ -169,7 +170,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		head.prev = head;
 	}
 
-	private SkipList(final Comparator<? super E> comparator,
+	private Skiplist(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		this(comparator);
 		Iterables.addAll(this, elements);
@@ -182,8 +183,8 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	 * @return a new {@code SkipList} that orders its elements according to
 	 *         their natural ordering
 	 */
-	public static <E extends Comparable<? super E>> SkipList<E> create() {
-		return new SkipList<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> Skiplist<E> create() {
+		return new Skiplist<E>(Ordering.natural());
 	}
 
 	/**
@@ -195,10 +196,10 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	 * @return a new {@code SkipList} that orders its elements according to
 	 *         {@code comparator}
 	 */
-	public static <E extends Comparable<? super E>> SkipList<E> create(
+	public static <E extends Comparable<? super E>> Skiplist<E> create(
 			final Comparator<? super E> comparator) {
 		checkNotNull(comparator);
-		return new SkipList<E>(comparator);
+		return new Skiplist<E>(comparator);
 	}
 
 	/**
@@ -221,7 +222,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	 *             iterable itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <E> SkipList<E> create(final Iterable<? extends E> elements) {
+	public static <E> Skiplist<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -232,7 +233,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 			comparator = ((SortedCollection) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new SkipList<E>(comparator, elements);
+		return new Skiplist<E>(comparator, elements);
 	}
 
 	/**
@@ -413,6 +414,14 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		size = 0;
 	}
 
+	@Override
+	public Sortedlist<E> subList(int fromIndex, int toIndex) {
+		checkPositionIndexes(fromIndex, toIndex, size);
+		if (fromIndex == size)
+			fromIndex--;
+		return new SubList(this, fromIndex, --toIndex);
+	}
+
 	/**
 	 * Returns a shallow copy of this {@code SkipList}. The elements themselves
 	 * are not cloned.
@@ -421,10 +430,10 @@ public class SkipList<E> extends AbstractCollection<E> implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public SkipList<E> clone() {
-		SkipList<E> clone;
+	public Skiplist<E> clone() {
+		Skiplist<E> clone;
 		try {
-			clone = (SkipList<E>) super.clone();
+			clone = (Skiplist<E>) super.clone();
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
@@ -535,7 +544,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		public void remove() {
 			checkForConcurrentModification();
 			checkState(last != null);
-			SkipList.this.remove(--index + offset);
+			Skiplist.this.remove(--index + offset);
 			expectedModCount = modCount;
 			last = null;
 		}
@@ -545,7 +554,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 			throw new UnsupportedOperationException();
 		}
 
-		private void checkForConcurrentModification() {
+		void checkForConcurrentModification() {
 			if (expectedModCount != modCount)
 				throw new ConcurrentModificationException();
 		}
@@ -592,7 +601,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		size--;
 	}
 
-	private Node<E> search(final E element) {
+	Node<E> search(final E element) {
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--)
 			while (curr.next[i] != head
@@ -615,78 +624,32 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		return curr;
 	}
 
-	@Override
-	public SortedList<E> subList(E fromElement, boolean fromInclusive,
-			E toElement, boolean toInclusive) {
-		throw new UnsupportedOperationException();
-	}
+	private class SubList extends Skiplist<E> {
+		private final Skiplist<E> list;
+		private int offset;
+		private Node<E> from;
+		private Node<E> to;
 
-	@Override
-	public SortedList<E> headList(E toElement, boolean inclusive) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public SortedList<E> tailList(E fromElement, boolean inclusive) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public SortedList<E> subList(int fromIndex, boolean fromInclusive,
-			int toIndex, boolean toInclusive) {
-		throw new UnsupportedOperationException();
-	}
-
-	private class SubList<E> extends SkipList<E>{
-		private final SkipList<E> list;
-		private final E fromElement;
-		private final E toElement;
-		private int fromIndex;
-		
-		
-		public SubList(final SkipList<E> list, final int fromIndex, final int toIndex,
-				final E fromElement, final E toElement) {
+		public SubList(final Skiplist<E> list, final int fromIndex,
+				final int toIndex) {
 			super(list.comparator);
 			this.list = list;
-//			min = parent.min;
-//			offset = fromIndex;
 			modCount = list.modCount;
-			size = toIndex - fromIndex;
-			this.fromElement = fromElement;
-			this.toElement = toElement;
-			this.fromIndex = fromIndex;
-			int i = 0;
-//			for (; i < fromIndex; i++)
-//				min = successor(min);
-//			max = min;
-//			for (; i < toIndex - 1; i++)
-//				max = successor(max);
-//			if (fromElement != null)
-//				this.fromElement = fromElement;
-//			else
-//				this.fromElement = min.element;
-//			if (toElement != null)
-//				this.toElement = toElement;
-//			else
-//				this.toElement = max.element;
+			offset = fromIndex;
+			size = toIndex - fromIndex;			
+			from = list.search(fromIndex);
+			to = list.search(toIndex);
+		}
+		
+		void checkForConcurrentModification() {
+			if (modCount != list.modCount)
+				throw new ConcurrentModificationException();
 		}
 		
 		@Override
-		public int size() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public boolean isEmpty() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean contains(Object o) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean contains(Object o){
+			checkForConcurrentModification();
+			return super.contains(o);
 		}
 
 		@Override
@@ -746,7 +709,7 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		@Override
 		public void clear() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -786,30 +749,25 @@ public class SkipList<E> extends AbstractCollection<E> implements
 		}
 
 		@Override
-		public SortedList<E> subList(E fromElement, boolean fromInclusive,
-				E toElement, boolean toInclusive) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public SortedList<E> headList(E toElement, boolean inclusive) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public SortedList<E> tailList(E fromElement, boolean inclusive) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public SortedList<E> subList(int fromIndex, boolean fromInclusive,
-				int toIndex, boolean toInclusive) {
+		public Sortedlist<E> subList(int fromIndex, int toIndex) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
+		@Override
+		Node<E> search(final E e) {
+			int min = comparator.compare(e, from.element);
+			int max = comparator.compare(e, to.element);
+			if (min < 0 || max > 0)
+				return null;
+			if (min == 0)
+				return from;
+			else if (max == 0)
+				return to;
+			else
+				return list.search(e);
+		}
+
 	}
+
 }
