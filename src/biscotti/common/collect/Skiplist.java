@@ -16,12 +16,7 @@
 
 package biscotti.common.collect;
 
-import static com.google.common.base.Preconditions.checkElementIndex;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkPositionIndex;
-import static com.google.common.base.Preconditions.checkPositionIndexes;
-import static com.google.common.base.Preconditions.checkState;
-
+import static com.google.common.base.Preconditions.*;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -38,14 +33,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
- * A {@link Sortedlist} whose elements are sorted from <i>least</i> to
- * <i>greatest</i> according to their <i>natural ordering</i>, or by an explicit
- * {@link Comparator} provided at creation. Attempting to remove or insert
- * {@code null} elements is prohibited. Querying for {@code null} elements is
- * allowed. Inserting non-comparable elements will result in a
- * {@code ClassCastException}. The {@code add(int, E)} ,
- * {@code addAll(int, Collection)}, and {@code set(int, E)} operations are not
- * supported.
+ * A Skip List implementation of a {@link Sortedlist}. Elements are sorted from
+ * <i>least</i> to <i>greatest</i> according to their <i>natural ordering</i>,
+ * or by an explicit {@link Comparator} provided at creation. Attempting to
+ * remove or insert {@code null} elements is prohibited. Querying for
+ * {@code null} elements is allowed. Inserting non-comparable elements will
+ * result in a {@code ClassCastException}.
  * <p>
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
@@ -76,7 +69,7 @@ import com.google.common.collect.Ordering;
  * probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class compared to a
- * {@link TreeList} (where n is the size of the list and m is the size of the
+ * {@link Treelist} (where n is the size of the list and m is the size of the
  * specified collection):
  * <p>
  * 
@@ -87,8 +80,8 @@ import com.google.common.collect.Ordering;
  *     <th style="text-align:center;" colspan="2">Running Time</th>
  *   </tr>
  *   <tr>
- *     <td style="text-align:center;"><b>SkipList</b><br>(<i>expected</i>)</td>
- *     <td style="text-align:center;"><b>TreeList</b><br>(<i>worst-case</i>)</td>
+ *     <td style="text-align:center;"><b>Skiplist</b><br>(<i>expected</i>)</td>
+ *     <td style="text-align:center;"><b>Treelist</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
  *     <td>
@@ -136,14 +129,14 @@ import com.google.common.collect.Ordering;
  *   </tr>
  * </table>
  * <p>
- * The {@code subList} view exhibits identical time complexity, with the
+ * The sub-list views exhibit identical time complexity, with the
  * exception of the {@code clear()} operation which runs in linear time
  * proportional to the size of the view.
  * 
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
- * @see TreeList
+ * @see Treelist
  */
 public class Skiplist<E> extends AbstractCollection<E> implements
 		Sortedlist<E>, Serializable, Cloneable {
@@ -151,7 +144,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
-	private transient int size = 0;
+	transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
@@ -159,7 +152,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@SuppressWarnings("unchecked")
 	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
-	private transient int modCount = 0;
+	transient int modCount = 0;
 
 	private Skiplist(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
@@ -419,7 +412,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		checkPositionIndexes(fromIndex, toIndex, size);
 		if (fromIndex == size)
 			fromIndex--;
-		return new SubList(this, fromIndex, --toIndex);
+		return new Sublist(this, fromIndex, --toIndex);
 	}
 
 	/**
@@ -624,116 +617,155 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return curr;
 	}
 
-	private class SubList extends Skiplist<E> {
+	private class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
 		private Node<E> from;
 		private Node<E> to;
 
-		public SubList(final Skiplist<E> list, final int fromIndex,
+		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
 			super(list.comparator);
 			this.list = list;
 			modCount = list.modCount;
 			offset = fromIndex;
-			size = toIndex - fromIndex;			
+			size = toIndex - fromIndex;
 			from = list.search(fromIndex);
 			to = list.search(toIndex);
 		}
-		
-		void checkForConcurrentModification() {
+
+		private void checkForConcurrentModification() {
 			if (modCount != list.modCount)
 				throw new ConcurrentModificationException();
 		}
-		
+
 		@Override
-		public boolean contains(Object o){
+		public Comparator<? super E> comparator() {
+			return list.comparator();
+		}
+
+		@Override
+		public int size() {
 			checkForConcurrentModification();
-			return super.contains(o);
+			return size;
 		}
 
-		@Override
-		public Iterator<E> iterator() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		// @Override
+		// public boolean isEmpty() {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
 
-		@Override
-		public Object[] toArray() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		// @Override
+		// public boolean contains(Object o) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
 
-		@Override
-		public <T> T[] toArray(T[] a) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		// @Override
+		// public Iterator<E> iterator() {
+		// // TODO Auto-generated method stub
+		// return null;
+		// }
+
+		// @Override
+		// public Object[] toArray() {
+		// // TODO Auto-generated method stub
+		// return null;
+		// }
+		//
+		// @Override
+		// public <T> T[] toArray(T[] a) {
+		// // TODO Auto-generated method stub
+		// return null;
+		// }
 
 		@Override
 		public boolean add(E e) {
-			// TODO Auto-generated method stub
-			return false;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public boolean remove(Object o) {
-			// TODO Auto-generated method stub
-			return false;
+			throw new UnsupportedOperationException();
 		}
 
-		@Override
-		public boolean containsAll(Collection<?> c) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+		// @Override
+		// public boolean containsAll(Collection<?> c) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
 
-		@Override
-		public boolean addAll(Collection<? extends E> c) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+		// @Override
+		// public boolean addAll(Collection<? extends E> c) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
 
-		@Override
-		public boolean removeAll(Collection<?> c) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+		// @Override
+		// public boolean removeAll(Collection<?> c) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		//
+		// @Override
+		// public boolean retainAll(Collection<?> c) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
 
 		@Override
 		public void clear() {
-			// TODO Auto-generated method stub
-
+			checkForConcurrentModification();
+			final Iterator<?> iterator = iterator();
+			while (iterator.hasNext()) {
+				iterator.next();
+				iterator.remove();
+			}
 		}
 
 		@Override
 		public E get(int index) {
-			// TODO Auto-generated method stub
-			return null;
+			checkForConcurrentModification();
+			checkArgument(index > 0 && index <= size);
+			E e = list.remove(index + offset);
+			return list.get(index + offset);
 		}
 
 		@Override
 		public E remove(int index) {
-			// TODO Auto-generated method stub
-			return null;
+			checkForConcurrentModification();
+			checkArgument(index > 0 && index <= size);
+			final E e = list.remove(index + offset);
+			modCount = list.modCount;
+			size--;
+			return e;
 		}
 
 		@Override
 		public int indexOf(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
+			checkForConcurrentModification();
+			E e = (E) o;
+			int min = comparator.compare(e, from.element);
+			int max = comparator.compare(e, to.element);
+			if (min < 0 || max > 0)
+				return -1;
+			if (min == 0)
+				return 0;
+			return list.indexOf(e) + offset;
 		}
 
 		@Override
 		public int lastIndexOf(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
+			checkForConcurrentModification();
+			E e = (E) o;
+			int min = comparator.compare(e, from.element);
+			int max = comparator.compare(e, to.element);
+			if(min == 0)
+				return 0;
+			if (min < 0 || max > 0)
+				return -1;
+			return list.indexOf(e) + offset;
 		}
 
 		@Override
@@ -753,19 +785,19 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 		@Override
 		Node<E> search(final E e) {
+			checkForConcurrentModification();
 			int min = comparator.compare(e, from.element);
 			int max = comparator.compare(e, to.element);
 			if (min < 0 || max > 0)
 				return null;
 			if (min == 0)
 				return from;
-			else if (max == 0)
+			if (max == 0)
 				return to;
-			else
-				return list.search(e);
+			return list.search(e);
 		}
 
 	}
