@@ -33,11 +33,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
- * A Skip List implementation of a {@link Sortedlist}. Elements are sorted from
- * <i>least</i> to <i>greatest</i> according to their <i>natural ordering</i>,
- * or by an explicit {@link Comparator} provided at creation. Attempting to
- * remove or insert {@code null} elements is prohibited. Querying for
- * {@code null} elements is allowed. Inserting non-comparable elements will
+ * A {@link Sortedlist} implementation based on a modified <a
+ * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a>. Elements are
+ * sorted from <i>least</i> to <i>greatest</i> according to their <i>natural
+ * ordering</i>, or by an explicit {@link Comparator} provided at creation.
+ * Attempting to remove or insert {@code null} elements is prohibited. Querying
+ * for {@code null} elements is allowed. Inserting non-comparable elements will
  * result in a {@code ClassCastException}.
  * <p>
  * The iterators obtained from the {@link #iterator()} and
@@ -144,7 +145,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
-	transient int size = 0;
+	private transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
@@ -152,7 +153,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@SuppressWarnings("unchecked")
 	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
-	transient int modCount = 0;
+	private transient int modCount = 0;
 
 	private Skiplist(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
@@ -617,11 +618,13 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return curr;
 	}
 
-	private class Sublist extends Skiplist<E> {
+	private final class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
 		private Node<E> from;
 		private Node<E> to;
+		private int size;
+		private int modCount;
 
 		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
@@ -761,11 +764,11 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			E e = (E) o;
 			int min = comparator.compare(e, from.element);
 			int max = comparator.compare(e, to.element);
-			if(min == 0)
-				return 0;
 			if (min < 0 || max > 0)
 				return -1;
-			return list.indexOf(e) + offset;
+			if (max == 0)
+				return size - 1;
+			return list.lastIndexOf(e) + offset;
 		}
 
 		@Override
