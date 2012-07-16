@@ -16,7 +16,13 @@
 
 package biscotti.common.collect;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkPositionIndexes;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -28,7 +34,6 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.SortedSet;
-import java.util.SubList;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -770,9 +775,9 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 				@Override
 				public void remove() {
-	                li.remove();
-	                Sublist.this.modCount = list.modCount;
-	                size--;
+					li.remove();
+					Sublist.this.modCount = list.modCount;
+					size--;
 				}
 
 				@Override
