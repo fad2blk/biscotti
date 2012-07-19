@@ -478,7 +478,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private class ListIteratorImpl implements ListIterator<E> {
 		private Node<E> node;
 		private Node<E> last = null;
-		private int offset;
+		private final int offset;
 		private int index = 0;
 		private int expectedModCount = modCount;
 
@@ -555,8 +555,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 	// Skip List
 
-	private static class Node<E> {
-		private E element;
+	public static class Node<E> {
+		public E element;
 		private Node<E> prev;
 		private final Node<E>[] next;
 		private final int[] dist;
@@ -578,6 +578,19 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		while (randomLevel < MAX_LEVEL - 1 && random.nextDouble() < P)
 			randomLevel++;
 		return randomLevel;
+	}
+
+	private boolean remove(final Node<E> node) {
+		Node<E> curr = head;
+		for (int i = level - 1; i >= 0; i--) {
+			while (curr.next[i] != head && curr.next[i] != node)
+				;
+			curr = curr.next[i];
+			update[i] = curr;
+		}
+		curr = curr.next();
+		delete(curr, update);
+		return true;
 	}
 
 	private void delete(final Node<E> node, final Node<E>[] update) {
@@ -617,11 +630,11 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return curr;
 	}
 
-	private final class Sublist extends Skiplist<E> {
+	public final class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
-		private Node<E> from;
-		private Node<E> to;
+		public Node<E> from;
+		public Node<E> to;
 
 		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
@@ -663,13 +676,20 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			checkForConcurrentModification();
 			checkNotNull(o);
 			E e = (E) o;
+			System.out.println("delete " + e);
 			checkArgument(comparator.compare(from.element, e) < 1
 					&& comparator.compare(e, to.element) < 1);
-			if (comparator.compare(e, to.element) == 0)
+			if (comparator.compare(e, to.element) == 0) {
+				System.out.println(e + " equals " + to.element
+						+ " according to comparator");
+				System.out.println("old to: " + to.element);
 				to = to.prev;
+				System.out.println("new to: " + to.element);
+				super.remove(to.next());
+			}
 			list.remove(e);
 			this.modCount = list.modCount;
-			size--;
+			// size--;
 			return true;
 		}
 
