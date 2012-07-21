@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -40,7 +42,7 @@ import com.google.common.collect.Ordering;
 
 /**
  * A {@link Sortedlist} implementation based on a modified <a
- * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a>. Elements are
+ * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a>. Elements are
  * sorted from <i>least</i> to <i>greatest</i> according to their <i>natural
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
  * Attempting to remove or insert {@code null} elements is prohibited. Querying
@@ -63,13 +65,13 @@ import com.google.common.collect.Ordering;
  * method are, from the standpoint of this list, equal.
  * <p>
  * This class implements an array-based <a
- * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
+ * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> modified to
  * provide logarithmic running time for insertion, removal, and <a
  * href="http://en.wikipedia.org/wiki/Random_access">random access</a> lookup
  * operations (e.g. get the element at the i<i>th</i> index).
  * <p>
  * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh</a> in 1990, A
- * Skip List is a probabilistic data structure for maintaining items in sorted
+ * skip list is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
@@ -77,7 +79,7 @@ import com.google.common.collect.Ordering;
  * <p>
  * The following table summarizes the performance of this class compared to a
  * {@link Treelist} (where n is the size of the list and m is the size of the
- * specified collection):
+ * specified collection which is iterable in linear time):
  * <p>
  * 
  * <pre>
@@ -553,10 +555,10 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		}
 	}
 
-	// Skip List
+	// skip list
 
-	public static class Node<E> {
-		public E element;
+	private static class Node<E> {
+		private E element;
 		private Node<E> prev;
 		private final Node<E>[] next;
 		private final int[] dist;
@@ -630,11 +632,12 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return curr;
 	}
 
-	public final class Sublist extends Skiplist<E> {
+	@SuppressWarnings("serial")
+	private final class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
-		public Node<E> from;
-		public Node<E> to;
+		private Node<E> from;
+		private Node<E> to;
 
 		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
@@ -645,6 +648,18 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			size = toIndex - fromIndex;
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
+		}
+
+		// do we need this?
+		private void writeObject(java.io.ObjectOutputStream out)
+				throws IOException {
+			throw new NotSerializableException();
+		}
+
+		// do we need this?
+		private void readObject(java.io.ObjectInputStream in)
+				throws IOException, ClassNotFoundException {
+			throw new NotSerializableException();
 		}
 
 		private void checkForConcurrentModification() {
@@ -662,8 +677,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		public boolean add(E e) {
 			checkForConcurrentModification();
 			checkNotNull(e);
-			checkArgument(comparator.compare(from.element, e) < 1
-					&& comparator.compare(e, to.element) < 1);
+			checkArgument(inRange(from, to, e));
 			list.add(e);
 			this.modCount = list.modCount;
 			size++;
@@ -675,21 +689,16 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		public boolean remove(Object o) {
 			checkForConcurrentModification();
 			checkNotNull(o);
+			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			System.out.println("delete " + e);
-			checkArgument(comparator.compare(from.element, e) < 1
-					&& comparator.compare(e, to.element) < 1);
+			checkArgument(inRange(from, to, e));
 			if (comparator.compare(e, to.element) == 0) {
-				System.out.println(e + " equals " + to.element
-						+ " according to comparator");
-				System.out.println("old to: " + to.element);
+				list.remove(to);
 				to = to.prev;
-				System.out.println("new to: " + to.element);
-				super.remove(to.next());
-			}
-			list.remove(e);
+			} else
+				list.remove(e);
 			this.modCount = list.modCount;
-			// size--;
+			size--;
 			return true;
 		}
 
@@ -707,7 +716,6 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		public E get(int index) {
 			checkForConcurrentModification();
 			checkArgument(index > 0 && index <= size);
-			E e = list.remove(index + offset);
 			return list.get(index + offset);
 		}
 
@@ -725,14 +733,13 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 		@Override
 		public int indexOf(Object o) {
-			checkNotNull(o);
 			checkForConcurrentModification();
+			checkNotNull(o);
+			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			int min = comparator.compare(e, from.element);
-			int max = comparator.compare(e, to.element);
-			if (min < 0 || max > 0)
+			if (!inRange(from, to, e))
 				return -1;
-			if (min == 0)
+			if (comparator.compare(e, from.element) == 0)
 				return 0;
 			final int result = list.indexOf(e);
 			return result == -1 ? -1 : result - offset;
@@ -740,14 +747,13 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 		@Override
 		public int lastIndexOf(Object o) {
-			checkNotNull(o);
 			checkForConcurrentModification();
+			checkNotNull(o);
+			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			final int min = comparator.compare(e, from.element);
-			final int max = comparator.compare(e, to.element);
-			if (min < 0 || max > 0)
+			if (!inRange(from, to, e))
 				return -1;
-			if (max == 0)
+			if (comparator.compare(to.element, e) == 0)
 				return size - 1;
 			final int result = list.lastIndexOf(e);
 			return result == -1 ? -1 : result - offset;
@@ -877,15 +883,18 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		Node<E> search(final E e) {
 			checkForConcurrentModification();
-			int min = comparator.compare(e, from.element);
-			int max = comparator.compare(e, to.element);
-			if (min < 0 || max > 0)
+			if (!inRange(from, to, e))
 				return null;
-			if (min == 0)
+			if (comparator.compare(e, from.element) == 0)
 				return from;
-			if (max == 0)
+			if (comparator.compare(e, to.element) == 0)
 				return to;
 			return list.search(e);
+		}
+
+		private boolean inRange(final Node<E> from, final Node<E> to, E e) {
+			return (comparator.compare(from.element, e) < 1 && comparator
+					.compare(e, to.element) < 1);
 		}
 
 	}

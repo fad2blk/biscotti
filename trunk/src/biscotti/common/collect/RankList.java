@@ -52,13 +52,13 @@ import com.google.common.collect.Iterables;
  * concurrently it must be synchronized externally.
  * <p>
  * This class implements an array-based <a
- * href="http://en.wikipedia.org/wiki/Skip_list">Skip List</a> modified to
+ * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> modified to
  * provide logarithmic running time for linear list operations (e.g. insert an
  * element at the i<i>th</i> index). Linear list operations are sometimes
  * referred to as rank operations.
  * <p>
  * Invented by <a href="http://www.cs.umd.edu/~pugh/">Bill Pugh</a> in 1990, A
- * Skip List is a probabilistic data structure for maintaining items in sorted
+ * skip list is a probabilistic data structure for maintaining items in sorted
  * order. Strictly speaking it is impossible to make any hard guarantees
  * regarding the worst-case performance of this class. Practical performance is
  * <i>expected</i> to be logarithmic with an extremely high degree of
@@ -485,7 +485,7 @@ public final class RankList<E> extends AbstractList<E> implements List<E>,
 		}
 	}
 
-	// Skip List
+	// skip list
 
 	private static class Node<E> {
 		private E element;
