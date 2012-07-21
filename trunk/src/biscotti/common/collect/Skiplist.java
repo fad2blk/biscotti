@@ -35,7 +35,6 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.SortedSet;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
