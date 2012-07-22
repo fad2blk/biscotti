@@ -106,8 +106,8 @@ public class Test {
 		sl2.remove(1.7);
 		System.out.println(sl2+ ":"+sl.size());
 		
-		System.out.println("from: " + ((Skiplist.Sublist)sl2).from.element);
-		System.out.println("to: " + ((Skiplist.Sublist)sl2).to.element);
+	//	System.out.println("from: " + ((Skiplist.Sublist)sl2).from.element);
+//		System.out.println("to: " + ((Skiplist.Sublist)sl2).to.element);
 //		
 //		
 //		
