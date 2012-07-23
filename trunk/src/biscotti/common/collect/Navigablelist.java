@@ -1,14 +1,59 @@
 package biscotti.common.collect;
 
+
 /**
  * A {@link Sortedlist} augmented with navigation methods reporting closest
  * matches for given search targets.
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this list
+ *            the type of elements held in this sorted-list
  */
 public interface Navigablelist<E> extends Sortedlist<E> {
+	
+	/**
+	 * Returns a view of the greatest elements in this sorted-list strictly less than
+	 * the given element, or {@code null} if there is no such elements.
+	 * 
+	 * @param e
+	 *            the value to match
+	 * @return a view of greatest elements less than {@code e}, or {@code null}
+	 *         if there is no such elements
+	 */
+	Navigablelist<E> lower(E e);
+
+	/**
+	 * Returns a view of the greatest elements in this sorted-list less than or equal
+	 * to the given element, or {@code null} if there is no such elements.
+	 * 
+	 * @param e
+	 *            the value to match
+	 * @return a view of greatest elements less than or equal to {@code e}, or
+	 *         {@code null} if there is no such elements
+	 */
+	Navigablelist<E> floor(E e);
+
+	/**
+	 * Returns a view of the least elements in this sorted-list greater than or equal
+	 * to the given element, or {@code null} if there is no such elements.
+	 * 
+	 * @param e
+	 *            the value to match
+	 * @return a view of least elements greater than or equal to {@code e}, or
+	 *         {@code null} if there is no such elements
+	 */
+	Navigablelist<E> ceiling(E e);
+
+	/**
+	 * Returns a view of the least elements in this sorted-list strictly greater than
+	 * the given element, or {@code null} if there is no such elements.
+	 * 
+	 * @param e
+	 *            the value to match
+	 * @return a view of least elements greater than {@code e}, or {@code null}
+	 *         if there is no such elements
+	 */
+	Navigablelist<E> higher(E e);
 
 	/**
 	 * Returns a view of the portion of this sorted-list whose elements range

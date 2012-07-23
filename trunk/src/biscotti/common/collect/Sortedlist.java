@@ -44,7 +44,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 * if the element is not present.
 	 * 
 	 * @param o
-	 *            element to search for
+  	 *            element to search for
 	 * @return the index of the first occurrence of the specified element, or -1
 	 *         if the element is not present
 	 */
