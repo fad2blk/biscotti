@@ -16,13 +16,13 @@
 
 package biscotti.common.collect;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static biscotti.common.collect.Treelist.Color.BLACK;
+import static biscotti.common.collect.Treelist.Color.RED;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkPositionIndexes;
 import static com.google.common.base.Preconditions.checkState;
-import static biscotti.common.collect.Treelist.Color.*;
 
 import java.io.NotSerializableException;
 import java.io.Serializable;
@@ -39,6 +39,8 @@ import java.util.SortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.googlecode.biscotti.base.CloneNotSupportedException;
+import com.googlecode.biscotti.collect.SkipList;
+import com.googlecode.biscotti.collect.SortedList;
 
 /**
  * A {@link SortedList} implementation, based on a modified <a
@@ -815,6 +817,8 @@ public class Treelist<E> extends AbstractList<E> implements Sortedlist<E>,
 		}
 		return null;
 	}
+	
+	
 
 	/**
 	 * Introduction to Algorithms (CLR) Second Edition
