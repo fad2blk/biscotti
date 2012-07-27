@@ -520,7 +520,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		public boolean add(E e) {
 			checkForConcurrentModification();
 			if (comparator.compare(e, from.element) < 0
-					|| comparator.compare(e, to.element) >= 0)
+					|| comparator.compare(e, to.element) > 0)
 				throw new IllegalArgumentException("element out of range");
 			list.add(e);
 			modCount = list.modCount;
