@@ -117,7 +117,7 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  * </table>
  * <p>
- * The {@code headList}, {@code subList}, and {@code tailList} views exhibit
+ * The sub-list views exhibit
  * identical time complexity, with the exception of the {@code clear()}
  * operation which runs in linear time proportional to the size of the views.
  * 
@@ -192,6 +192,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <E> Treelist<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -229,6 +230,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean contains(Object o) {
 		return o != null && search((E) o) != null;
@@ -246,6 +248,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	@Override
 	public int indexOf(Object o) {
 		if (o != null) {
+			@SuppressWarnings("unchecked")
 			E e = (E) o;
 			ListIterator<E> itor = listIterator();
 			while (itor.hasNext())
@@ -258,6 +261,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
+			@SuppressWarnings("unchecked")
 			E e = (E) o;
 			ListIterator<E> itor = listIterator();
 			while (itor.hasNext())
@@ -367,6 +371,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		return listIterator;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		checkNotNull(o);
@@ -452,6 +457,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	 *             if an attempt is made to clone is a {@code subList},
 	 *             {@code headList}, or {@code tailList} view of the parent list
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Treelist<E> clone() {
 		Treelist<E> clone;
@@ -478,6 +484,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			oos.writeObject(e);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
@@ -490,6 +497,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			add((E) ois.readObject());
 	}
 
+	@SuppressWarnings("serial")
 	private class SubList extends Treelist<E> {
 		private final Treelist<E> list;
 		private final int offset;
@@ -530,6 +538,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			return true;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean contains(Object o) {
 			checkForConcurrentModification();
@@ -610,6 +619,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			};
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean remove(Object o) {
 			checkForConcurrentModification();
