@@ -130,13 +130,13 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		Sortedlist<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private transient int size = 0;
+	transient int size = 0;
 	private transient Node nil = new Node();
 	private transient Node min = nil;
 	private transient Node max = nil;
 	private transient Node root = nil;
-	private transient int modCount = 0;
-	private final Comparator<? super E> comparator;
+	transient int modCount = 0;
+	final Comparator<? super E> comparator;
 
 	private Treelist(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
@@ -358,12 +358,6 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		};
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * The returned iterator does not support the {@code add(E)} and
-	 * {@code set(E)} operations.
-	 */
 	@Override
 	public ListIterator<E> listIterator(int index) {
 		checkPositionIndex(index, size);
@@ -620,7 +614,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		public boolean remove(Object o) {
 			checkForConcurrentModification();
 			checkNotNull(o);
-			Node node = search((E) o);
+			final Node node = search((E) o);
 			if (node == null)
 				return false;
 			if (node == to)
