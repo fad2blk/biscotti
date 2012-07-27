@@ -81,8 +81,6 @@ import com.google.common.collect.Ordering;
  * {@link Treelist} (where n is the size of the list and m is the size of the
  * specified collection which is iterable in linear time):
  * <p>
- * 
- * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
@@ -179,10 +177,10 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code SkipList} that orders its elements according to
+	 * Creates a new {@code Skiplist} that orders its elements according to
 	 * their natural ordering.
 	 * 
-	 * @return a new {@code SkipList} that orders its elements according to
+	 * @return a new {@code Skiplist} that orders its elements according to
 	 *         their natural ordering
 	 */
 	public static <E extends Comparable<? super E>> Skiplist<E> create() {
@@ -190,12 +188,12 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code SkipList} that orders its elements according to the
+	 * Creates a new {@code Skiplist} that orders its elements according to the
 	 * specified comparator.
 	 * 
 	 * @param comparator
 	 *            the comparator that will be used to order this list
-	 * @return a new {@code SkipList} that orders its elements according to
+	 * @return a new {@code Skiplist} that orders its elements according to
 	 *         {@code comparator}
 	 */
 	public static <E extends Comparable<? super E>> Skiplist<E> create(
@@ -205,7 +203,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code SkipList} containing the elements of the specified
+	 * Creates a new {@code Skiplist} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection},
 	 * this list will be ordered according to the same ordering. Otherwise, this
@@ -214,7 +212,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the list
-	 * @return a new {@code SkipList} containing the elements of the specified
+	 * @return a new {@code Skiplist} containing the elements of the specified
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
@@ -423,7 +421,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Returns a shallow copy of this {@code SkipList}. The elements themselves
+	 * Returns a shallow copy of this {@code Skiplist}. The elements themselves
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this list

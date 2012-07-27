@@ -430,6 +430,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * 
 	 * @return a shallow copy of this queue
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public TreeQueue<E> clone() {
 		TreeQueue<E> clone;
@@ -456,6 +457,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			oos.writeObject(e);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
