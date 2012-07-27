@@ -646,6 +646,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			modCount = list.modCount;
 			offset = fromIndex;
 			size = toIndex - fromIndex;
+			
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
 		}
@@ -715,7 +716,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		public E get(int index) {
 			checkForConcurrentModification();
-			checkArgument(index > 0 && index <= size);
+			checkPositionIndex(index, size);
 			return list.get(index + offset);
 		}
 
