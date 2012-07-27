@@ -70,9 +70,6 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
  * specified collection which is iterable in linear time):
  * <p>
- * 
- * <pre>
- * 
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;">Method</th>
@@ -117,9 +114,9 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  *   </tr>
  * </table>
  * <p>
- * The sub-list views exhibit
- * identical time complexity, with the exception of the {@code clear()}
- * operation which runs in linear time proportional to the size of the views.
+ * The sub-list views exhibit identical time complexity, with the exception of
+ * the {@code clear()} operation which runs in linear time proportional to the
+ * size of the views.
  * 
  * @author Zhenya Leonov
  * @param <E>
