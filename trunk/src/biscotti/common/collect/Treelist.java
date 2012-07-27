@@ -63,8 +63,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * not one is explicitly provided) to perform all element comparisons. Two
  * elements which are deemed equal by the comparator's {@code compare(E, E)}
  * method are, from the standpoint of this list, equal. Further, no guarantee is
- * made as to the final order of elements with equal priority. Ties may be
- * broken arbitrarily.
+ * made as to the final order of <i>equal</i> elements. Ties may be broken
+ * arbitrarily.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
  * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
