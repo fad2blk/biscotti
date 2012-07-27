@@ -62,7 +62,9 @@ import com.google.common.collect.Ordering;
  * <b>Implementation Note:</b> This implementation uses a comparator (whether or
  * not one is explicitly provided) to perform all element comparisons. Two
  * elements which are deemed equal by the comparator's {@code compare(E, E)}
- * method are, from the standpoint of this list, equal.
+ * method are, from the standpoint of this list, equal. Further, no guarantee is
+ * made as to the final order of <i>equal</i> elements. Ties may be broken
+ * arbitrarily.
  * <p>
  * This class implements an array-based <a
  * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a> modified to
