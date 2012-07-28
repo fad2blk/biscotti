@@ -1,6 +1,5 @@
 package biscotti.common.collect;
 
-
 /**
  * A {@link Sortedlist} augmented with navigation methods reporting closest
  * matches for given search targets.
@@ -10,10 +9,22 @@ package biscotti.common.collect;
  *            the type of elements held in this sorted-list
  */
 public interface Navigablelist<E> extends Sortedlist<E> {
-	
+
 	/**
-	 * Returns a view of the greatest elements in this sorted-list strictly less than
-	 * the given element, or {@code null} if there is no such elements.
+	 * Returns a reverse order view of the elements contained in this
+	 * sorted-list. The descending sorted-list is backed by this sorted-list, so
+	 * changes to the sorted-list are reflected in the descending sorted-list,
+	 * and vice-versa. If either sorted-list is modified while an iteration over
+	 * either sorted-list is in progress (except through the iterator's own
+	 * {@code remove} operation), the results of the iteration are undefined.
+	 * 
+	 * @return a reverse order view of this list
+	 */
+	Navigablelist<E> descendingList();
+
+	/**
+	 * Returns a view of the greatest elements in this sorted-list strictly less
+	 * than the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
@@ -23,8 +34,8 @@ public interface Navigablelist<E> extends Sortedlist<E> {
 	Navigablelist<E> lower(E e);
 
 	/**
-	 * Returns a view of the greatest elements in this sorted-list less than or equal
-	 * to the given element, or {@code null} if there is no such elements.
+	 * Returns a view of the greatest elements in this sorted-list less than or
+	 * equal to the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
@@ -34,8 +45,8 @@ public interface Navigablelist<E> extends Sortedlist<E> {
 	Navigablelist<E> floor(E e);
 
 	/**
-	 * Returns a view of the least elements in this sorted-list greater than or equal
-	 * to the given element, or {@code null} if there is no such elements.
+	 * Returns a view of the least elements in this sorted-list greater than or
+	 * equal to the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
@@ -45,8 +56,8 @@ public interface Navigablelist<E> extends Sortedlist<E> {
 	Navigablelist<E> ceiling(E e);
 
 	/**
-	 * Returns a view of the least elements in this sorted-list strictly greater than
-	 * the given element, or {@code null} if there is no such elements.
+	 * Returns a view of the least elements in this sorted-list strictly greater
+	 * than the given element, or {@code null} if there is no such elements.
 	 * 
 	 * @param e
 	 *            the value to match
@@ -133,5 +144,5 @@ public interface Navigablelist<E> extends Sortedlist<E> {
 	 *             {@code fromElement} lies outside the bounds of the range
 	 */
 	Navigablelist<E> tailList(E fromElement, boolean inclusive);
-	
+
 }
