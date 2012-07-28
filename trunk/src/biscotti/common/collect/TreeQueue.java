@@ -53,7 +53,8 @@ import com.google.common.collect.Ordering;
  * element equality. The ordering imposed by the comparator is not required to
  * be consistent with equals. Given a comparator {@code c}, for any two elements
  * {@code e1} and {@code e2} such that {@code c.compare(e1, e2) == 0} it is not
- * necessarily true that {@code e1.equals(e2) == true}.
+ * necessary for {@code e1.equals(e2)} to return {@code true}. This allows for
+ * unequal elements to have equal priority.
  * <p>
  * Besides the regular {@link #peek() peek()}, {@link #poll() poll()},
  * {@link #remove() remove()} operations specified in the {@code Queue}
@@ -72,19 +73,18 @@ import com.google.common.collect.Ordering;
  * concurrently it must be synchronized externally.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * compared to a {@link PriorityQueue PriorityQueue} (where <i>n</i> is
- * the size of this list and <i>m</i> is the size of the specified collection):
+ * compared to a {@link PriorityQueue PriorityQueue} (where <i>n</i> is the size
+ * of this queue and <i>m</i> is the size of the specified collection which is
+ * iterable in linear time):
  * <p>
- * 
- * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
  *     <th style="text-align:center;" colspan="2">Running Time</th>
  *   </tr>
  *   <tr>
- *     <th>TreeQueue</th>
- *     <th>PriorityQueue</th>
+ *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>average</i>)</td>
+ *     <td style="text-align:center;"><b>PriorityQueue</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
  *     <td>

@@ -65,11 +65,10 @@ import com.google.common.collect.Iterables;
  * probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class compared to an
- * {@link ArrayList} and a {@link LinkedList} (where n is the size of the list
- * and m is the size of the specified collection):
+ * {@link ArrayList} and a {@link LinkedList} (where n is the size of this list
+ * and <i>m</i> is the size of the specified collection which is iterable in
+ * linear time):
  * <p>
- * 
- * <pre>
  * <table border cellpadding="3" cellspacing="1" style="width:450px;">
  *   <tr>
  *     <th style="text-align:center;" rowspan="2">Method</th>
@@ -167,7 +166,7 @@ import com.google.common.collect.Iterables;
  *     <td style="text-align:center;" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * <p>
- * The {@code subList} view exhibits identical time complexity, with the
+ * The sub-list views exhibit identical time complexity, with the
  * exception of the {@code clear()} operation which runs in linear time
  * proportional to the size of the view.
  * 

@@ -67,8 +67,8 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * arbitrarily.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
- * (where <i>n</i> is the size of this list and <i>m</i> is the size of the
- * specified collection which is iterable in linear time):
+ * (where <i>n</i> is the size of this sorted-list and <i>m</i> is the size of
+ * the specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
