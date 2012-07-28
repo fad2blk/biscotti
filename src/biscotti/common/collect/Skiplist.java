@@ -80,8 +80,8 @@ import com.google.common.collect.Ordering;
  * probability as the list grows.
  * <p>
  * The following table summarizes the performance of this class compared to a
- * {@link Treelist} (where n is the size of the list and m is the size of the
- * specified collection which is iterable in linear time):
+ * {@link Treelist} (where n is the size of this sorted-list and <i>m</i> is the
+ * size of the specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
@@ -646,7 +646,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			modCount = list.modCount;
 			offset = fromIndex;
 			size = toIndex - fromIndex;
-			
+
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
 		}
