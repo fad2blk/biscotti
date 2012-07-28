@@ -53,8 +53,7 @@ import com.google.common.collect.Ordering;
  * element equality. The ordering imposed by the comparator is not required to
  * be consistent with equals. Given a comparator {@code c}, for any two elements
  * {@code e1} and {@code e2} such that {@code c.compare(e1, e2) == 0} it is not
- * necessary for {@code e1.equals(e2)} to return {@code true}. This allows for
- * unequal elements to have equal priority.
+ * necessary for {@code e1.equals(e2)} to return {@code true}.
  * <p>
  * Besides the regular {@link #peek() peek()}, {@link #poll() poll()},
  * {@link #remove() remove()} operations specified in the {@code Queue}
@@ -72,71 +71,64 @@ import com.google.common.collect.Ordering;
  * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
  * concurrently it must be synchronized externally.
  * <p>
- * The underlying Red-Black Tree provides the following worst case running time
- * compared to a {@link PriorityQueue PriorityQueue} (where <i>n</i> is the size
- * of this queue and <i>m</i> is the size of the specified collection which is
- * iterable in linear time):
+ * The underlying Red-Black Tree provides the following running time compared to
+ * a {@link PriorityQueue PriorityQueue} (where <i>n</i> is the size of this
+ * queue and <i>m</i> is the size of the specified collection which is iterable
+ * in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
- *   <tr>
- *     <th style="text-align:center;" rowspan="2">Method</th>
- *     <th style="text-align:center;" colspan="2">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>average</i>)</td>
- *     <td style="text-align:center;"><b>PriorityQueue</b><br>(<i>worst-case</i>)</td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #offer(Object) offer(E)}</br>
- *       {@link #remove(Object)}
- *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #contains(Object)}
- *     </td>
- *     <td bgcolor="FFCC99"><i>O(log n)</i></td>
- *     <td bgcolor="FFCCCC" rowspan="2" style="text-align:center;"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear()}
- *     </td>
- *     <td bgcolor="FFCC99" rowspan="2" style="text-align:center;"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #poll()}</br>
- *       {@link #remove() remove()}</br>
- *     </td>
- *     <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #peek()}</br>
- *       {@link #size()}
- *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
- *   </tr>
+ * <tr>
+ * <th style="text-align:center;" rowspan="2">Method</th>
+ * <th style="text-align:center;" colspan="2">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td style="text-align:center;"><b>TreeQueue</b><br>
+ * (<i>average</i>)</td>
+ * <td style="text-align:center;"><b>PriorityQueue</b><br>
+ * (<i>worst-case</i>)</td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}<br>
+ * {@link #containsAll(Collection) containsAll(Collection)}</br>
+ * {@link #retainAll(Collection) retainAll(Collection)}</br>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}</br> {@link #offer(Object) offer(E)}</br>
+ * {@link #remove(Object)}</td>
+ * <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #contains(Object)}</td>
+ * <td bgcolor="FFCC99"><i>O(log n)</i></td>
+ * <td bgcolor="FFCCCC" rowspan="2" style="text-align:center;"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear()}</td>
+ * <td bgcolor="FFCC99" rowspan="2" style="text-align:center;"><i>O(1)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #poll()}</br> {@link #remove() remove()}</br></td>
+ * <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
+ * {@link #peek()}</br> {@link #size()}</td>
+ * <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
+ * </tr>
  * </table>
+ * <p>
  * 
  * @author Zhenya Leonov
  * @param <E>
- * the type of elements held in this queue
+ *            the type of elements held in this queue
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
