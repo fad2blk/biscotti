@@ -59,12 +59,11 @@ import com.googlecode.biscotti.base.CloneNotSupportedException;
  * This list is not <i>thread-safe</i>. If multiple threads modify this list
  * concurrently it must be synchronized externally.
  * <p>
- * <b>Implementation Note:</b> This implementation uses a comparator (whether or
- * not one is explicitly provided) to perform all element comparisons. Two
- * elements which are deemed equal by the comparator's {@code compare(E, E)}
- * method are, from the standpoint of this list, equal. Further, no guarantee is
- * made as to the final order of <i>equal</i> elements. Ties may be broken
- * arbitrarily.
+ * This implementation uses a comparator (whether or not one is explicitly
+ * provided) to perform all element comparisons. Two elements which are deemed
+ * equal by the comparator's {@code compare(E, E)} method are, from the
+ * standpoint of this list, equal. Further, no guarantee is made as to the final
+ * order of <i>equal</i> elements. Ties may be broken arbitrarily.
  * <p>
  * The underlying Red-Black Tree provides the following worst case running time
  * (where <i>n</i> is the size of this sorted-list and <i>m</i> is the size of
@@ -402,49 +401,12 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		size = 0;
 	}
 
-	// @Override
-	// public TreeList<E> headList(E toElement) {
-	// checkNotNull(toElement);
-	// Iterator<E> itor = iterator();
-	// int toIndex = 0;
-	// while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
-	// toIndex++;
-	// return new SubList(this, 0, toIndex, null, toElement);
-	// }
-
 	@Override
 	public Treelist<E> subList(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size());
 		return new SubList(this, fromIndex, toIndex);
 	}
-
-	// @Override
-	// public TreeList<E> subList(E fromElement, E toElement) {
-	// checkNotNull(fromElement);
-	// checkNotNull(toElement);
-	// checkArgument(comparator.compare(fromElement, toElement) <= 0);
-	// Iterator<E> itor = iterator();
-	// int fromIndex = 0;
-	// while (itor.hasNext()
-	// && comparator.compare(itor.next(), fromElement) < 0)
-	// fromIndex++;
-	// int toIndex = fromIndex + 1;
-	// while (itor.hasNext() && comparator.compare(itor.next(), toElement) < 0)
-	// toIndex++;
-	// return new SubList(this, fromIndex, toIndex, fromElement, toElement);
-	// }
-
-	// @Override
-	// public TreeList<E> tailList(E fromElement) {
-	// checkNotNull(fromElement);
-	// Iterator<E> itor = iterator();
-	// int fromIndex = 0;
-	// while (itor.hasNext()
-	// && comparator.compare(itor.next(), fromElement) < 0)
-	// fromIndex++;
-	// return new SubList(this, fromIndex, size, fromElement, null);
-	// }
-
+	
 	/**
 	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
 	 * are not cloned.
