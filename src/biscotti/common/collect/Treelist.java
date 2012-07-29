@@ -55,8 +55,8 @@ import com.google.common.collect.Ordering;
  * {@code ConcurrentModificationException}. Further, the list iterator does not
  * support the {@code add(E)} and {@code set(E)} operations.
  * <p>
- * This list is not <i>thread-safe</i>. If multiple threads modify this list
- * concurrently it must be synchronized externally.
+ * This sorted-list is not <i>thread-safe</i>. If multiple threads modify this
+ * sorted-list concurrently it must be synchronized externally.
  * <p>
  * This implementation uses a comparator (whether or not one is explicitly
  * provided) to perform all element comparisons. Two elements which are deemed
