@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -68,6 +69,8 @@ import com.google.common.collect.Ordering;
  * (where <i>n</i> is the size of this sorted-list and <i>m</i> is the size of
  * the specified collection which is iterable in linear time):
  * <p>
+ * 
+ * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;">Method</th>
@@ -401,11 +404,39 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	@Override
+	public int hashCode() {
+		int hashCode = 1;
+		for (E e : this)
+			hashCode = 31 * hashCode + e.hashCode();
+		return hashCode;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Sortedlist))
+			return false;
+		try {
+			@SuppressWarnings("unchecked")
+			final Iterator<E> i = ((Collection<E>) o).iterator();
+			for (E e : this)
+				if (comparator.compare(e, i.next()) != 0)
+					return false;
+			return !i.hasNext();
+		} catch (ClassCastException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	@Override
 	public Treelist<E> subList(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size());
 		return new SubList(this, fromIndex, toIndex);
 	}
-	
+
 	/**
 	 * Returns a shallow copy of this {@code Treelist}. The elements themselves
 	 * are not cloned.
