@@ -1,7 +1,5 @@
 package biscotti.common.collect;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.ListIterator;
 
 /**

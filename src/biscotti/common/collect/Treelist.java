@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -69,8 +68,6 @@ import com.google.common.collect.Ordering;
  * (where <i>n</i> is the size of this sorted-list and <i>m</i> is the size of
  * the specified collection which is iterable in linear time):
  * <p>
- * 
- * <pre>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;">Method</th>
