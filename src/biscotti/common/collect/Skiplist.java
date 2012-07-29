@@ -414,6 +414,34 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		modCount++;
 		size = 0;
 	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = 1;
+		for (E e : this)
+			hashCode = 31 * hashCode + e.hashCode();
+		return hashCode;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Sortedlist))
+			return false;
+		try {
+			@SuppressWarnings("unchecked")
+			final Iterator<E> i = ((Collection<E>) o).iterator();
+			for (E e : this)
+				if (comparator.compare(e, i.next()) != 0)
+					return false;
+			return !i.hasNext();
+		} catch (ClassCastException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
 
 	@Override
 	public Skiplist<E> subList(int fromIndex, int toIndex) {

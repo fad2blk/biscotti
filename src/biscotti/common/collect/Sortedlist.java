@@ -1,5 +1,7 @@
 package biscotti.common.collect;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 /**
@@ -44,7 +46,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 * if the element is not present.
 	 * 
 	 * @param o
-  	 *            element to search for
+	 *            element to search for
 	 * @return the index of the first occurrence of the specified element, or -1
 	 *         if the element is not present
 	 */
@@ -110,5 +112,27 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             {@code fromIndex < 0 || toIndex > size || fromIndex > toIndex}
 	 */
 	public Sortedlist<E> subList(int fromIndex, int toIndex);
+
+	/**
+	 * Returns the hash code value for this sorted-list. The hash code of a
+	 * sorted-list is dependent the elements present in the sorted-list.
+	 * 
+	 * @return the hash code value for this sorted-list
+	 */
+	@Override
+	public int hashCode();
+
+	/**
+	 * Compares the specified object with this sorted-list for equality. Returns
+	 * {@code true} if and only if the specified object is also a sorted-list,
+	 * both sorted-lists have the same size, and all corresponding of pairs of
+	 * elements in the two sorted-lists are equal according to their <i>natural
+	 * ordering</i> or to the comparator provided during creation.
+	 * 
+	 * @return {@code true} if the specified object is {@code equal} to this
+	 *         sorted-list
+	 */
+	@Override
+	public boolean equals(Object o);
 
 }
