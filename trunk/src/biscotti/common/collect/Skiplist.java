@@ -429,7 +429,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Skiplist<E> clone() {
+	public Skiplist<E> clone() throws CloneNotSupportedException {
 		Skiplist<E> clone;
 		try {
 			clone = (Skiplist<E>) super.clone();
@@ -648,6 +648,11 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
+		}
+		
+		@Override
+		public Skiplist<E> clone() throws CloneNotSupportedException {
+			throw new CloneNotSupportedException();
 		}
 
 		// do we need this?
