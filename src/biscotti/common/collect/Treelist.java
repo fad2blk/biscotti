@@ -38,7 +38,6 @@ import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
-import com.googlecode.biscotti.base.CloneNotSupportedException;
 
 /**
  * A {@link Sortedlist} implementation, based on a modified <a
@@ -145,10 +144,10 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeList} that orders its elements according to
+	 * Creates a new {@code Treelist} that orders its elements according to
 	 * their natural ordering.
 	 * 
-	 * @return a new {@code TreeList} that orders its elements according to
+	 * @return a new {@code Treelist} that orders its elements according to
 	 *         their natural ordering
 	 */
 	public static <E extends Comparable<? super E>> Treelist<E> create() {
@@ -156,12 +155,12 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeList} that orders its elements according to the
+	 * Creates a new {@code Treelist} that orders its elements according to the
 	 * specified comparator.
 	 * 
 	 * @param comparator
 	 *            the comparator that will be used to order this list
-	 * @return a new {@code TreeList} that orders its elements according to
+	 * @return a new {@code Treelist} that orders its elements according to
 	 *         {@code comparator}
 	 */
 	public static <E> Treelist<E> create(final Comparator<? super E> comparator) {
@@ -170,7 +169,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates a new {@code TreeList} containing the elements of the specified
+	 * Creates a new {@code Treelist} containing the elements of the specified
 	 * {@code Iterable}. If the specified iterable is an instance of
 	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection},
 	 * this list will be ordered according to the same ordering. Otherwise, this
@@ -179,7 +178,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	 * 
 	 * @param elements
 	 *            the iterable whose elements are to be placed into the list
-	 * @return a new {@code TreeList} containing the elements of the specified
+	 * @return a new {@code Treelist} containing the elements of the specified
 	 *         iterable
 	 * @throws ClassCastException
 	 *             if elements of the specified iterable cannot be compared to
@@ -408,17 +407,17 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 	
 	/**
-	 * Returns a shallow copy of this {@code TreeList}. The elements themselves
+	 * Returns a shallow copy of this {@code Treelist}. The elements themselves
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this list
 	 * @throws CloneNotSupportedException
-	 *             if an attempt is made to clone is a {@code subList},
-	 *             {@code headList}, or {@code tailList} view of the parent list
+	 *             if an attempt is made to clone is a sub-list view of this
+	 *             sorted-list
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Treelist<E> clone() {
+	public Treelist<E> clone() throws CloneNotSupportedException {
 		Treelist<E> clone;
 		try {
 			clone = (Treelist<E>) super.clone();
@@ -625,7 +624,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		}
 
 		@Override
-		public Treelist<E> clone() {
+		public Treelist<E> clone() throws CloneNotSupportedException {
 			throw new CloneNotSupportedException();
 		}
 
