@@ -77,54 +77,61 @@ import com.google.common.collect.Ordering;
  * in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
- * <tr>
- * <th style="text-align:center;" rowspan="2">Method</th>
- * <th style="text-align:center;" colspan="2">Running Time</th>
- * </tr>
- * <tr>
- * <td style="text-align:center;"><b>TreeQueue</b><br>
- * (<i>average</i>)</td>
- * <td style="text-align:center;"><b>PriorityQueue</b><br>
- * (<i>worst-case</i>)</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection) addAll(Collection)}<br>
- * {@link #containsAll(Collection) containsAll(Collection)}</br>
- * {@link #retainAll(Collection) retainAll(Collection)}</br>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}</br> {@link #offer(Object) offer(E)}</br>
- * {@link #remove(Object)}</td>
- * <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #contains(Object)}</td>
- * <td bgcolor="FFCC99"><i>O(log n)</i></td>
- * <td bgcolor="FFCCCC" rowspan="2" style="text-align:center;"><i>O(n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear()}</td>
- * <td bgcolor="FFCC99" rowspan="2" style="text-align:center;"><i>O(1)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #poll()}</br> {@link #remove() remove()}</br></td>
- * <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #element() element()}</br> {@link #isEmpty() isEmpty()}</br>
- * {@link #peek()}</br> {@link #size()}</td>
- * <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
- * </tr>
+ *   <tr>
+ *     <th style="text-align:center;" rowspan="2">Method</th>
+ *     <th style="text-align:center;" colspan="2">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>average</i>)</td>
+ *     <td style="text-align:center;"><b>PriorityQueue</b><br>(<i>worst-case</i>)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}<br>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #offer(Object) offer(E)}</br>
+ *       {@link #remove(Object)}
+ *     </td>
+ *     <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #contains(Object)}
+ *     </td>
+ *     <td bgcolor="FFCC99" style="text-align:center;"><i>O(log n)</i></td>
+ *     <td bgcolor="FFCCCC" rowspan="2" style="text-align:center;"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear()}
+ *     </td>
+ *     <td bgcolor="FFCC99" rowspan="2" style="text-align:center;"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #poll()}</br>
+ *       {@link #remove() remove()}</br>
+ *     </td>
+ *     <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #element() element()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek()}</br>
+ *       {@link #size()}
+ *     </td>
+ *     <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
+ *   </tr>
  * </table>
- * <p>
  * 
  * @author Zhenya Leonov
  * @param <E>
