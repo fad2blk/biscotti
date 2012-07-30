@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package biscotti.common.collect;
+package biscotti.collect;
 
-import static biscotti.common.collect.Treelist.Color.BLACK;
-import static biscotti.common.collect.Treelist.Color.RED;
+import static biscotti.collect.Treelist.Color.BLACK;
+import static biscotti.collect.Treelist.Color.RED;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
