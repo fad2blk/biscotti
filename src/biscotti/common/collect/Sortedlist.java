@@ -7,10 +7,10 @@ import java.util.ListIterator;
  * maintains its elements in sorted order according to their <i>natural
  * ordering</i> or by a given {@code Comparator}.
  * <p>
- * Unlike a sorted set a sorted-list typically allows duplicate elements and
- * allows users to access and remove elements by their integer index.
+ * Unlike a sorted set a sorted-list may contain duplicate elements and allows
+ * users to access and remove elements by their integer index.
  * 
- * @author Zhenya Leonov
+ * @author Zhenya Leonov List
  * @param <E>
  *            the type of elements held in this list
  */
@@ -118,7 +118,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 * <pre>
 	 * int hashCode = 1;
 	 * for (E e : this)
-	 *     hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+	 * 	hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
 	 * </pre>
 	 * 
 	 * @return the hash code value for this sorted-list
