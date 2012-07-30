@@ -3,12 +3,10 @@ package biscotti.collect;
 import java.util.ListIterator;
 
 /**
- * A <i>list-like</i> {@link SortedCollection}. Like a sorted set a sorted-list
- * maintains its elements in sorted order according to their <i>natural
- * ordering</i> or by a given {@code Comparator}.
- * <p>
- * Unlike a sorted set a sorted-list may contain duplicate elements and allows
+ * A {@link SortedCollection} which may contain duplicate elements and allows
  * users to access and remove elements by their integer index.
+ * <p>
+ * This is the <i>list</i> analog to sorted set.
  * 
  * @author Zhenya Leonov List
  * @param <E>
