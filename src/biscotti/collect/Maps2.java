@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.google.common.collect.Maps;
@@ -69,20 +70,6 @@ public class Maps2 {
 		checkArgument(expectedSize >= 0);
 		return new LinkedHashMap<K, V>(Math.max(expectedSize * 2, 16), .75F,
 				true);
-	}
-
-	/**
-	 * Creates a {@code TreeMap} containing the same mappings as the specified
-	 * map, sorted according to the <i>natural ordering</i> of its keys.
-	 * 
-	 * @param map
-	 *            the map whose mappings are to be placed in this map
-	 * @return a {@code TreeMap} containing the same mappings as the specified
-	 *         map, sorted according to the <i>natural ordering</i> of its keys
-	 */
-	public static <K, V> TreeMap<K, V> newTreeMap(
-			Map<? extends K, ? extends V> map) {
-		return new TreeMap<K, V>(map);
 	}
 
 }
