@@ -142,10 +142,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 
 	private static final long serialVersionUID = 1L;
 	transient int size = 0;
-	private transient Node<E> nil = new Node<E>();
-	transient Node<E> min = nil;
-	transient Node<E> max = nil;
-	private transient Node<E> root = nil;
+	private transient Node nil = new Node();
+	transient Node min = nil;
+	transient Node max = nil;
+	private transient Node root = nil;
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
@@ -243,7 +243,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		@SuppressWarnings("unchecked")
-		final Node<E> node = search((E) o);
+		final Node node = search((E) o);
 		if (node == null)
 			return false;
 		delete(node);
@@ -298,7 +298,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public boolean offer(E e) {
 		checkNotNull(e);
-		final Node<E> newNode = new Node<E>(e);
+		final Node newNode = new Node(e);
 		insert(newNode);
 		return true;
 	}
@@ -339,8 +339,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	@Override
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
-			private Node<E> next = min;
-			private Node<E> last = nil;
+			private Node next = min;
+			private Node last = nil;
 			private int expectedModCount = modCount;
 
 			@Override
@@ -385,8 +385,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 */
 	public Iterator<E> descendingIterator() {
 		return new Iterator<E>() {
-			private Node<E> next = max;
-			private Node<E> last = nil;
+			private Node next = max;
+			private Node last = nil;
 			private int expectedModCount = modCount;
 
 			@Override
@@ -438,7 +438,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError();
 		}
-		clone.nil = new Node<E>();
+		clone.nil = new Node();
 		clone.modCount = 0;
 		clone.root = clone.nil;
 		clone.min = clone.nil;
@@ -460,7 +460,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		nil = new Node<E>();
+		nil = new Node();
 		root = nil;
 		max = nil;
 		min = nil;
@@ -477,11 +477,11 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		BLACK, RED;
 	}
 
-	static class Node<E> {
+	class Node {
 		E element = null;
-		private Node<E> parent;
-		private Node<E> left;
-		private Node<E> right;
+		private Node parent;
+		private Node left;
+		private Node right;
 		private Color color = BLACK;
 
 		private Node() {
@@ -519,11 +519,11 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	private void insert(Node<E> z) {
+	private void insert(Node z) {
 		size++;
 		modCount++;
-		Node<E> x = root;
-		Node<E> y = nil;
+		Node x = root;
+		Node y = nil;
 		while (x != nil) {
 			y = x;
 			if (comparator.compare(z.element, x.element) < 0)
@@ -545,10 +545,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			min = z;
 	}
 
-	void delete(Node<E> z) {
+	void delete(Node z) {
 		size--;
 		modCount++;
-		Node<E> x, y;
+		Node x, y;
 		if (min == z)
 			min = successor(z);
 		if (max == z)
@@ -574,8 +574,8 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			fixAfterDeletion(x);
 	}
 
-	private Node<E> search(final E e) {
-		Node<E> n = root;
+	private Node search(final E e) {
+		Node n = root;
 		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
 			if (e.equals(n.element))
@@ -601,16 +601,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *       y = p[y]
 	 * return y
 	 */
-	private Node<E> successor(Node<E> x) {
+	private Node successor(Node x) {
 		if (x == nil)
 			return nil;
 		if (x.right != nil) {
-			Node<E> y = x.right;
+			Node y = x.right;
 			while (y.left != nil)
 				y = y.left;
 			return y;
 		}
-		Node<E> y = x.parent;
+		Node y = x.parent;
 		while (y != nil && x == y.right) {
 			x = y;
 			y = y.parent;
@@ -618,16 +618,16 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		return y;
 	}
 
-	private Node<E> predecessor(Node<E> x) {
+	private Node predecessor(Node x) {
 		if (x == nil)
 			return nil;
 		if (x.left != nil) {
-			Node<E> y = x.left;
+			Node y = x.left;
 			while (y.right != nil)
 				y = y.right;
 			return y;
 		}
-		Node<E> y = x.parent;
+		Node y = x.parent;
 		while (y != nil && x == y.left) {
 			x = y;
 			y = y.left;
@@ -653,9 +653,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * left[y] = x							Put x on y's left.
 	 * p[x] = y
 	 */
-	private void leftRotate(final Node<E> x) {
+	private void leftRotate(final Node x) {
 		if (x != nil) {
-			Node<E> n = x.right;
+			Node n = x.right;
 			x.right = n.left;
 			if (n.left != nil)
 				n.left.parent = x;
@@ -671,9 +671,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		}
 	}
 
-	private void rightRotate(final Node<E> x) {
+	private void rightRotate(final Node x) {
 		if (x != nil) {
-			Node<E> n = x.left;
+			Node n = x.left;
 			x.left = n.right;
 			if (n.right != nil)
 				n.right.parent = x;
@@ -712,11 +712,11 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *                        with right and left exchanged)
 	 * color[root[T]] = BLACK
 	 */
-	private void fixAfterInsertion(Node<E> z) {
+	private void fixAfterInsertion(Node z) {
 		z.color = RED;
 		while (z.parent.color == RED) {
 			if (z.parent == z.parent.parent.left) {
-				Node<E> y = z.parent.parent.right;
+				Node y = z.parent.parent.right;
 				if (y.color == RED) {
 					z.parent.color = BLACK;
 					y.color = BLACK;
@@ -732,7 +732,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 					rightRotate(z.parent.parent);
 				}
 			} else {
-				Node<E> y = z.parent.parent.left;
+				Node y = z.parent.parent.left;
 				if (y.color == RED) {
 					z.parent.color = BLACK;
 					y.color = BLACK;
@@ -781,10 +781,10 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *          else (same as then clause with right and left exchanged)
 	 * color[x] = BLACK
 	 */
-	private void fixAfterDeletion(Node<E> x) {
+	private void fixAfterDeletion(Node x) {
 		while (x != root && x.color == BLACK) {
 			if (x == x.parent.left) {
-				Node<E> w = x.parent.right;
+				Node w = x.parent.right;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
@@ -808,7 +808,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 					x = root;
 				}
 			} else {
-				Node<E> w = x.parent.left;
+				Node w = x.parent.left;
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
