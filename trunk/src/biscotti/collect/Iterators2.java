@@ -28,7 +28,6 @@ import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ForwardingListIterator;
@@ -248,8 +247,6 @@ public final class Iterators2 {
 	 * Returns an immutable empty {@code ListIterator}.
 	 * 
 	 * @return an immutable empty {@code ListIterator}
-	 * @deprecated {@link Collections#emptyListIterator()} is provided in Java
-	 *             SE 7 API.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> ListIterator<E> emptyListIterator() {
