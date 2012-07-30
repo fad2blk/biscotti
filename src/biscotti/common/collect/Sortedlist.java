@@ -113,7 +113,13 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 
 	/**
 	 * Returns the hash code value for this sorted-list. The hash code of a
-	 * sorted-list is dependent the elements present in the sorted-list.
+	 * sorted-list is defined to be the result of the following calculation:
+	 * 
+	 * <pre>
+	 * int hashCode = 1;
+	 * for (E e : this)
+	 *     hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+	 * </pre>
 	 * 
 	 * @return the hash code value for this sorted-list
 	 */
@@ -123,9 +129,9 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	/**
 	 * Compares the specified object with this sorted-list for equality. Returns
 	 * {@code true} if and only if the specified object is also a sorted-list,
-	 * both sorted-lists have the same size, and all corresponding of pairs of
-	 * elements in the two sorted-lists are equal according to their <i>natural
-	 * ordering</i> or to the comparator provided during creation.
+	 * both sorted-lists have the same size, and all corresponding pairs of
+	 * elements in the two sorted-lists are <i>equal</i> according to the
+	 * definition of this sorted-list.
 	 * 
 	 * @return {@code true} if the specified object is {@code equal} to this
 	 *         sorted-list
