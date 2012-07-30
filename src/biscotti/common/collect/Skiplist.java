@@ -708,7 +708,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		public boolean add(E e) {
 			checkForConcurrentModification();
 			checkNotNull(e);
-			checkArgument(inRange(from, to, e));
+			checkArgument(inRange(e, from, to));
 			list.add(e);
 			this.modCount = list.modCount;
 			size++;
@@ -722,7 +722,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			checkNotNull(o);
 			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			checkArgument(inRange(from, to, e));
+			checkArgument(inRange(e, from, to));
 			if (comparator.compare(e, to.element) == 0) {
 				list.remove(to);
 				to = to.prev;
@@ -746,16 +746,18 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		public E get(int index) {
 			checkForConcurrentModification();
-			checkPositionIndex(index, size);
+			checkElementIndex(index, size);
 			return list.get(index + offset);
 		}
 
 		@Override
 		public E remove(int index) {
 			checkForConcurrentModification();
-			checkArgument(index > 0 && index <= size);
+			checkElementIndex(index, size);
 			if (index == size - 1)
 				to = to.prev;
+			if (index == 0)
+				from = from.next();
 			final E e = list.remove(index + offset);
 			modCount = list.modCount;
 			size--;
@@ -768,7 +770,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			checkNotNull(o);
 			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			if (!inRange(from, to, e))
+			if (!inRange(e, from, to))
 				return -1;
 			if (comparator.compare(e, from.element) == 0)
 				return 0;
@@ -782,7 +784,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			checkNotNull(o);
 			@SuppressWarnings("unchecked")
 			E e = (E) o;
-			if (!inRange(from, to, e))
+			if (!inRange(e, from, to))
 				return -1;
 			if (comparator.compare(to.element, e) == 0)
 				return size - 1;
@@ -914,7 +916,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		Node<E> search(final E e) {
 			checkForConcurrentModification();
-			if (!inRange(from, to, e))
+			if (!inRange(e, from, to))
 				return null;
 			if (comparator.compare(e, from.element) == 0)
 				return from;
@@ -923,7 +925,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			return list.search(e);
 		}
 
-		private boolean inRange(final Node<E> from, final Node<E> to, E e) {
+		private boolean inRange(final E e, final Node<E> from, final Node<E> to) {
 			return (comparator.compare(from.element, e) < 1 && comparator
 					.compare(e, to.element) < 1);
 		}
