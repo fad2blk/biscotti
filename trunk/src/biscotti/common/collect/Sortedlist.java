@@ -7,8 +7,8 @@ import java.util.ListIterator;
  * maintains its elements in sorted order according to their <i>natural
  * ordering</i> or by a given {@code Comparator}.
  * <p>
- * Unlike a sorted set a sorted-list accepts duplicate elements and allows users
- * to access and remove elements by their integer index.
+ * Unlike a sorted set a sorted-list typically allows duplicate elements and
+ * allows users to access and remove elements by their integer index.
  * 
  * @author Zhenya Leonov
  * @param <E>
