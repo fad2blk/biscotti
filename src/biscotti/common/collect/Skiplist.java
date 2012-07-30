@@ -613,15 +613,13 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head && curr.next[i] != node)
-				;
-			curr = curr.next[i];
+				curr = curr.next[i];
 			update[i] = curr;
 		}
 		curr = curr.next();
 		delete(curr, update);
 		return true;
 	}
-
 	private void delete(final Node<E> node, final Node<E>[] update) {
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
