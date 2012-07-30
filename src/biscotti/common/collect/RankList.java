@@ -166,7 +166,7 @@ import com.google.common.collect.Iterables;
  *     <td style="text-align:center;" rowspan="4" colspan="3"><i>O(n)</i></td>
  * </table>
  * <p>
- * The sub-list views exhibit identical time complexity, with the
+ * The {@code subList} views exhibit identical time complexity, with the
  * exception of the {@code clear()} operation which runs in linear time
  * proportional to the size of the view.
  * 
