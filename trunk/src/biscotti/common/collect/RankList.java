@@ -89,21 +89,12 @@ import com.google.common.collect.Iterables;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #containsAll(Collection) containsAll(Collection)}
- *     </td>
- *     <td style="text-align:center;" colspan="3" rowspan="3"><i>O(m * n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *   </tr>
- *   <tr>
- *     <td>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #removeAll(Collection) removeAll(Collection)}</br>
  *       {@link #retainAll(Collection) retainAll(Collection)}
  *     </td>
+ *     <td style="text-align:center;" colspan="3"><i>O(m * n)</i></td>
  *   </tr>
- *   <tr>
  *     <td>
  *       {@link #add(Object) add(E)}
  *     </td>
@@ -150,11 +141,11 @@ import com.google.common.collect.Iterables;
  *     <td>{@link ListIterator#add(Object) ListIterator.add(E)}</td>
  *   </tr>
  *   <tr>
- *     <td>{@link ListIterator#set(Object) ListIterator.set(E)}</td>
- *     <td style="text-align:center;" colspan="3" rowspan="2"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>{@link #clear()}</td>
+ *     <td>
+ *       {@link ListIterator#set(Object) ListIterator.set(E)}</br>
+ *       {@link #clear()}
+ *     </td>
+ *     <td style="text-align:center;" colspan="3"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
