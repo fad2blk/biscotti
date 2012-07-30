@@ -1,4 +1,4 @@
-package biscotti.common.collect;
+package biscotti.collect;
 
 import java.util.ListIterator;
 

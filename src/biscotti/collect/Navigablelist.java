@@ -1,4 +1,4 @@
-package biscotti.common.collect;
+package biscotti.collect;
 
 /**
  * A {@link Sortedlist} augmented with navigation methods reporting closest

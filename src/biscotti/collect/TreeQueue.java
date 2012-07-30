@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package biscotti.common.collect;
+package biscotti.collect;
 
-import static biscotti.common.collect.TreeQueue.Color.BLACK;
-import static biscotti.common.collect.TreeQueue.Color.RED;
+import static biscotti.collect.TreeQueue.Color.BLACK;
+import static biscotti.collect.TreeQueue.Color.RED;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package biscotti.common.collect;
+package biscotti.collect;
 
 import com.google.common.collect.ForwardingIterator;
 import com.google.common.collect.PeekingIterator;

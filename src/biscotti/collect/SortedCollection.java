@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package biscotti.common.collect;
+package biscotti.collect;
 
 import java.util.Collection;
 import java.util.Comparator;
