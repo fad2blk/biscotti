@@ -116,7 +116,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 * <pre>
 	 * int hashCode = 1;
 	 * for (E e : this)
-	 * 	hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+	 *     hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
 	 * </pre>
 	 * 
 	 * @return the hash code value for this sorted-list
