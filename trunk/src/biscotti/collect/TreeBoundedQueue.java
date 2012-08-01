@@ -1,29 +1,15 @@
-/*
- * Copyright (C) 2010 Zhenya Leonov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package biscotti.collect;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
 
+import com.google.common.collect.ForwardingQueue;
 import com.google.common.collect.Ordering;
 
 /**
@@ -57,25 +43,26 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
-		BoundedQueue<E> {
+public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
+		BoundedQueue<E>, SortedCollection<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
-	private final int maxSize;
+	private TreeQueue<E> delegate;
+	private int maxSize;
 
 	private TreeBoundedQueue(final int maxSize,
 			final Comparator<? super E> comparator) {
-		super(comparator);
+		delegate = TreeQueue.create(comparator);
 		this.maxSize = maxSize;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
-		super(comparator);
+		delegate = TreeQueue.create(comparator);
 		for (E e : elements)
-			super.offer(e);
-		checkArgument(size > 0);
-		this.maxSize = size;
+			offer(e);
+		checkArgument(size() > 0);
+		this.maxSize = size();
 	}
 
 	/**
@@ -153,44 +140,20 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 		return q;
 	}
 
-	/**
-	 * Inserts the specified element into this queue if it is possible to do so
-	 * immediately without violating capacity restrictions, returning
-	 * {@code true} upon success and throwing an {@code IllegalStateException}
-	 * if no space is currently available.
-	 * <p>
-	 * This implementation returns {@code true} if {@code offer} succeeds, else
-	 * throws an {@code IllegalStateException}.
-	 * 
-	 * @throws IllegalStateException
-	 *             if this queue is full and the element to be added has equal
-	 *             or lower priority than the element at the tail of this queue
-	 */
 	@Override
 	public boolean add(E e) {
-		checkState(offer(e), "Deque full");
+		checkState(offer(e), "Queue full");
 		return true;
 	}
 
-	/**
-	 * Inserts the specified element into this queue if it is possible to do so
-	 * immediately without violating capacity restrictions. When using a
-	 * capacity-restricted queue, this method is generally preferable to
-	 * {@link #add}, which can fail to insert an element only by throwing an
-	 * exception.
-	 * 
-	 * @return {@code true} if the element was added to this queue, if this
-	 *         queue is full and the element to be added has equal or lower
-	 *         priority than the element at the head of this queue
-	 */
 	@Override
 	public boolean offer(E e) {
 		if (size() == maxSize)
-			if (comparator().compare(e, min.element) < 0)
-				delete(max);
+			if (comparator().compare(e, delegate().peekLast()) < 0)
+				delegate().pollLast();
 			else
 				return false;
-		return super.offer(e);
+		return delegate().offer(e);
 	}
 
 	@Override
@@ -201,6 +164,30 @@ public final class TreeBoundedQueue<E> extends TreeQueue<E> implements
 	@Override
 	public int remainingCapacity() {
 		return maxSize - size();
+	}
+
+	@Override
+	public Comparator<? super E> comparator() {
+		return delegate().comparator();
+	}
+
+	@Override
+	protected TreeQueue<E> delegate() {
+		return delegate;
+	}
+
+	/**
+	 * Returns a shallow copy of this {@code TreeBoundedQueue}. The elements
+	 * themselves are not cloned.
+	 * 
+	 * @return a shallow copy of this queue
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public TreeBoundedQueue<E> clone() throws CloneNotSupportedException {
+		TreeBoundedQueue<E> clone = (TreeBoundedQueue<E>) super.clone();
+		clone.delegate = (TreeQueue<E>) delegate.clone();
+		return clone;
 	}
 
 }
