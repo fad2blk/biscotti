@@ -141,15 +141,15 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	transient int size = 0;
+	private transient int size = 0;
 	private transient Node nil = new Node();
-	transient Node min = nil;
-	transient Node max = nil;
+	private transient Node min = nil;
+	private transient Node max = nil;
 	private transient Node root = nil;
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
-	TreeQueue(final Comparator<? super E> comparator) {
+	private TreeQueue(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
@@ -490,9 +490,9 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 
 		private Node(final E element) {
 			this.element = element;
-			parent = this;
-			right = this;
-			left = this;
+			parent = nil;
+			right = nil;
+			left = nil;
 		}
 	}
 
@@ -545,7 +545,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			min = z;
 	}
 
-	void delete(Node z) {
+	private void delete(Node z) {
 		size--;
 		modCount++;
 		Node x, y;
