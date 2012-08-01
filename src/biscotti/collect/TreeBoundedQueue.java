@@ -27,9 +27,9 @@ import com.google.common.collect.Ordering;
  * {@code addAll(Collection)} operations behave according to the following
  * policy: if the element to be added has higher priority than the lowest
  * priority element currently in the queue, the new element is added and the
- * lowest priority element is removed; else the new element is rejected. This
- * implementation maintains references to the highest and lowest elements in the
- * queue; rejecting an element is an <i>O(1)</i> operation.
+ * lowest priority element is removed; else the new element is rejected. The
+ * backing {@code TreeQueue} maintains references to the highest and lowest
+ * elements in the queue; rejecting an element is an <i>O(1)</i> operation.
  * <p>
  * Bounded priority queues are useful when implementing <i>n-best</i> algorithms
  * (e.g. finding the <i>best</i> <i>n</i> elements in an arbitrary collection).
@@ -43,17 +43,17 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
+final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		BoundedQueue<E>, SortedCollection<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private TreeQueue<E> delegate;
-	private int maxSize;
+	private int maximumSize;
 
-	private TreeBoundedQueue(final int maxSize,
+	private TreeBoundedQueue(final int maximumSize,
 			final Comparator<? super E> comparator) {
 		delegate = TreeQueue.create(comparator);
-		this.maxSize = maxSize;
+		this.maximumSize = maximumSize;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
@@ -62,13 +62,13 @@ public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		for (E e : elements)
 			offer(e);
 		checkArgument(size() > 0);
-		this.maxSize = size();
+		this.maximumSize = size();
 	}
 
 	/**
 	 * Creates a new {@code TreeBoundedQeque} having the specified maximum size.
 	 * 
-	 * @param maxSize
+	 * @param maximumSize
 	 *            the maximum size (the bound) of this queue
 	 * @return returns a new {@code TreeBoundedQeque} having the specified
 	 *         maximum size
@@ -76,16 +76,16 @@ public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 *             if {@code maxSize} is less than 1
 	 */
 	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
-			final int maxSize) {
-		checkArgument(maxSize > 0);
-		return new TreeBoundedQueue<E>(maxSize, Ordering.natural());
+			final int maximumSize) {
+		checkArgument(maximumSize > 0);
+		return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
 	}
 
 	/**
 	 * Creates a new empty {@code TreeBoundedQeque} having the specified maximum
 	 * size and comparator.
 	 * 
-	 * @param maxSize
+	 * @param maximumSize
 	 *            the maximum size (the bound) of this queue
 	 * @param comparator
 	 *            the comparator that will be used to order this queue
@@ -94,11 +94,11 @@ public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * @throws IllegalArgumentException
 	 *             if {@code maxSize} is less than 1
 	 */
-	public static <E> TreeBoundedQueue<E> create(final int maxSize,
+	public static <E> TreeBoundedQueue<E> create(final int maximumSize,
 			final Comparator<? super E> comparator) {
-		checkArgument(maxSize > 0);
+		checkArgument(maximumSize > 0);
 		checkNotNull(comparator);
-		return new TreeBoundedQueue<E>(maxSize, comparator);
+		return new TreeBoundedQueue<E>(maximumSize, comparator);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	@Override
 	public boolean offer(E e) {
-		if (size() == maxSize)
+		if (size() == maximumSize)
 			if (comparator().compare(e, delegate().peekLast()) < 0)
 				delegate().pollLast();
 			else
@@ -157,13 +157,13 @@ public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	@Override
-	public int maxSize() {
-		return maxSize;
+	public int maximumSize() {
+		return maximumSize;
 	}
 
 	@Override
 	public int remainingCapacity() {
-		return maxSize - size();
+		return maximumSize - size();
 	}
 
 	@Override
