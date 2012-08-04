@@ -52,54 +52,58 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	private TreeBoundedQueue(final int maximumSize,
 			final Comparator<? super E> comparator) {
-		delegate = TreeQueue.create(comparator);
+		delegate = TreeQueue.orderedBy(comparator).create();
 		this.maximumSize = maximumSize;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
-		delegate = TreeQueue.create(comparator);
+		delegate = TreeQueue.orderedBy(comparator).create();
 		for (E e : elements)
 			offer(e);
 		checkArgument(size() > 0);
 		this.maximumSize = size();
 	}
 
-	/**
-	 * Creates a new {@code TreeBoundedQeque} having the specified maximum size.
-	 * 
-	 * @param maximumSize
-	 *            the maximum size (the bound) of this queue
-	 * @return returns a new {@code TreeBoundedQeque} having the specified
-	 *         maximum size
-	 * @throws IllegalArgumentException
-	 *             if {@code maxSize} is less than 1
-	 */
-	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
-			final int maximumSize) {
-		checkArgument(maximumSize > 0);
-		return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
-	}
+//	/**
+//	 * Creates a new {@code TreeBoundedQeque} which orders its elements
+//	 * according to their <i>natural ordering</i>, and having the specified
+//	 * maximum size.
+//	 * 
+//	 * @param maximumSize
+//	 *            the maximum size (the bound) of this queue
+//	 * @return returns a new {@code TreeBoundedQeque} which orders its elements
+//	 *         according to their <i>natural ordering</i>, having the specified
+//	 *         maximum size
+//	 * @throws IllegalArgumentException
+//	 *             if {@code maxSize} is less than 1
+//	 */
+//	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
+//			final int maximumSize) {
+//		checkArgument(maximumSize > 0);
+//		return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
+//	}
 
-	/**
-	 * Creates a new empty {@code TreeBoundedQeque} having the specified maximum
-	 * size and comparator.
-	 * 
-	 * @param maximumSize
-	 *            the maximum size (the bound) of this queue
-	 * @param comparator
-	 *            the comparator that will be used to order this queue
-	 * @return returns a new {@code TreeBoundedQeque} having the specified
-	 *         maximum size
-	 * @throws IllegalArgumentException
-	 *             if {@code maxSize} is less than 1
-	 */
-	public static <E> TreeBoundedQueue<E> create(final int maximumSize,
-			final Comparator<? super E> comparator) {
-		checkArgument(maximumSize > 0);
-		checkNotNull(comparator);
-		return new TreeBoundedQueue<E>(maximumSize, comparator);
-	}
+	// /**
+	// * Creates a new empty {@code TreeBoundedQeque} having the specified
+	// maximum
+	// * size and comparator.
+	// *
+	// * @param maximumSize
+	// * the maximum size (the bound) of this queue
+	// * @param comparator
+	// * the comparator that will be used to order this queue
+	// * @return returns a new {@code TreeBoundedQeque} having the specified
+	// * maximum size
+	// * @throws IllegalArgumentException
+	// * if {@code maxSize} is less than 1
+	// */
+	// public static <E> TreeBoundedQueue<E> create(final int maximumSize,
+	// final Comparator<? super E> comparator) {
+	// checkArgument(maximumSize > 0);
+	// checkNotNull(comparator);
+	// return new TreeBoundedQueue<E>(maximumSize, comparator);
+	// }
 
 	/**
 	 * Creates a new {@code TreeBoundedQeque} containing the elements of and
@@ -123,21 +127,113 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * @throws IllegalArgumentException
 	 *             if the specified iterable is empty
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	public static <E> TreeBoundedQueue<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			comparator = ((SortedSet<? super E>) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			comparator = ((PriorityQueue<? super E>) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(comparator, elements);
 		return q;
+	}
+
+	/**
+	 * A builder for the creation of {@code TreeBoundedQueue}s.
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code Queue<Float>} or a {@code Queue<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private Comparator<B> comparator = null;
+		private int maximumSize = -1;
+
+		private Builder() {
+		};
+
+		/**
+		 * Sets the maximum size of queues produced by this builder.
+		 * 
+		 * @param maximumSize
+		 *            the specified maximum size
+		 * @return this builder instance
+		 */
+		public Builder<B> maximumSize(final int maximumSize) {
+			checkArgument(maximumSize > 0);
+			this.maximumSize = maximumSize;
+			return this;
+		}
+
+		/**
+		 * Sets the comparator which will be used by queues produced by this
+		 * builder.
+		 * 
+		 * @param comparator
+		 *            the specified comparator
+		 * @return this builder instance
+		 */
+		public Builder<B> orderBy(final Comparator<B> comparator) {
+			checkNotNull(comparator);
+			this.comparator = comparator;
+			return this;
+		}
+
+		/**
+		 * Builds an empty {@code TreeBoundedQueue} using the previously
+		 * specified options. If a comparator was not provided, elements will be
+		 * ordered according to their <i>natural ordering</i>.
+		 * 
+		 * @return an empty {@code TreeBoundedQueue} using the previously
+		 *         specified options
+		 * @throws IllegalStateException
+		 *             if the maximum size was not specified
+		 */
+		@SuppressWarnings("unchecked")
+		public <T extends B> TreeBoundedQueue<T> create() {
+			checkState(maximumSize > 0);
+			return new TreeBoundedQueue<T>(maximumSize,
+					comparator == null ? (Comparator<B>) Ordering.natural()
+							: comparator);
+		}
+
+		/**
+		 * Builds a new {@code TreeBoundedQueue} using the previously specified
+		 * options, and having the given initial elements. If a comparator was
+		 * not provided, elements will be ordered according to their <i>natural
+		 * ordering</i>.
+		 * 
+		 * @return an empty {@code TreeBoundedQueue} using the previously
+		 *         specified options, having the given initial elements
+		 * @throws IllegalStateException
+		 *             if the maximum size has not been specified
+		 */
+		public <T extends B> TreeBoundedQueue<T> create(
+				final Iterable<? extends T> iterable) {
+			checkNotNull(iterable);
+			final TreeBoundedQueue<T> queue = create();
+			for (T element : iterable)
+				queue.offer(element);
+			return queue;
+		}
+	}
+
+	/**
+	 * Returns a new builder.
+	 * 
+	 * @return a new builder
+	 */
+	public static <E> Builder<E> builder() {
+		return new Builder<E>();
 	}
 
 	@Override

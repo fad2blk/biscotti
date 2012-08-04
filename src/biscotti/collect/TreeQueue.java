@@ -31,7 +31,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SortedSet;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 /**
@@ -41,19 +40,14 @@ import com.google.common.collect.Ordering;
  * or by an explicit {@link Comparator} provided at creation. Attempting to
  * remove or insert {@code null} elements is prohibited. Querying for
  * {@code null} elements is allowed. Inserting non-comparable elements will
- * result in a {@code ClassCastException}.
- * <p>
- * This queue uses the same general ordering rules as a {@link PriorityQueue
- * PriorityQueue}. The first element (the head) of this queue is considered to
- * be the <i>least</i> element with respect to the specified ordering. Elements
- * with equal priority are ordered according to their insertion order.
- * <p>
- * This implementation uses a comparator (whether or not one is explicitly
- * provided) to maintain priority order, and {@code equals} when testing for
- * element equality. The ordering imposed by the comparator is not required to
- * be consistent with equals. Given a comparator {@code c}, for any two elements
- * {@code e1} and {@code e2} such that {@code c.compare(e1, e2) == 0} it is not
- * necessary for {@code e1.equals(e2)} to return {@code true}.
+ * result in a {@code ClassCastException}. This queue uses the same general
+ * ordering rules as a {@link PriorityQueue PriorityQueue}. The first element
+ * (the head) of this queue is considered to be the <i>least</i> element with
+ * respect to the specified ordering. A comparator is used (whether or not one
+ * is explicitly provided) to perform all element comparisons. Two elements
+ * which are deemed equal by the comparator's {@code compare(E, E)} method have
+ * equal priority from the standpoint of this queue. Elements with equal
+ * priority are sorted according to their insertion order.
  * <p>
  * Besides the regular {@link #peek() peek()}, {@link #poll() poll()},
  * {@link #remove() remove()} operations specified in the {@code Queue}
@@ -82,7 +76,7 @@ import com.google.common.collect.Ordering;
  *     <th style="text-align:center;" colspan="2">Running Time</th>
  *   </tr>
  *   <tr>
- *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>average</i>)</td>
+ *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>worst-case</i>)</td>
  *     <td style="text-align:center;"><b>PriorityQueue</b><br>(<i>worst-case</i>)</td>
  *   </tr>
  *   <tr>
@@ -135,7 +129,7 @@ import com.google.common.collect.Ordering;
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this queue
+ * the type of elements held in this queue
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
@@ -153,12 +147,6 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		this.comparator = comparator;
 	}
 
-	private TreeQueue(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
-		this(comparator);
-		Iterables.addAll(this, elements);
-	}
-
 	/**
 	 * Creates a new {@code TreeQueue} that orders its elements according to
 	 * their <i>natural ordering</i>.
@@ -167,21 +155,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
-		return new TreeQueue<E>(Ordering.natural());
-	}
-
-	/**
-	 * Creates a new {@code TreeQueue} that orders its elements according to the
-	 * specified comparator.
-	 * 
-	 * @param comparator
-	 *            the comparator that will be used to order this queue
-	 * @return a new {@code TreeQueue} that orders its elements according to
-	 *         {@code comparator}
-	 */
-	public static <E> TreeQueue<E> create(final Comparator<? super E> comparator) {
-		checkNotNull(comparator);
-		return new TreeQueue<E>(comparator);
+		return orderedBy(Ordering.natural()).create();
 	}
 
 	/**
@@ -203,19 +177,33 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *             if any of the elements of the specified iterable or the
 	 *             iterable itself is {@code null}
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public static <E> TreeQueue<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			comparator = ((SortedSet<? super E>) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			comparator = ((PriorityQueue<? super E>) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeQueue<E>(comparator, elements);
+		return orderedBy(comparator).create(elements);
+	}
+
+	/**
+	 * Creates and returns a new builder, configured to build {@code TreeQueue}s
+	 * that use the specified comparator ordering.
+	 * 
+	 * @param comparator
+	 *            the specified comparator
+	 * @return a new building which builds {@code TreeQueue}s that use the
+	 *         specified comparator for ordering
+	 */
+	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
+		checkNotNull(comparator);
+		return new Builder<B>(comparator);
 	}
 
 	@Override
@@ -469,6 +457,45 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 			add((E) ois.readObject());
 	}
 
+	/**
+	 * A builder for the creation of {@code TreeQueue}s.
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code Queue<Float>} or a {@code Queue<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private final Comparator<B> comparator;
+
+		private Builder(final Comparator<B> comparator) {
+			this.comparator = comparator;
+		}
+
+		/**
+		 * Builds a {@code TreeQueue} queue using the previously specified
+		 * options, and having no initial contents.
+		 */
+		public <T extends B> TreeQueue<T> create() {
+			return new TreeQueue<T>(comparator);
+		}
+
+		/**
+		 * Builds a new {@code TreeQueue} using the previously specified
+		 * options, and having the given initial elements.
+		 */
+		public <T extends B> TreeQueue<T> create(
+				final Iterable<? extends T> iterable) {
+			checkNotNull(iterable);
+			final TreeQueue<T> queue = new TreeQueue<T>(comparator);
+			for (T element : iterable)
+				queue.offer(element);
+			return queue;
+		}
+	}
+
 	/*
 	 * Red-Black Tree
 	 */
@@ -578,7 +605,7 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 		Node n = root;
 		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
-			if (e.equals(n.element))
+			if (cmp == 0)
 				return n;
 			if (cmp < 0)
 				n = n.left;
