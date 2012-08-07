@@ -37,6 +37,7 @@ import java.util.PriorityQueue;
 import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
 
 /**
@@ -137,69 +138,113 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		this.comparator = comparator;
 	}
 
-	private Treelist(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
-		this(comparator);
-		Iterables.addAll(this, elements);
-	}
-
 	/**
 	 * Creates a new {@code Treelist} that orders its elements according to
-	 * their natural ordering.
+	 * their <i>natural ordering</i>.
 	 * 
 	 * @return a new {@code Treelist} that orders its elements according to
-	 *         their natural ordering
+	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> Treelist<E> create() {
 		return new Treelist<E>(Ordering.natural());
 	}
 
 	/**
-	 * Creates a new {@code Treelist} that orders its elements according to the
-	 * specified comparator.
-	 * 
-	 * @param comparator
-	 *            the comparator that will be used to order this list
-	 * @return a new {@code Treelist} that orders its elements according to
-	 *         {@code comparator}
-	 */
-	public static <E> Treelist<E> create(final Comparator<? super E> comparator) {
-		checkNotNull(comparator);
-		return new Treelist<E>(comparator);
-	}
-
-	/**
-	 * Creates a new {@code Treelist} containing the elements of the specified
-	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection},
-	 * this list will be ordered according to the same ordering. Otherwise, this
-	 * list will be ordered according to the <i>natural ordering</i> of its
-	 * elements.
+	 * Creates a new {@code Treelist} containing the specified initial elements.
+	 * If {@code elements} is an instance of {@link SortedSet},
+	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
+	 * {@code SortedCollection}, this list will be ordered according to the same
+	 * ordering. Otherwise, this list will be ordered according to the
+	 * <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
-	 *            the iterable whose elements are to be placed into the list
+	 *            the collection whose elements are to be placed into the list
 	 * @return a new {@code Treelist} containing the elements of the specified
-	 *         iterable
+	 *         collection
 	 * @throws ClassCastException
-	 *             if elements of the specified iterable cannot be compared to
+	 *             if elements of the specified collection cannot be compared to
 	 *             one another according to this list's ordering
 	 * @throws NullPointerException
-	 *             if any of the elements of the specified iterable or the
-	 *             iterable itself is {@code null}
+	 *             if any of the elements of the specified collection or the
+	 *             collection itself is {@code null}
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <E> Treelist<E> create(final Iterable<? extends E> elements) {
+	@SuppressWarnings({ "unchecked" })
+	public static <E> Treelist<E> create(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			comparator = ((SortedSet<? super E>) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			comparator = ((PriorityQueue<? super E>) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			comparator = ((SortedCollection<? super E>) elements).comparator();
+		else if (elements instanceof MinMaxPriorityQueue<?>)
+			comparator = ((MinMaxPriorityQueue<? super E>) elements)
+					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new Treelist<E>(comparator, elements);
+		return orderedBy(comparator).create(elements);
+	}
+
+	/**
+	 * Creates and returns a new builder, configured to build {@code Treelist}
+	 * instances that use the specified comparator ordering.
+	 * 
+	 * @param comparator
+	 *            the specified comparator
+	 * @return a new building which builds {@code Treelist} instances that use
+	 *         the specified comparator for ordering
+	 */
+	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
+		checkNotNull(comparator);
+		return new Builder<B>(comparator);
+	}
+
+	/**
+	 * A builder for the creation of {@code Treelist} instances. Instances of
+	 * this builder are obtained calling {@link Treelist#orderedBy(Comparator)}.
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code Treelist<Float>} or a {@code Treelist<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private final Comparator<B> comparator;
+
+		private Builder(final Comparator<B> comparator) {
+			this.comparator = comparator;
+		}
+
+		/**
+		 * Builds an empty {@code Treelist} using the previously specified
+		 * comparator.
+		 * 
+		 * @return an empty {@code Treelist} using the previously specified
+		 *         comparator.
+		 */
+		public <T extends B> Treelist<T> create() {
+			return new Treelist<T>(comparator);
+		}
+
+		/**
+		 * Builds a new {@code Treelist} using the previously specified
+		 * comparator, and having the given initial elements.
+		 * 
+		 * @param elements
+		 *            the initial elements to be placed in this queue
+		 * @return a new {@code Treelist} using the previously specified
+		 *         comparator, and having the given initial elements
+		 */
+		public <T extends B> Treelist<T> create(
+				final Iterable<? extends T> elements) {
+			checkNotNull(elements);
+			final Treelist<T> list = new Treelist<T>(comparator);
+			Iterables.addAll(list, elements);
+			return list;
+		}
 	}
 
 	/**
