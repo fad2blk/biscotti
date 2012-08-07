@@ -55,7 +55,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	private static final long serialVersionUID = 1L;
 	private TreeQueue<E> delegate;
-	private int maximumSize;
+	private final int maximumSize;
 
 	private TreeBoundedQueue(final int maximumSize,
 			final Comparator<? super E> comparator) {
@@ -152,8 +152,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		TreeBoundedQueue<E> q = new TreeBoundedQueue<E>(comparator, elements);
-		return q;
+		return new TreeBoundedQueue<E>(comparator, elements);
 	}
 
 	/**
@@ -186,7 +185,6 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	public static final class Builder<B> {
 
 		private final Comparator<B> comparator;
-		private int maximumSize = 0;
 
 		private Builder(final Comparator<B> comparator) {
 			this.comparator = comparator;
@@ -194,51 +192,39 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 		/**
 		 * Builds an empty {@code TreeBoundedQueue} using the previously
-		 * specified options.
+		 * specified comparator and the given maximumSize.
 		 * 
+		 * @param maximumSize the maximum size of this queue
 		 * @return an empty {@code TreeBoundedQueue} using the previously
-		 *         specified options.
-		 * @throws IllegalStateException
+		 *         specified comparator and the given maximum size
+		 * @throws IllegalArgumentException
 		 *             if the maximum size has not been specified
 		 */
-		public <T extends B> TreeBoundedQueue<T> create() {
-			checkState(maximumSize > 0, "maximum size not set");
+		public <T extends B> TreeBoundedQueue<T> create(final int maximumSize) {
+			checkArgument(maximumSize > 0, "maximum size < 1");
 			return new TreeBoundedQueue<T>(maximumSize, comparator);
 		}
 
 		/**
 		 * Builds a new {@code TreeBoundedQueue} using the previously specified
-		 * options, and having the given initial elements.
+		 * comparator and maximum size, and having the given initial elements.
 		 * 
+		 * @param maximumSize the maximum size of this queue
 		 * @param elements
 		 *            the initial elements to be placed in this queue
 		 * @return a new {@code TreeBoundedQueue} using the previously specified
-		 *         options, and having the given initial elements
+		 *        comparator and maximum size, having the given initial elements
 		 * @throws IllegalStateException
 		 *             if the maximum size has not been specified
 		 */
-		public <T extends B> TreeBoundedQueue<T> create(
+		public <T extends B> TreeBoundedQueue<T> create(final int maximumSize,
 				final Iterable<? extends T> elements) {
+			checkArgument(maximumSize > 0, "maximum size < 1");
 			checkNotNull(elements);
 			final TreeBoundedQueue<T> list = new TreeBoundedQueue<T>(
 					maximumSize, comparator);
 			Iterables.addAll(list, elements);
 			return list;
-		}
-
-		/**
-		 * Sets the maximum size of {@code TreeBoundedQueue} instances this
-		 * builder will create.
-		 * 
-		 * @param maximumSize
-		 *            maximum size of {@code TreeBoundedQueue} instances this
-		 *            builder will create
-		 * @return this builder
-		 */
-		public Builder<B> maximumSize(final int maximumSize) {
-			checkArgument(maximumSize > 0, "maximum size < 1");
-			this.maximumSize = maximumSize;
-			return this;
 		}
 	}
 
