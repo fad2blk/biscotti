@@ -192,7 +192,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 		/**
 		 * Builds an empty {@code TreeBoundedQueue} using the previously
-		 * specified comparator and the given maximumSize.
+		 * specified comparator and the given maximum size.
 		 * 
 		 * @param maximumSize the maximum size of this queue
 		 * @return an empty {@code TreeBoundedQueue} using the previously
@@ -207,7 +207,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 		/**
 		 * Builds a new {@code TreeBoundedQueue} using the previously specified
-		 * comparator and maximum size, and having the given initial elements.
+		 * comparator and maximum size, having the given initial elements.
 		 * 
 		 * @param maximumSize the maximum size of this queue
 		 * @param elements
