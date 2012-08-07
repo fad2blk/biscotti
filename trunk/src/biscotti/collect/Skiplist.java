@@ -38,6 +38,7 @@ import java.util.Random;
 import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
 
 /**
@@ -171,70 +172,113 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		head.prev = head;
 	}
 
-	private Skiplist(final Comparator<? super E> comparator,
-			final Iterable<? extends E> elements) {
-		this(comparator);
-		Iterables.addAll(this, elements);
-	}
-
 	/**
 	 * Creates a new {@code Skiplist} that orders its elements according to
-	 * their natural ordering.
+	 * their <i>natural ordering</i>.
 	 * 
 	 * @return a new {@code Skiplist} that orders its elements according to
-	 *         their natural ordering
+	 *         their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> Skiplist<E> create() {
 		return new Skiplist<E>(Ordering.natural());
 	}
 
 	/**
-	 * Creates a new {@code Skiplist} that orders its elements according to the
-	 * specified comparator.
-	 * 
-	 * @param comparator
-	 *            the comparator that will be used to order this list
-	 * @return a new {@code Skiplist} that orders its elements according to
-	 *         {@code comparator}
-	 */
-	public static <E extends Comparable<? super E>> Skiplist<E> create(
-			final Comparator<? super E> comparator) {
-		checkNotNull(comparator);
-		return new Skiplist<E>(comparator);
-	}
-
-	/**
-	 * Creates a new {@code Skiplist} containing the elements of the specified
-	 * {@code Iterable}. If the specified iterable is an instance of
-	 * {@link SortedSet}, {@link PriorityQueue}, or {@code SortedCollection},
-	 * this list will be ordered according to the same ordering. Otherwise, this
-	 * list will be ordered according to the <i>natural ordering</i> of its
-	 * elements.
+	 * Creates a new {@code Skiplist} containing the specified initial elements.
+	 * If {@code elements} is an instance of {@link SortedSet},
+	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
+	 * {@code SortedCollection}, this list will be ordered according to the same
+	 * ordering. Otherwise, this list will be ordered according to the
+	 * <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
-	 *            the iterable whose elements are to be placed into the list
+	 *            the collection whose elements are to be placed into the list
 	 * @return a new {@code Skiplist} containing the elements of the specified
-	 *         iterable
+	 *         collection
 	 * @throws ClassCastException
-	 *             if elements of the specified iterable cannot be compared to
+	 *             if elements of the specified collection cannot be compared to
 	 *             one another according to this list's ordering
 	 * @throws NullPointerException
-	 *             if any of the elements of the specified iterable or the
-	 *             iterable itself is {@code null}
+	 *             if any of the elements of the specified collection or the
+	 *             collection itself is {@code null}
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <E> Skiplist<E> create(final Iterable<? extends E> elements) {
+	@SuppressWarnings({ "unchecked" })
+	public static <E> Skiplist<E> create(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
-			comparator = ((SortedSet) elements).comparator();
+			comparator = ((SortedSet<? super E>) elements).comparator();
 		else if (elements instanceof PriorityQueue<?>)
-			comparator = ((PriorityQueue) elements).comparator();
+			comparator = ((PriorityQueue<? super E>) elements).comparator();
 		else if (elements instanceof SortedCollection<?>)
-			comparator = ((SortedCollection) elements).comparator();
+			comparator = ((SortedCollection<? super E>) elements).comparator();
+		else if (elements instanceof MinMaxPriorityQueue<?>)
+			comparator = ((MinMaxPriorityQueue<? super E>) elements)
+					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new Skiplist<E>(comparator, elements);
+		return orderedBy(comparator).create(elements);
+	}
+
+	/**
+	 * Creates and returns a new builder, configured to build {@code Skiplist}
+	 * instances that use the specified comparator ordering.
+	 * 
+	 * @param comparator
+	 *            the specified comparator
+	 * @return a new building which builds {@code Skiplist} instances that use
+	 *         the specified comparator for ordering
+	 */
+	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
+		checkNotNull(comparator);
+		return new Builder<B>(comparator);
+	}
+
+	/**
+	 * A builder for the creation of {@code Skiplist} instances. Instances of
+	 * this builder are obtained calling {@link Skiplist#orderedBy(Comparator)}.
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code Skiplist<Float>} or a {@code Skiplist<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private final Comparator<B> comparator;
+
+		private Builder(final Comparator<B> comparator) {
+			this.comparator = comparator;
+		}
+
+		/**
+		 * Builds an empty {@code Skiplist} using the previously specified
+		 * comparator.
+		 * 
+		 * @return an empty {@code Skiplist} using the previously specified
+		 *         comparator.
+		 */
+		public <T extends B> Skiplist<T> create() {
+			return new Skiplist<T>(comparator);
+		}
+
+		/**
+		 * Builds a new {@code Skiplist} using the previously specified
+		 * comparator, and having the given initial elements.
+		 * 
+		 * @param elements
+		 *            the initial elements to be placed in this queue
+		 * @return a new {@code Skiplist} using the previously specified
+		 *         comparator, and having the given initial elements
+		 */
+		public <T extends B> Skiplist<T> create(
+				final Iterable<? extends T> elements) {
+			checkNotNull(elements);
+			final Skiplist<T> list = new Skiplist<T>(comparator);
+			Iterables.addAll(list, elements);
+			return list;
+		}
 	}
 
 	/**
@@ -414,7 +458,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		modCount++;
 		size = 0;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int hashCode = 1;
@@ -620,6 +664,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		delete(curr, update);
 		return true;
 	}
+
 	private void delete(final Node<E> node, final Node<E>[] update) {
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
@@ -675,7 +720,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
 		}
-		
+
 		@Override
 		public Skiplist<E> clone() throws CloneNotSupportedException {
 			throw new CloneNotSupportedException();
