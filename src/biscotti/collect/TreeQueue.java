@@ -31,8 +31,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SortedSet;
 
-import biscotti.collect.TreeQueue.Builder;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
