@@ -198,6 +198,8 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 * 
 		 * @return an empty {@code TreeBoundedQueue} using the previously
 		 *         specified options.
+		 * @throws IllegalStateException
+		 *             if the maximum size has not been specified
 		 */
 		public <T extends B> TreeBoundedQueue<T> create() {
 			checkState(maximumSize > 0, "maximum size not set");
@@ -212,6 +214,8 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 *            the initial elements to be placed in this queue
 		 * @return a new {@code TreeBoundedQueue} using the previously specified
 		 *         options, and having the given initial elements
+		 * @throws IllegalStateException
+		 *             if the maximum size has not been specified
 		 */
 		public <T extends B> TreeBoundedQueue<T> create(
 				final Iterable<? extends T> elements) {
