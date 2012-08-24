@@ -1,7 +1,7 @@
 package biscotti.collect;
 
-import static biscotti.collect.SortedCollectionImpl.Color.BLACK;
-import static biscotti.collect.SortedCollectionImpl.Color.RED;
+import static biscotti.collect.RedBlackTree.Color.BLACK;
+import static biscotti.collect.RedBlackTree.Color.RED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -45,7 +45,7 @@ import com.google.common.collect.Ordering;
  * (where <i>n</i> is the size of this collection and <i>m</i> is the size of
  * the specified collection which is iterable in linear time):
  * <p>
- * <table border="2" cellpadding="3" cellspacing="1" style="width:400px;">
+ * <table border="1" cellpadding="0" cellspacing="0" style="width:400px;">
  *   <tr>
  *     <th style="text-align:center;">Method</th>
  *     <th style="text-align:center;">Running Time</th>
@@ -82,24 +82,24 @@ import com.google.common.collect.Ordering;
  * @param <E>
  * the type of elements maintained by this collection
  */
-public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
+class RedBlackTree<E> extends AbstractCollection<E> implements
 		SortedCollection<E>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	protected transient int size = 0;
-	protected transient Node nil = new Node();
-	protected transient Node min = nil;
-	protected transient Node max = nil;
-	protected transient Node root = nil;
-	protected transient int modCount = 0;
-	protected final Comparator<? super E> comparator;
+	transient int size = 0;
+	transient Node nil = new Node();
+	transient Node min = nil;
+	transient Node max = nil;
+	transient Node root = nil;
+	transient int modCount = 0;
+	final Comparator<? super E> comparator;
 
-	protected SortedCollectionImpl(final Comparator<? super E> comparator) {
+	RedBlackTree(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
 	/**
-	 * Creates a new {@code TreeCollection} containing the specified initial
+	 * Creates a new {@code RedBlackTree} containing the specified initial
 	 * elements. If {@code elements} is an instance of {@link SortedSet},
 	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
 	 * {@code SortedCollection}, this collection will be ordered according to
@@ -108,7 +108,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 * 
 	 * @param elements
 	 *            the initial elements to place in this collection
-	 * @return a new {@code TreeCollection} containing the specified initial
+	 * @return a new {@code RedBlackTree} containing the specified initial
 	 *         elements
 	 * @throws ClassCastException
 	 *             if specified elements cannot be compared to one another
@@ -117,7 +117,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 *             if any of the specified elements are {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> SortedCollectionImpl<E> create(
+	public static <E> RedBlackTree<E> create(
 			final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -132,21 +132,20 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		final SortedCollectionImpl<E> collection = new SortedCollectionImpl<E>(
-				comparator);
+		final RedBlackTree<E> collection = new RedBlackTree<E>(comparator);
 		Iterables.addAll(collection, elements);
 		return collection;
 	}
 
 	/**
-	 * Creates a new {@code TreeCollection} that orders its elements according
-	 * to their <i>natural ordering</i>.
+	 * Creates a new {@code RedBlackTree} that orders its elements according to
+	 * their <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code TreeCollection} that orders its elements according
-	 *         to their <i>natural ordering</i>
+	 * @return a new {@code RedBlackTree} that orders its elements according to
+	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> SortedCollectionImpl<E> create() {
-		return new SortedCollectionImpl<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> RedBlackTree<E> create() {
+		return new RedBlackTree<E>(Ordering.natural());
 	}
 
 	@Override
@@ -208,9 +207,9 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 
 	/**
 	 * Compares the specified object with this collection for equality. Returns
-	 * {@code true} if the given object is also a {@code TreeCollection}, the
-	 * two collection have the same size, and every member of the given
-	 * collection is contained in this collection.
+	 * {@code true} if the given object is also a {@code RedBlackTree}, the two
+	 * collection have the same size, and every member of the given collection
+	 * is contained in this collection.
 	 * 
 	 * @param o
 	 *            the specified object to compare with this collection
@@ -220,7 +219,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	public boolean equals(Object o) {
 		if (o == this)
 			return true;
-		if (!(o instanceof SortedCollectionImpl))
+		if (!(o instanceof RedBlackTree))
 			return false;
 		@SuppressWarnings("unchecked")
 		Collection<E> c = (Collection<E>) o;
@@ -255,10 +254,10 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
 	}
-	
-	protected class IteratorImpl implements Iterator<E> {
-		protected Node next = min;
-		protected Node last = nil;
+
+	class IteratorImpl implements Iterator<E> {
+		Node next = min;
+		Node last = nil;
 		private int expectedModCount = modCount;
 
 		@Override
@@ -287,7 +286,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 			last = nil;
 		}
 
-		protected void checkForConcurrentModification() {
+		void checkForConcurrentModification() {
 			if (expectedModCount != modCount)
 				throw new ConcurrentModificationException();
 		}
@@ -299,20 +298,20 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 		BLACK, RED;
 	}
 
-	protected class Node {
-		protected E element = null;
-		protected Node parent;
-		protected Node left;
-		protected Node right;
+	class Node {
+		E element = null;
+		Node parent;
+		Node left;
+		Node right;
 		private Color color = BLACK;
 
-		protected Node() {
+		Node() {
 			parent = this;
 			right = this;
 			left = this;
 		}
 
-		protected Node(final E element) {
+		Node(final E element) {
 			this.element = element;
 			parent = nil;
 			right = nil;
@@ -320,7 +319,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 		}
 	}
 
-	protected Node search(final E e) {
+	Node search(final E e) {
 		Node n = root;
 		while (n != nil) {
 			int cmp = comparator.compare(e, n.element);
@@ -357,7 +356,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	protected void insert(Node z) {
+	void insert(Node z) {
 		size++;
 		modCount++;
 		Node x = root;
@@ -407,7 +406,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 *    then RB-DELETE-FIXUP(T, x)
 	 * return y
 	 */
-	protected void delete(Node z) {
+	void delete(Node z) {
 		size--;
 		modCount++;
 		Node x, y;
@@ -449,7 +448,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 *       y = p[y]
 	 * return y
 	 */
-	protected Node successor(Node x) {
+	Node successor(Node x) {
 		if (x == nil)
 			return nil;
 		if (x.right != nil) {
@@ -466,7 +465,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 		return y;
 	}
 
-	protected Node predecessor(Node x) {
+	Node predecessor(Node x) {
 		if (x == nil)
 			return nil;
 		if (x.left != nil) {

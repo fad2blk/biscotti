@@ -129,7 +129,7 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
+public class TreeQueue<E> extends RedBlackTree<E> implements Queue<E> {
 
 	private static final long serialVersionUID = 1L;
 
