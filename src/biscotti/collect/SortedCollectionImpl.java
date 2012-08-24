@@ -83,7 +83,7 @@ import com.google.common.collect.Ordering;
  * the type of elements maintained by this collection
  */
 public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
-		SortedCollection<E>, Cloneable, Serializable {
+		SortedCollection<E>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	protected transient int size = 0;
@@ -235,31 +235,6 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 		}
 	}
 
-	/**
-	 * Returns a shallow copy of this collection. The elements themselves are
-	 * not cloned.
-	 * 
-	 * @return a shallow copy of this collection
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public SortedCollectionImpl<E> clone() throws CloneNotSupportedException {
-		SortedCollectionImpl<E> clone;
-		try {
-			clone = (SortedCollectionImpl<E>) super.clone();
-		} catch (java.lang.CloneNotSupportedException e) {
-			throw new InternalError();
-		}
-		clone.nil = new Node();
-		clone.min = clone.nil;
-		clone.max = clone.nil;
-		clone.root = clone.nil;
-		clone.size = 0;
-		clone.modCount = 0;
-		clone.addAll(this);
-		return clone;
-	}
-
 	private void writeObject(java.io.ObjectOutputStream oos)
 			throws java.io.IOException {
 		oos.defaultWriteObject();
@@ -296,9 +271,9 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 			checkForConcurrentModification();
 			if (next == nil)
 				throw new NoSuchElementException();
-			final Node node = next;
-			last = node;
-			return node.element;
+			last = next;
+			next = successor(next);
+			return last.element;
 		}
 
 		@Override
@@ -316,7 +291,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 			if (expectedModCount != modCount)
 				throw new ConcurrentModificationException();
 		}
-	};
+	}
 
 	// Red-Black-Tree
 
@@ -337,7 +312,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 			left = this;
 		}
 
-		private Node(final E element) {
+		protected Node(final E element) {
 			this.element = element;
 			parent = nil;
 			right = nil;
@@ -382,7 +357,7 @@ public class SortedCollectionImpl<E> extends AbstractCollection<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	private void insert(Node z) {
+	protected void insert(Node z) {
 		size++;
 		modCount++;
 		Node x = root;
