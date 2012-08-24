@@ -119,7 +119,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see Skiplist
  */
-class Treelist<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
+class Treelist<E> extends RedBlackTree<E> implements Sortedlist<E> {
 	
 	private static final long serialVersionUID = 1L;
 
