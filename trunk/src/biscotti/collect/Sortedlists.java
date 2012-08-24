@@ -9,7 +9,7 @@ import java.util.Collections;
  * 
  * @author Zhenya Leonov
  */
-public class Sortedlists {
+final public class Sortedlists {
 
 	private Sortedlists() {
 	}
