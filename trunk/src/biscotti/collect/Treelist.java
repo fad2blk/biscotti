@@ -120,11 +120,316 @@ import com.google.common.collect.Ordering;
  * @see Skiplist
  */
 class Treelist<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
-
+	
 	private static final long serialVersionUID = 1L;
 
-	private Treelist(final Comparator<? super E> comparator) {
-		super(comparator);
+	/**
+	 * A builder for the creation of {@code Treelist} instances. Instances of
+	 * this builder are obtained calling {@link Treelist#orderedBy(Comparator)}
+	 * .
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code Treelist<Float>} or a {@code Treelist<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private final Comparator<B> comparator;
+
+		private Builder(final Comparator<B> comparator) {
+			this.comparator = comparator;
+		}
+
+		/**
+		 * Builds an empty {@code Treelist} using the previously specified
+		 * comparator.
+		 * 
+		 * @return an empty {@code Treelist} using the previously specified
+		 *         comparator.
+		 */
+		public <T extends B> Treelist<T> create() {
+			return new Treelist<T>(comparator);
+		}
+
+		/**
+		 * Builds a new {@code Treelist} using the previously specified
+		 * comparator, and having the given initial elements.
+		 * 
+		 * @param elements
+		 *            the initial elements to be placed in this queue
+		 * @return a new {@code Treelist} using the previously specified
+		 *         comparator, and having the given initial elements
+		 */
+		public <T extends B> Treelist<T> create(
+				final Iterable<? extends T> elements) {
+			checkNotNull(elements);
+			final Treelist<T> list = new Treelist<T>(comparator);
+			Iterables.addAll(list, elements);
+			return list;
+		}
+	}
+
+	private class ListIteratorImpl extends IteratorImpl implements
+			ListIterator<E> {
+		private int index = 0;
+		private Node prev = nil;
+
+		@Override
+		public void add(E e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return index < size();
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return index > 0;
+		}
+
+		@Override
+		public E next() {
+			E e = super.next();
+			index++;
+			return e;
+		}
+
+		@Override
+		public int nextIndex() {
+			return index;
+		}
+
+		@Override
+		public E previous() {
+			super.checkForConcurrentModification();
+			if (index == 0)
+				throw new NoSuchElementException();
+			next = prev;
+			index--;
+			prev = predecessor(prev);
+			last = next;
+			return next.element;
+		}
+
+		@Override
+		public int previousIndex() {
+			return index - 1;
+		}
+
+		@Override
+		public void remove() {
+			super.remove();
+			index--;
+		}
+
+		@Override
+		public void set(E e) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	@SuppressWarnings("serial")
+	private class SubList extends Treelist<E> {
+		private final Treelist<E> list;
+		private final int offset;
+		private Node from;
+		private Node to;
+
+		public SubList(Treelist<E> list, int fromIndex, int toIndex) {
+			super(list.comparator);
+			this.list = list;
+			from = list.min;
+			offset = fromIndex;
+			modCount = list.modCount;
+			size = toIndex - fromIndex;
+			int i = 0;
+			for (; i < fromIndex; i++)
+				from = successor(from);
+			to = from;
+			for (; i < toIndex - 1; i++)
+				to = successor(to);
+		}
+
+		@Override
+		public boolean add(E e) {
+			checkForConcurrentModification();
+			if (comparator.compare(e, from.element) < 0
+					|| comparator.compare(e, to.element) > 0)
+				throw new IllegalArgumentException("element out of range");
+			list.add(e);
+			modCount = list.modCount;
+			size++;
+			if (comparator.compare(to.element, e) <= 0)
+				to = successor(to);
+			return true;
+		}
+
+		private void checkForConcurrentModification() {
+			if (modCount != list.modCount)
+				throw new ConcurrentModificationException();
+		}
+
+		@Override
+		public void clear() {
+			checkForConcurrentModification();
+			final Iterator<E> iterator = iterator();
+			while (iterator.hasNext())
+				iterator.remove();
+		}
+
+		@Override
+		public Treelist<E> clone() throws CloneNotSupportedException {
+			throw new CloneNotSupportedException();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public boolean contains(Object o) {
+			checkForConcurrentModification();
+			return o != null && search((E) o) != null;
+		}
+
+		@Override
+		public E get(int index) {
+			checkForConcurrentModification();
+			checkElementIndex(index, size);
+			return list.get(index + offset);
+		}
+
+		@Override
+		public ListIterator<E> listIterator() {
+			return listIterator(0);
+		}
+
+		@Override
+		public ListIterator<E> listIterator(final int index) {
+			checkForConcurrentModification();
+			checkPositionIndex(index, size);
+			return new ListIterator<E>() {
+				private ListIterator<E> i = list.listIterator(index + offset);
+
+				@Override
+				public void add(E e) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public boolean hasNext() {
+					return nextIndex() < size;
+				}
+
+				@Override
+				public boolean hasPrevious() {
+					return previousIndex() >= 0;
+				}
+
+				@Override
+				public E next() {
+					if (hasNext())
+						return i.next();
+					else
+						throw new NoSuchElementException();
+				}
+
+				@Override
+				public int nextIndex() {
+					return i.nextIndex() - offset;
+				}
+
+				@Override
+				public E previous() {
+					if (hasPrevious())
+						return i.previous();
+					else
+						throw new NoSuchElementException();
+				}
+
+				@Override
+				public int previousIndex() {
+					return i.previousIndex() - offset;
+				}
+
+				@Override
+				public void remove() {
+					i.remove();
+					modCount = list.modCount;
+					size--;
+				}
+
+				@Override
+				public void set(E e) {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
+
+		private void readObject(java.io.ObjectInputStream ois)
+				throws NotSerializableException {
+			throw new NotSerializableException();
+		}
+
+		@Override
+		public E remove(int index) {
+			checkForConcurrentModification();
+			checkElementIndex(index, size);
+			if (index == 0)
+				from = successor(from);
+			if (index == size - 1)
+				to = predecessor(to);
+			E e = list.remove(index + offset);
+			modCount = list.modCount;
+			size--;
+			return e;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public boolean remove(Object o) {
+			checkForConcurrentModification();
+			checkNotNull(o);
+			final Node node = search((E) o);
+			if (node == null)
+				return false;
+			if (node == to)
+				to = predecessor(to);
+			if (node == from)
+				from = successor(from);
+			list.delete(node);
+			modCount = list.modCount;
+			size--;
+			return true;
+		}
+
+		@Override
+		protected Node search(final E e) {
+			int compareFrom = comparator.compare(e, from.element);
+			int compareTo = comparator.compare(e, to.element);
+			if (compareFrom < 0 || compareTo > 0)
+				return null;
+			if (compareFrom == 0)
+				return from;
+			else if (compareTo == 0)
+				return to;
+			else
+				return list.search(e);
+		}
+
+		@Override
+		public int size() {
+			checkForConcurrentModification();
+			return size;
+		}
+
+		// Red-Black-Tree
+
+		private void writeObject(java.io.ObjectOutputStream oos)
+				throws NotSerializableException {
+			throw new NotSerializableException();
+		}
 	}
 
 	/**
@@ -189,217 +494,8 @@ class Treelist<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
 		return new Builder<B>(comparator);
 	}
 
-	/**
-	 * A builder for the creation of {@code Treelist} instances. Instances of
-	 * this builder are obtained calling {@link Treelist#orderedBy(Comparator)}
-	 * .
-	 * 
-	 * @author Zhenya Leonov
-	 * @param <B>
-	 *            the upper bound of the type of queues this builder can produce
-	 *            (for example a {@code Builder<Number>} can produce a
-	 *            {@code Treelist<Float>} or a {@code Treelist<Integer>}
-	 */
-	public static final class Builder<B> {
-
-		private final Comparator<B> comparator;
-
-		private Builder(final Comparator<B> comparator) {
-			this.comparator = comparator;
-		}
-
-		/**
-		 * Builds an empty {@code Treelist} using the previously specified
-		 * comparator.
-		 * 
-		 * @return an empty {@code Treelist} using the previously specified
-		 *         comparator.
-		 */
-		public <T extends B> Treelist<T> create() {
-			return new Treelist<T>(comparator);
-		}
-
-		/**
-		 * Builds a new {@code Treelist} using the previously specified
-		 * comparator, and having the given initial elements.
-		 * 
-		 * @param elements
-		 *            the initial elements to be placed in this queue
-		 * @return a new {@code Treelist} using the previously specified
-		 *         comparator, and having the given initial elements
-		 */
-		public <T extends B> Treelist<T> create(
-				final Iterable<? extends T> elements) {
-			checkNotNull(elements);
-			final Treelist<T> list = new Treelist<T>(comparator);
-			Iterables.addAll(list, elements);
-			return list;
-		}
-	}
-
-	/**
-	 * Returns the comparator used to order the elements in this list. If one
-	 * was not explicitly provided a <i>natural order</i> comparator is
-	 * returned.
-	 * 
-	 * @return the comparator used to order this list
-	 */
-	@Override
-	public Comparator<? super E> comparator() {
-		return comparator;
-	}
-
-	@Override
-	public E get(int index) {
-		checkElementIndex(index, size);
-		Iterator<E> itor = iterator();
-		for (int i = 0; i < index; i++)
-			itor.next();
-		return itor.next();
-	}
-
-	@Override
-	public int indexOf(Object o) {
-		if (o != null) {
-			@SuppressWarnings("unchecked")
-			E e = (E) o;
-			ListIterator<E> itor = listIterator();
-			while (itor.hasNext())
-				if (comparator.compare(itor.next(), e) == 0)
-					return itor.previousIndex();
-		}
-		return -1;
-	}
-
-	@Override
-	public int lastIndexOf(Object o) {
-		if (o != null) {
-			@SuppressWarnings("unchecked")
-			E e = (E) o;
-			ListIterator<E> itor = listIterator();
-			while (itor.hasNext())
-				if (comparator.compare(itor.next(), e) == 0) {
-					while (itor.hasNext()
-							&& comparator.compare(itor.next(), e) == 0)
-						;
-					return itor.previousIndex();
-				}
-		}
-		return -1;
-	}
-
-	@Override
-	public Iterator<E> iterator() {
-		return listIterator();
-	}
-
-	@Override
-	public ListIterator<E> listIterator() {
-		return new ListIteratorImpl();
-	}
-
-	private class ListIteratorImpl extends IteratorImpl implements
-			ListIterator<E> {
-		private int index = 0;
-		private Node prev = nil;
-
-		@Override
-		public void add(E e) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return index < size();
-		}
-
-		@Override
-		public boolean hasPrevious() {
-			return index > 0;
-		}
-
-		@Override
-		public E next() {
-			E e = super.next();
-			index++;
-			return e;
-		}
-
-		@Override
-		public int nextIndex() {
-			return index;
-		}
-
-		@Override
-		public E previous() {
-			super.checkForConcurrentModification();
-			if (index == 0)
-				throw new NoSuchElementException();
-			next = prev;
-			index--;
-			prev = predecessor(prev);
-			last = next;
-			return next.element;
-		}
-
-		@Override
-		public int previousIndex() {
-			return index - 1;
-		}
-
-		@Override
-		public void remove() {
-			super.remove();
-			index--;
-		}
-
-		@Override
-		public void set(E e) {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	@Override
-	public ListIterator<E> listIterator(int index) {
-		checkPositionIndex(index, size);
-		ListIterator<E> listIterator = listIterator();
-		for (int i = 0; i < index; i++)
-			listIterator.next();
-		return listIterator;
-	}
-
-	@Override
-	public E remove(int index) {
-		checkElementIndex(index, size);
-		ListIterator<E> li = listIterator(index);
-		E e = li.next();
-		li.remove();
-		return e;
-	}
-
-	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof Sortedlist))
-			return false;
-		try {
-			@SuppressWarnings("unchecked")
-			final Iterator<E> i = ((Collection<E>) o).iterator();
-			for (E e : this)
-				if (comparator.compare(e, i.next()) != 0)
-					return false;
-			return !i.hasNext();
-		} catch (ClassCastException e) {
-			return false;
-		} catch (NullPointerException e) {
-			return false;
-		}
+	private Treelist(final Comparator<? super E> comparator) {
+		super(comparator);
 	}
 
 	/**
@@ -430,210 +526,114 @@ class Treelist<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
 		return clone;
 	}
 
+	/**
+	 * Returns the comparator used to order the elements in this list. If one
+	 * was not explicitly provided a <i>natural order</i> comparator is
+	 * returned.
+	 * 
+	 * @return the comparator used to order this list
+	 */
+	@Override
+	public Comparator<? super E> comparator() {
+		return comparator;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Sortedlist))
+			return false;
+		try {
+			@SuppressWarnings("unchecked")
+			final Iterator<E> i = ((Collection<E>) o).iterator();
+			for (E e : this)
+				if (comparator.compare(e, i.next()) != 0)
+					return false;
+			return !i.hasNext();
+		} catch (ClassCastException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public E get(int index) {
+		checkElementIndex(index, size);
+		Iterator<E> itor = iterator();
+		for (int i = 0; i < index; i++)
+			itor.next();
+		return itor.next();
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		if (o != null) {
+			@SuppressWarnings("unchecked")
+			E e = (E) o;
+			ListIterator<E> itor = listIterator();
+			while (itor.hasNext())
+				if (comparator.compare(itor.next(), e) == 0)
+					return itor.previousIndex();
+		}
+		return -1;
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return listIterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		if (o != null) {
+			@SuppressWarnings("unchecked")
+			E e = (E) o;
+			ListIterator<E> itor = listIterator();
+			while (itor.hasNext())
+				if (comparator.compare(itor.next(), e) == 0) {
+					while (itor.hasNext()
+							&& comparator.compare(itor.next(), e) == 0)
+						;
+					return itor.previousIndex();
+				}
+		}
+		return -1;
+	}
+
+	@Override
+	public ListIterator<E> listIterator() {
+		return new ListIteratorImpl();
+	}
+
+	@Override
+	public ListIterator<E> listIterator(int index) {
+		checkPositionIndex(index, size);
+		ListIterator<E> listIterator = listIterator();
+		for (int i = 0; i < index; i++)
+			listIterator.next();
+		return listIterator;
+	}
+
+	@Override
+	public E remove(int index) {
+		checkElementIndex(index, size);
+		ListIterator<E> li = listIterator(index);
+		E e = li.next();
+		li.remove();
+		return e;
+	}
+
+	@Override
+	public int size() {
+		return size;
+	}
+
 	@Override
 	public Treelist<E> subList(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size());
 		return new SubList(this, fromIndex, toIndex);
-	}
-
-	@SuppressWarnings("serial")
-	private class SubList extends Treelist<E> {
-		private final Treelist<E> list;
-		private final int offset;
-		private Node from;
-		private Node to;
-
-		private void checkForConcurrentModification() {
-			if (modCount != list.modCount)
-				throw new ConcurrentModificationException();
-		}
-
-		public SubList(Treelist<E> list, int fromIndex, int toIndex) {
-			super(list.comparator);
-			this.list = list;
-			from = list.min;
-			offset = fromIndex;
-			modCount = list.modCount;
-			size = toIndex - fromIndex;
-			int i = 0;
-			for (; i < fromIndex; i++)
-				from = successor(from);
-			to = from;
-			for (; i < toIndex - 1; i++)
-				to = successor(to);
-		}
-
-		@Override
-		public boolean add(E e) {
-			checkForConcurrentModification();
-			if (comparator.compare(e, from.element) < 0
-					|| comparator.compare(e, to.element) > 0)
-				throw new IllegalArgumentException("element out of range");
-			list.add(e);
-			modCount = list.modCount;
-			size++;
-			if (comparator.compare(to.element, e) <= 0)
-				to = successor(to);
-			return true;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public boolean contains(Object o) {
-			checkForConcurrentModification();
-			return o != null && search((E) o) != null;
-		}
-
-		@Override
-		public E get(int index) {
-			checkForConcurrentModification();
-			checkElementIndex(index, size);
-			return list.get(index + offset);
-		}
-
-		@Override
-		public ListIterator<E> listIterator() {
-			return listIterator(0);
-		}
-
-		@Override
-		public ListIterator<E> listIterator(final int index) {
-			checkForConcurrentModification();
-			checkPositionIndex(index, size);
-			return new ListIterator<E>() {
-				private ListIterator<E> i = list.listIterator(index + offset);
-
-				@Override
-				public boolean hasNext() {
-					return nextIndex() < size;
-				}
-
-				@Override
-				public E next() {
-					if (hasNext())
-						return i.next();
-					else
-						throw new NoSuchElementException();
-				}
-
-				@Override
-				public boolean hasPrevious() {
-					return previousIndex() >= 0;
-				}
-
-				@Override
-				public E previous() {
-					if (hasPrevious())
-						return i.previous();
-					else
-						throw new NoSuchElementException();
-				}
-
-				@Override
-				public int nextIndex() {
-					return i.nextIndex() - offset;
-				}
-
-				@Override
-				public int previousIndex() {
-					return i.previousIndex() - offset;
-				}
-
-				@Override
-				public void remove() {
-					i.remove();
-					modCount = list.modCount;
-					size--;
-				}
-
-				@Override
-				public void set(E e) {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public void add(E e) {
-					throw new UnsupportedOperationException();
-				}
-			};
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public boolean remove(Object o) {
-			checkForConcurrentModification();
-			checkNotNull(o);
-			final Node node = search((E) o);
-			if (node == null)
-				return false;
-			if (node == to)
-				to = predecessor(to);
-			if (node == from)
-				from = successor(from);
-			list.delete(node);
-			modCount = list.modCount;
-			size--;
-			return true;
-		}
-
-		@Override
-		public E remove(int index) {
-			checkForConcurrentModification();
-			checkElementIndex(index, size);
-			if (index == 0)
-				from = successor(from);
-			if (index == size - 1)
-				to = predecessor(to);
-			E e = list.remove(index + offset);
-			modCount = list.modCount;
-			size--;
-			return e;
-		}
-
-		@Override
-		public int size() {
-			checkForConcurrentModification();
-			return size;
-		}
-
-		@Override
-		public void clear() {
-			checkForConcurrentModification();
-			final Iterator<E> iterator = iterator();
-			while (iterator.hasNext())
-				iterator.remove();
-		}
-
-		@Override
-		public Treelist<E> clone() throws CloneNotSupportedException {
-			throw new CloneNotSupportedException();
-		}
-
-		private void writeObject(java.io.ObjectOutputStream oos)
-				throws NotSerializableException {
-			throw new NotSerializableException();
-		}
-
-		private void readObject(java.io.ObjectInputStream ois)
-				throws NotSerializableException {
-			throw new NotSerializableException();
-		}
-
-		// Red-Black-Tree
-
-		@Override
-		protected Node search(final E e) {
-			int compareFrom = comparator.compare(e, from.element);
-			int compareTo = comparator.compare(e, to.element);
-			if (compareFrom < 0 || compareTo > 0)
-				return null;
-			if (compareFrom == 0)
-				return from;
-			else if (compareTo == 0)
-				return to;
-			else
-				return list.search(e);
-		}
 	}
 
 }
