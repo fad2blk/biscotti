@@ -133,8 +133,70 @@ public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	private TreeQueue(final Comparator<? super E> comparator) {
-		super(comparator);
+	/**
+	 * A builder for the creation of {@code TreeQueue} instances. Instances of
+	 * this builder are obtained calling
+	 * {@link TreeQueue#orderedBy(Comparator)}.
+	 * 
+	 * @author Zhenya Leonov
+	 * @param <B>
+	 *            the upper bound of the type of queues this builder can produce
+	 *            (for example a {@code Builder<Number>} can produce a
+	 *            {@code TreeQueue<Float>} or a {@code TreeQueue<Integer>}
+	 */
+	public static final class Builder<B> {
+
+		private final Comparator<B> comparator;
+
+		private Builder(final Comparator<B> comparator) {
+			this.comparator = comparator;
+		}
+
+		/**
+		 * Builds an empty {@code TreeQueue} using the previously specified
+		 * comparator.
+		 * 
+		 * @return an empty {@code TreeQueue} using the previously specified
+		 *         comparator.
+		 */
+		public <T extends B> TreeQueue<T> create() {
+			return new TreeQueue<T>(comparator);
+		}
+
+		/**
+		 * Builds a new {@code TreeQueue} using the previously specified
+		 * comparator, and having the given initial elements.
+		 * 
+		 * @param elements
+		 *            the initial elements to be placed in this queue
+		 * @return a new {@code TreeQueue} using the previously specified
+		 *         comparator, and having the given initial elements
+		 */
+		public <T extends B> TreeQueue<T> create(
+				final Iterable<? extends T> elements) {
+			checkNotNull(elements);
+			final TreeQueue<T> list = new TreeQueue<T>(comparator);
+			Iterables.addAll(list, elements);
+			return list;
+		}
+	}
+
+	private class DescendingIterator extends IteratorImpl {
+
+		private DescendingIterator() {
+			super();
+			next = min;
+		}
+
+		@Override
+		public E next() {
+			checkForConcurrentModification();
+			if (next == nil)
+				throw new NoSuchElementException();
+			last = next;
+			next = predecessor(next);
+			return last.element;
+		}
 	}
 
 	/**
@@ -200,97 +262,8 @@ public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
 		return new Builder<B>(comparator);
 	}
 
-	/**
-	 * A builder for the creation of {@code TreeQueue} instances. Instances of
-	 * this builder are obtained calling
-	 * {@link TreeQueue#orderedBy(Comparator)}.
-	 * 
-	 * @author Zhenya Leonov
-	 * @param <B>
-	 *            the upper bound of the type of queues this builder can produce
-	 *            (for example a {@code Builder<Number>} can produce a
-	 *            {@code TreeQueue<Float>} or a {@code TreeQueue<Integer>}
-	 */
-	public static final class Builder<B> {
-
-		private final Comparator<B> comparator;
-
-		private Builder(final Comparator<B> comparator) {
-			this.comparator = comparator;
-		}
-
-		/**
-		 * Builds an empty {@code TreeQueue} using the previously specified
-		 * comparator.
-		 * 
-		 * @return an empty {@code TreeQueue} using the previously specified
-		 *         comparator.
-		 */
-		public <T extends B> TreeQueue<T> create() {
-			return new TreeQueue<T>(comparator);
-		}
-
-		/**
-		 * Builds a new {@code TreeQueue} using the previously specified
-		 * comparator, and having the given initial elements.
-		 * 
-		 * @param elements
-		 *            the initial elements to be placed in this queue
-		 * @return a new {@code TreeQueue} using the previously specified
-		 *         comparator, and having the given initial elements
-		 */
-		public <T extends B> TreeQueue<T> create(
-				final Iterable<? extends T> elements) {
-			checkNotNull(elements);
-			final TreeQueue<T> list = new TreeQueue<T>(comparator);
-			Iterables.addAll(list, elements);
-			return list;
-		}
-	}
-
-	/**
-	 * Retrieves and removes the last element of this queue. This method differs
-	 * from {@link #pollLast pollLast()} only in that it throws an exception if
-	 * this queue is empty.
-	 * 
-	 * @return the last element of this queue
-	 * @throws NoSuchElementException
-	 *             if this queue is empty
-	 */
-	public E removeLast() {
-		final E e = pollLast();
-		if (e != null)
-			return e;
-		else
-			throw new NoSuchElementException();
-	}
-
-	/**
-	 * Retrieves and removes the last element of this queue, or returns
-	 * {@code null} if this queue is empty.
-	 * 
-	 * @return the last element of this queue, or {@code null} if this queue is
-	 *         empty
-	 */
-	public E pollLast() {
-		if (isEmpty())
-			return null;
-		final E e = max.element;
-		delete(max);
-		return e;
-	}
-
-	/**
-	 * Retrieves, but does not remove, the last element of this queue, or
-	 * returns {@code null} if this queue is empty.
-	 * 
-	 * @return the last element of this queue, or {@code null} if this queue is
-	 *         empty
-	 */
-	public E peekLast() {
-		if (isEmpty())
-			return null;
-		return max.element;
+	private TreeQueue(final Comparator<? super E> comparator) {
+		super(comparator);
 	}
 
 	@Override
@@ -302,55 +275,14 @@ public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
 	}
 
 	@Override
-	public boolean offer(E e) {
-		checkNotNull(e);
-		final Node newNode = new Node(e);
-		insert(newNode);
-		return true;
-	}
-
-	@Override
-	public E poll() {
-		if (isEmpty())
-			return null;
-		final E e = min.element;
-		delete(min);
-		return e;
-	}
-
-	@Override
-	public E peek() {
-		if (isEmpty())
-			return null;
-		return min.element;
-	}
-
-	/**
-	 * Returns an iterator over the elements of this queue in reverse order from
-	 * last (tail) to first (head).
-	 * 
-	 * @return an iterator over the elements of this queue in reverse order
-	 */
-	public Iterator<E> descendingIterator() {
-		return new DescendingIterator();
-	}
-
-	private class DescendingIterator extends IteratorImpl {
-
-		private DescendingIterator() {
-			super();
-			next = min;
-		}
-
-		@Override
-		public E next() {
-			checkForConcurrentModification();
-			if (next == nil)
-				throw new NoSuchElementException();
-			last = next;
-			next = predecessor(next);
-			return last.element;
-		}
+	public boolean addAll(Collection<? extends E> c) {
+		checkNotNull(c);
+		checkState(c != this);
+		boolean modified = false;
+		for (E e : c)
+			if (add(e))
+				modified = true;
+		return modified;
 	}
 
 	/**
@@ -378,13 +310,14 @@ public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
 		return clone;
 	}
 
-	@Override
-	public E remove() {
-		E x = poll();
-		if (x != null)
-			return x;
-		else
-			throw new NoSuchElementException();
+	/**
+	 * Returns an iterator over the elements of this queue in reverse order from
+	 * last (tail) to first (head).
+	 * 
+	 * @return an iterator over the elements of this queue in reverse order
+	 */
+	public Iterator<E> descendingIterator() {
+		return new DescendingIterator();
 	}
 
 	@Override
@@ -397,14 +330,81 @@ public class TreeQueue<E> extends SortedCollectionImpl<E> implements Queue<E> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		checkNotNull(c);
-		checkState(c != this);
-		boolean modified = false;
-		for (E e : c)
-			if (add(e))
-				modified = true;
-		return modified;
+	public boolean offer(E e) {
+		checkNotNull(e);
+		final Node newNode = new Node(e);
+		insert(newNode);
+		return true;
+	}
+
+	@Override
+	public E peek() {
+		if (isEmpty())
+			return null;
+		return min.element;
+	}
+
+	/**
+	 * Retrieves, but does not remove, the last element of this queue, or
+	 * returns {@code null} if this queue is empty.
+	 * 
+	 * @return the last element of this queue, or {@code null} if this queue is
+	 *         empty
+	 */
+	public E peekLast() {
+		if (isEmpty())
+			return null;
+		return max.element;
+	}
+
+	@Override
+	public E poll() {
+		if (isEmpty())
+			return null;
+		final E e = min.element;
+		delete(min);
+		return e;
+	}
+
+	/**
+	 * Retrieves and removes the last element of this queue, or returns
+	 * {@code null} if this queue is empty.
+	 * 
+	 * @return the last element of this queue, or {@code null} if this queue is
+	 *         empty
+	 */
+	public E pollLast() {
+		if (isEmpty())
+			return null;
+		final E e = max.element;
+		delete(max);
+		return e;
+	}
+
+	@Override
+	public E remove() {
+		E x = poll();
+		if (x != null)
+			return x;
+		else
+			throw new NoSuchElementException();
+	}
+
+	/**
+	 * Retrieves and removes the last element of this queue. This method differs
+	 * from {@link #pollLast pollLast()} only in that it throws an exception if
+	 * this queue is empty.
+	 * 
+	 * @return the last element of this queue
+	 * @throws NoSuchElementException
+	 *             if this queue is empty
+	 */
+	public E removeLast() {
+		final E e = pollLast();
+		if (e != null)
+			return e;
+		else
+			throw new NoSuchElementException();
 	}
 
 }
