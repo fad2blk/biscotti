@@ -19,6 +19,7 @@ package biscotti.collect;
 import static biscotti.collect.TreeQueue.Color.BLACK;
 import static biscotti.collect.TreeQueue.Color.RED;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.AbstractQueue;
@@ -431,14 +432,13 @@ public class TreeQueue<E> extends AbstractQueue<E> implements
 
 			@Override
 			public boolean hasNext() {
-				return next != null;
+				return next != nil;
 			}
 
 			@Override
 			public void remove() {
 				checkForConcurrentModification();
-				if (last == null)
-					throw new IllegalStateException();
+				checkState(last != nil);
 				if (last.left != nil && last.right != nil)
 					next = last;
 				delete(last);

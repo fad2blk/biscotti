@@ -335,11 +335,11 @@ class Treelist2<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
 			super.checkForConcurrentModification();
 			if (index == 0)
 				throw new NoSuchElementException();
-			Node node = next = prev;
+			next = prev;
 			index--;
-			prev = predecessor(node);
-			last = node;
-			return node.element;
+			prev = predecessor(prev);
+			last = next;
+			return next.element;
 		}
 
 		@Override
@@ -400,6 +400,34 @@ class Treelist2<E> extends SortedCollectionImpl<E> implements Sortedlist<E> {
 		} catch (NullPointerException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Returns a shallow copy of this {@code Treelist}. The elements themselves
+	 * are not cloned.
+	 * 
+	 * @return a shallow copy of this list
+	 * @throws CloneNotSupportedException
+	 *             if an attempt is made to clone is a sub-list view of this
+	 *             sorted-list
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Treelist2<E> clone() throws CloneNotSupportedException {
+		Treelist2<E> clone;
+		try {
+			clone = (Treelist2<E>) super.clone();
+		} catch (java.lang.CloneNotSupportedException e) {
+			throw new InternalError();
+		}
+		clone.nil = new Node();
+		clone.min = clone.nil;
+		clone.max = clone.nil;
+		clone.root = clone.nil;
+		clone.size = 0;
+		clone.modCount = 0;
+		clone.addAll(this);
+		return clone;
 	}
 
 	@Override
