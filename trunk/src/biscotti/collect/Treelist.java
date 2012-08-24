@@ -126,12 +126,12 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		Sortedlist<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private transient int size = 0;
+	transient int size = 0;
 	private transient Node nil = new Node();
 	private transient Node min = nil;
 	private transient Node max = nil;
 	private transient Node root = nil;
-	private transient int modCount = 0;
+	transient int modCount = 0;
 	private final Comparator<? super E> comparator;
 
 	private Treelist(final Comparator<? super E> comparator) {
@@ -474,9 +474,9 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	@Override
-	public Treelist<E> subList(int fromIndex, int toIndex) {
+	public Treelist<E> sublist(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size());
-		return new SubList(this, fromIndex, toIndex);
+		return new Sublist(this, fromIndex, toIndex);
 	}
 
 	/**
@@ -529,24 +529,24 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	@SuppressWarnings("serial")
-	private class SubList extends Treelist<E> {
+	private class Sublist extends Treelist<E> {
 		private final Treelist<E> list;
 		private final int offset;
 		private Node from;
 		private Node to;
 
 		private void checkForConcurrentModification() {
-			if (modCount != list.modCount)
+			if (this.modCount != list.modCount)
 				throw new ConcurrentModificationException();
 		}
 
-		public SubList(Treelist<E> list, int fromIndex, int toIndex) {
+		public Sublist(Treelist<E> list, int fromIndex, int toIndex) {
 			super(list.comparator);
 			this.list = list;
 			from = list.min;
 			offset = fromIndex;
-			modCount = list.modCount;
-			size = toIndex - fromIndex;
+			this.modCount = list.modCount;
+			this.size = toIndex - fromIndex;
 			int i = 0;
 			for (; i < fromIndex; i++)
 				from = successor(from);
@@ -562,8 +562,8 @@ public class Treelist<E> extends AbstractCollection<E> implements
 					|| comparator.compare(e, to.element) > 0)
 				throw new IllegalArgumentException("element out of range");
 			list.add(e);
-			modCount = list.modCount;
-			size++;
+			this.modCount = list.modCount;
+			this.size++;
 			if (comparator.compare(to.element, e) <= 0)
 				to = successor(to);
 			return true;
@@ -579,7 +579,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		@Override
 		public E get(int index) {
 			checkForConcurrentModification();
-			checkElementIndex(index, size);
+			checkElementIndex(index, this.size);
 			return list.get(index + offset);
 		}
 
@@ -591,13 +591,13 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		@Override
 		public ListIterator<E> listIterator(final int index) {
 			checkForConcurrentModification();
-			checkPositionIndex(index, size);
+			checkPositionIndex(index, Sublist.this.size);
 			return new ListIterator<E>() {
 				private ListIterator<E> i = list.listIterator(index + offset);
 
 				@Override
 				public boolean hasNext() {
-					return nextIndex() < size;
+					return nextIndex() < Sublist.this.size;
 				}
 
 				@Override
@@ -634,8 +634,8 @@ public class Treelist<E> extends AbstractCollection<E> implements
 				@Override
 				public void remove() {
 					i.remove();
-					modCount = list.modCount;
-					size--;
+					Sublist.this.modCount = list.modCount;
+					Sublist.this.size--;
 				}
 
 				@Override
@@ -663,29 +663,29 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			if (node == from)
 				from = successor(from);
 			list.delete(node);
-			modCount = list.modCount;
-			size--;
+			this.modCount = list.modCount;
+			this.size--;
 			return true;
 		}
 
 		@Override
 		public E remove(int index) {
 			checkForConcurrentModification();
-			checkElementIndex(index, size);
+			checkElementIndex(index, this.size);
 			if (index == 0)
 				from = successor(from);
-			if (index == size - 1)
+			if (index == this.size - 1)
 				to = predecessor(to);
-			E e = list.remove(index + offset);
-			modCount = list.modCount;
-			size--;
+			final E e = list.remove(index + offset);
+			this.modCount = list.modCount;
+			this.size--;
 			return e;
 		}
 
 		@Override
 		public int size() {
 			checkForConcurrentModification();
-			return size;
+			return this.size;
 		}
 
 		@Override
@@ -715,13 +715,13 @@ public class Treelist<E> extends AbstractCollection<E> implements
 
 		@Override
 		Node search(final E e) {
-			int i = comparator.compare(e, from.element);
-			int j = comparator.compare(e, to.element);
-			if (i < 0 || j > 0)
+			final int compareFrom = comparator.compare(e, from.element);
+			final int compareTo = comparator.compare(e, to.element);
+			if (compareFrom < 0 || compareTo > 0)
 				return null;
-			if (i == 0)
+			if (compareFrom == 0)
 				return from;
-			else if (j == 0)
+			else if (compareTo == 0)
 				return to;
 			else
 				return list.search(e);

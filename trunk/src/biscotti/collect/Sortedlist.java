@@ -107,7 +107,7 @@ public interface Sortedlist<E> extends SortedCollection<E> {
 	 *             if
 	 *             {@code fromIndex < 0 || toIndex > size || fromIndex > toIndex}
 	 */
-	public Sortedlist<E> subList(int fromIndex, int toIndex);
+	public Sortedlist<E> sublist(int fromIndex, int toIndex);
 
 	/**
 	 * Returns the hash code value for this sorted-list. The hash code of a

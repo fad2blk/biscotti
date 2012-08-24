@@ -153,7 +153,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
 	private static final int MAX_LEVEL = 32;
-	private transient int size = 0;
+	transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
 	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
@@ -488,7 +488,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	@Override
-	public Skiplist<E> subList(int fromIndex, int toIndex) {
+	public Skiplist<E> sublist(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size);
 		return new Sublist(this, fromIndex, toIndex);
 	}
@@ -713,9 +713,9 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 				final int toIndex) {
 			super(list.comparator);
 			this.list = list;
-			modCount = list.modCount;
+			this.modCount = list.modCount;
 			offset = fromIndex;
-			size = toIndex - fromIndex;
+			this.size = toIndex - fromIndex;
 			from = list.search(fromIndex);
 			to = list.search(toIndex - 1);
 		}
@@ -738,14 +738,14 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		}
 
 		private void checkForConcurrentModification() {
-			if (modCount != list.modCount)
+			if (this.modCount != list.modCount)
 				throw new ConcurrentModificationException();
 		}
 
 		@Override
 		public int size() {
 			checkForConcurrentModification();
-			return size;
+			return this.size;
 		}
 
 		@Override
@@ -755,7 +755,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			checkArgument(inRange(e, from, to));
 			list.add(e);
 			this.modCount = list.modCount;
-			size++;
+			this.size++;
 			return true;
 
 		}
@@ -773,7 +773,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			} else
 				list.remove(e);
 			this.modCount = list.modCount;
-			size--;
+			this.size--;
 			return true;
 		}
 
@@ -790,21 +790,21 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		public E get(int index) {
 			checkForConcurrentModification();
-			checkElementIndex(index, size);
+			checkElementIndex(index, this.size);
 			return list.get(index + offset);
 		}
 
 		@Override
 		public E remove(int index) {
 			checkForConcurrentModification();
-			checkElementIndex(index, size);
-			if (index == size - 1)
+			checkElementIndex(index, this.size);
+			if (index == this.size - 1)
 				to = to.prev;
 			if (index == 0)
 				from = from.next();
 			final E e = list.remove(index + offset);
-			modCount = list.modCount;
-			size--;
+			this.modCount = list.modCount;
+			this.size--;
 			return e;
 		}
 
@@ -831,7 +831,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			if (!inRange(e, from, to))
 				return -1;
 			if (comparator.compare(to.element, e) == 0)
-				return size - 1;
+				return this.size - 1;
 			final int result = list.lastIndexOf(e);
 			return result == -1 ? -1 : result - offset;
 		}
@@ -839,13 +839,13 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		@Override
 		public ListIterator<E> listIterator(final int index) {
 			checkForConcurrentModification();
-			checkPositionIndex(index, size);
+			checkPositionIndex(index, Sublist.this.size);
 			return new ListIterator<E>() {
 				final ListIterator<E> li = list.listIterator(index + offset);
 
 				@Override
 				public boolean hasNext() {
-					return nextIndex() < size;
+					return nextIndex() < Sublist.this.size;
 				}
 
 				@Override
@@ -880,7 +880,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 				public void remove() {
 					li.remove();
 					Sublist.this.modCount = list.modCount;
-					size--;
+					Sublist.this.size--;
 				}
 
 				@Override
