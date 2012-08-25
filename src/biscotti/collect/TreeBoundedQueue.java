@@ -72,26 +72,24 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		this.maximumSize = size();
 	}
 
-	// /**
-	// * Creates a new {@code TreeBoundedQeque} which orders its elements
-	// * according to their <i>natural ordering</i>, and having the specified
-	// * maximum size.
-	// *
-	// * @param maximumSize
-	// * the maximum size (the bound) of this queue
-	// * @return returns a new {@code TreeBoundedQeque} which orders its
-	// elements
-	// * according to their <i>natural ordering</i>, having the specified
-	// * maximum size
-	// * @throws IllegalArgumentException
-	// * if {@code maxSize} is less than 1
-	// */
-	// public static <E extends Comparable<? super E>> TreeBoundedQueue<E>
-	// create(
-	// final int maximumSize) {
-	// checkArgument(maximumSize > 0);
-	// return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
-	// }
+	/**
+	 * Creates a new {@code TreeBoundedQeque} which orders its elements
+	 * according to their <i>natural ordering</i>, and having the specified
+	 * maximum size.
+	 * 
+	 * @param maximumSize
+	 *            the maximum size (the bound) of this queue
+	 * @return returns a new {@code TreeBoundedQeque} which orders its elements
+	 *         according to their <i>natural ordering</i>, having the specified
+	 *         maximum size
+	 * @throws IllegalArgumentException
+	 *             if {@code maxSize} is less than 1
+	 */
+	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> create(
+			final int maximumSize) {
+		checkArgument(maximumSize > 0);
+		return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
+	}
 
 	// /**
 	// * Creates a new empty {@code TreeBoundedQeque} having the specified
