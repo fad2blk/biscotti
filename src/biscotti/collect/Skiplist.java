@@ -156,10 +156,10 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
-	private transient Node head = new Node(null, MAX_LEVEL);
+	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
 	@SuppressWarnings("unchecked")
-	private transient Node[] update = (Node[]) new Object[MAX_LEVEL];
+	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
 	transient int modCount = 0;
 
@@ -300,8 +300,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	public boolean add(E e) {
 		checkNotNull(e);
 		final int newLevel = randomLevel();
-		Node x = head;
-		Node y = head;
+		Node<E> x = head;
+		Node<E> y = head;
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
@@ -321,7 +321,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			}
 			level = newLevel;
 		}
-		x = new Node(e, newLevel);
+		x = new Node<E>(e, newLevel);
 		for (i = 0; i < level; i++) {
 			if (i > newLevel - 1)
 				update[i].dist[i]++;
@@ -356,7 +356,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public int indexOf(Object o) {
 		if (o != null) {
-			Node curr = head;
+			Node<E> curr = head;
 			int idx = 0;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
@@ -376,7 +376,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
-			Node curr = head;
+			Node<E> curr = head;
 			int idx = -1;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
@@ -412,7 +412,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		final E element = (E) o;
-		Node curr = head;
+		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
@@ -429,7 +429,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public E remove(int index) {
 		checkElementIndex(index, size);
-		Node curr = head;
+		Node<E> curr = head;
 		int idx = 0;
 		for (int i = level - 1; i >= 0; i--) {
 			while (idx + curr.dist[i] <= index) {
@@ -533,12 +533,12 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		head = new Node(null, MAX_LEVEL);
+		head = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			head.next[i] = head;
 			head.dist[i] = 1;
 		}
-		update = (Node[]) new Object[MAX_LEVEL];
+		update = new Node[MAX_LEVEL];
 		index = new int[MAX_LEVEL];
 		head.prev = head;
 		random = new Random();
@@ -549,8 +549,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	private class ListIteratorImpl implements ListIterator<E> {
-		private Node node;
-		private Node last = null;
+		private Node<E> node;
+		private Node<E> last = null;
 		private final int offset;
 		private int index = 0;
 		private int expectedModCount = modCount;
@@ -628,20 +628,20 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 	// skip list
 
-	private class Node {
+	private static class Node<E> {
 		private E element;
-		private Node prev;
-		private final Node[] next;
+		private Node<E> prev;
+		private final Node<E>[] next;
 		private final int[] dist;
 
 		@SuppressWarnings("unchecked")
 		private Node(final E element, final int size) {
 			this.element = element;
-			next = (Node[]) new Object[size];
+			next = new Node[size];
 			dist = new int[size];
 		}
 
-		private Node next() {
+		private Node<E> next() {
 			return next[0];
 		}
 	}
@@ -653,8 +653,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return randomLevel;
 	}
 
-	private boolean remove(final Node node) {
-		Node curr = head;
+	private boolean remove(final Node<E> node) {
+		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head && curr.next[i] != node)
 				curr = curr.next[i];
@@ -665,7 +665,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return true;
 	}
 
-	private void delete(final Node node, final Node[] update) {
+	private void delete(final Node<E> node, final Node<E>[] update) {
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
 				update[i].next[i] = node.next[i];
@@ -679,8 +679,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		size--;
 	}
 
-	Node search(final E element) {
-		Node curr = head;
+	Node<E> search(final E element) {
+		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--)
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
@@ -691,8 +691,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return null;
 	}
 
-	private Node search(final int index) {
-		Node curr = head;
+	private Node<E> search(final int index) {
+		Node<E> curr = head;
 		int idx = -1;
 		for (int i = level - 1; i >= 0; i--)
 			while (idx + curr.dist[i] <= index) {
@@ -706,8 +706,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private final class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
-		private Node from;
-		private Node to;
+		private Node<E> from;
+		private Node<E> to;
 
 		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
@@ -958,7 +958,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		// }
 
 		@Override
-		Node search(final E e) {
+		Node<E> search(final E e) {
 			checkForConcurrentModification();
 			if (!inRange(e, from, to))
 				return null;
@@ -969,7 +969,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			return list.search(e);
 		}
 
-		private boolean inRange(final E e, final Node from, final Node to) {
+		private boolean inRange(final E e, final Node<E> from, final Node<E> to) {
 			return (comparator.compare(from.element, e) < 1 && comparator
 					.compare(e, to.element) < 1);
 		}
