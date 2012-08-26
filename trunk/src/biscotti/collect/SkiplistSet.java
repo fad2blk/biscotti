@@ -107,7 +107,7 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
- * @see SkiplistSet
+ * @see Skiplist
  */
 final public class SkiplistSet<E> extends AbstractSet<E> implements
 		SortedCollection<E>, Serializable, Cloneable {
@@ -118,10 +118,10 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
-	private transient Node head = new Node(null, MAX_LEVEL);
+	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
 	@SuppressWarnings("unchecked")
-	private transient Node[] update = (Node[]) new Object[MAX_LEVEL];
+	private transient Node<E>[] update = new Node[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
 	transient int modCount = 0;
 
@@ -215,8 +215,8 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	public boolean add(E e) {
 		checkNotNull(e);
 		final int newLevel = randomLevel();
-		Node x = head;
-		Node y = head;
+		Node<E> x = head;
+		Node<E> y = head;
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
@@ -235,7 +235,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		if (x.next().element != null
 				&& comparator.compare(x.next().element, e) == 0)
 			return false;
-		x = new Node(e, newLevel);
+		x = new Node<E>(e, newLevel);
 		for (i = 0; i < level; i++)
 			if (i < newLevel) {
 				x.next[i] = update[i].next[i];
@@ -262,7 +262,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		final E element = (E) o;
-		Node curr = head;
+		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
@@ -326,10 +326,10 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		head = new Node(null, MAX_LEVEL);
+		head = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++)
 			head.next[i] = head;
-		update = (Node[]) new Object[MAX_LEVEL];
+		update = new Node[MAX_LEVEL];
 		index = new int[MAX_LEVEL];
 		random = new Random();
 		level = 1;
@@ -339,8 +339,8 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	}
 
 	private class IteratorImpl implements Iterator<E> {
-		private Node node = head.next();
-		private Node last = null;
+		private Node<E> node = head.next();
+		private Node<E> last = null;
 		private int index = 0;
 		private int expectedModCount = modCount;
 
@@ -377,17 +377,17 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 
 	// skip set
 
-	private class Node {
+	private static class Node<E> {
 		private E element;
-		private final Node[] next;
+		private final Node<E>[] next;
 
 		@SuppressWarnings("unchecked")
 		private Node(final E element, final int size) {
 			this.element = element;
-			next = (Node[]) new Object[size];
+			next = new Node[size];
 		}
 
-		private Node next() {
+		private Node<E> next() {
 			return next[0];
 		}
 	}
@@ -399,7 +399,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		return randomLevel;
 	}
 
-	private void delete(final Node node, final Node[] update) {
+	private void delete(final Node<E> node, final Node<E>[] update) {
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
 				update[i].next[i] = node.next[i];
@@ -410,8 +410,8 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		size--;
 	}
 
-	private Node search(final E element) {
-		Node curr = head;
+	private Node<E> search(final E element) {
+		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--)
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
