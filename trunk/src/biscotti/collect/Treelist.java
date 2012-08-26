@@ -76,37 +76,37 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}</br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #addAll(Collection) addAll(Collection)}<br/>
+ *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
+ *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td style="text-align:center;"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #indexOf(Object)}</br>
- *       {@link #lastIndexOf(Object)}</br>
- *       {@link #get(int)}</br>
- *       {@link #remove(int)}</br>
+ *       {@link #indexOf(Object)}<br/>
+ *       {@link #lastIndexOf(Object)}<br/>
+ *       {@link #get(int)}<br/>
+ *       {@link #remove(int)}<br/>
  *       {@link #listIterator(int)}
  *     </td>
  *     <td style="text-align:center;"><i>O(n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
+ *       {@link #add(Object) add(E)}<br/>
+ *       {@link #contains(Object)}<br/>
  *       {@link #remove(Object)}
  *     </td>
  *     <td style="text-align:center;"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #clear() clear()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #size()}</br>
- *       {@link Iterator#remove()}</br>
+ *       {@link #clear() clear()}<br/>
+ *       {@link #isEmpty() isEmpty()}<br/>
+ *       {@link #size()}<br/>
+ *       {@link Iterator#remove()}<br/>
  *       {@link ListIterator#remove()}
  *     </td>
  *     <td style="text-align:center;"><i>O(1)</i></td>
@@ -483,7 +483,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	 * Returns a shallow copy of this {@code Treelist}. The elements themselves
 	 * are not cloned.
 	 * 
-	 * @return a shallow copy of this list
+	 * @return a shallow copy of this tree list
 	 * @throws CloneNotSupportedException
 	 *             if an attempt is made to clone is a sub-list view of this
 	 *             sorted-list

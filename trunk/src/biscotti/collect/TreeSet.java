@@ -16,20 +16,19 @@
 
 package biscotti.collect;
 
-import static biscotti.collect.TreeQueue.Color.BLACK;
-import static biscotti.collect.TreeQueue.Color.RED;
+import static biscotti.collect.TreeSet.Color.BLACK;
+import static biscotti.collect.TreeSet.Color.RED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
-import java.util.AbstractQueue;
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.SortedSet;
 
 import com.google.common.collect.Iterables;
@@ -37,152 +36,132 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
 
 /**
- * An unbounded priority {@link Queue} based on a modified <a
- * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
- * elements of this queue are sorted according to their <i>natural ordering</i>,
- * or by an explicit {@link Comparator} provided at creation. Attempting to
- * remove or insert {@code null} elements is prohibited. Querying for
- * {@code null} elements is allowed. Inserting non-comparable elements will
- * result in a {@code ClassCastException}. This queue uses the same general
- * ordering rules as a {@link PriorityQueue PriorityQueue}. The first element
- * (the head) of this queue is considered to be the <i>least</i> element with
- * respect to the specified ordering. A comparator is used (whether or not one
- * is explicitly provided) to perform all element comparisons. Two elements
- * which are deemed equal by the comparator's {@code compare(E, E)} method have
- * equal priority from the standpoint of this queue. Elements with equal
- * priority are sorted according to their insertion order.
+ * <b>Note: This class should only be used for testing. It provides no practical
+ * benefit when compared to {@link java.util.TreeSet} and lacks navigation
+ * methods defined in the {@link NavigableSet} interface.</b>
  * <p>
- * Besides the regular {@link #peek() peek()}, {@link #poll() poll()},
- * {@link #remove() remove()} operations specified in the {@code Queue}
- * interface, this implementation provides additional {@link #peekLast()
- * peekLast()}, {@link #pollLast() pollLast()}, {@link #removeLast()
- * removeLast()} methods to examine the elements at the tail of the queue.
+ * A {@code Set} implementation based on a modified <a
+ * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>.
+ * Elements are sorted from <i>least</i> to <i>greatest</i> according to their
+ * <i>natural ordering</i>, or by an explicit {@link Comparator} provided at
+ * creation. Attempting to remove or insert {@code null} elements is prohibited.
+ * Querying for {@code null} elements is allowed. Inserting non-comparable
+ * elements will result in a {@code ClassCastException}.
  * <p>
- * The {@link #iterator() iterator()} and {@link #descendingIterator()} methods
- * return <i>fail-fast</i> iterators which are guaranteed to traverse the
- * elements of the queue in ascending and descending priority order,
- * respectively. Attempts to modify the elements in this queue at any time after
- * an iterator is created, in any way except through the iterator's own remove
- * method, will result in a {@code ConcurrentModificationException}.
+ * The iterators obtained from the {@link #iterator()} method are
+ * <i>fail-fast</i>. Attempts to modify the elements in this list at any time
+ * after an iterator is created, in any way except through the iterator's own
+ * remove method, will result in a {@code ConcurrentModificationException}.
  * <p>
- * This queue is not <i>thread-safe</i>. If multiple threads modify this queue
+ * This set is not <i>thread-safe</i>. If multiple threads modify this set
  * concurrently it must be synchronized externally.
  * <p>
- * The underlying Red-Black Tree provides the following running time compared to
- * a {@link PriorityQueue PriorityQueue} (where <i>n</i> is the size of this
- * queue and <i>m</i> is the size of the specified collection which is iterable
- * in linear time):
+ * This implementation uses a comparator (whether or not one is explicitly
+ * provided) to perform all element comparisons. Two elements which are deemed
+ * equal by the comparator's {@code compare(E, E)} method are, from the
+ * standpoint of this set, equal.
+ * <p>
+ * The underlying Red-Black Tree provides the following worst case running time
+ * (where <i>n</i> is the size of this set and <i>m</i> is the size of the
+ * specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
- *     <th style="text-align:center;" rowspan="2">Method</th>
- *     <th style="text-align:center;" colspan="2">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center;"><b>TreeQueue</b><br>(<i>worst-case</i>)</td>
- *     <td style="text-align:center;"><b>PriorityQueue</b><br>(<i>worst-case</i>)</td>
+ *     <th style="text-align:center;">Method</th>
+ *     <th style="text-align:center;">Running Time</th>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}<br>
+ *       {@link #addAll(Collection) addAll(Collection)}<br/>
  *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
  *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
+ *     <td style="text-align:center;"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
  *       {@link #add(Object) add(E)}<br/>
- *       {@link #offer(Object) offer(E)}<br/>
+ *       {@link #contains(Object)}<br/>
  *       {@link #remove(Object)}
  *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
+ *     <td style="text-align:center;"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #contains(Object)}
- *     </td>
- *     <td bgcolor="FFCC99" style="text-align:center;"><i>O(log n)</i></td>
- *     <td bgcolor="FFCCCC" rowspan="2" style="text-align:center;"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear()}
- *     </td>
- *     <td bgcolor="FFCC99" rowspan="2" style="text-align:center;"><i>O(1)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #poll()}<br/>
- *       {@link #remove() remove()}<br/>
- *     </td>
- *     <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #element() element()}<br/>
+ *       {@link #clear() clear()}<br/>
  *       {@link #isEmpty() isEmpty()}<br/>
- *       {@link #peek()}<br/>
- *       {@link #size()}
+ *       {@link #size()}<br/>
+ *       {@link Iterator#remove()}
  *     </td>
- *     <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
+ *     <td style="text-align:center;"><i>O(1)</i></td>
  *   </tr>
  * </table>
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this queue
- * @see TreeBoundedQueue
+ *            the type of elements maintained by this list
+ * @see SkiplistSet
  */
-final public class TreeQueue<E> extends AbstractQueue<E> implements
+final public class TreeSet<E> extends AbstractSet<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private transient int size = 0;
+	private transient int size = 0, modCount = 0;
 	private transient Node nil = new Node();
-	private transient Node min = nil;
-	private transient Node max = nil;
-	private transient Node root = nil;
-	private transient int modCount = 0;
+	private transient Node min = nil, root = nil;
 	private final Comparator<? super E> comparator;
 
-	private TreeQueue(final Comparator<? super E> comparator) {
+	private TreeSet(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 	}
 
 	/**
-	 * Creates a new {@code TreeQueue} that orders its elements according to
-	 * their <i>natural ordering</i>.
+	 * Creates a new {@code TreeSet} that orders its elements according to their
+	 * <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code TreeQueue} that orders its elements according to
-	 *         their <i>natural ordering</i>
+	 * @return a new {@code TreeSet} that orders its elements according to their
+	 *         <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
-		return orderedBy(Ordering.natural()).create();
+	public static <E extends Comparable<? super E>> TreeSet<E> create() {
+		return new TreeSet<E>(Ordering.natural());
 	}
 
 	/**
-	 * Creates a new {@code TreeQueue} containing the specified initial
-	 * elements. If {@code elements} is an instance of {@link SortedSet} ,
+	 * Creates a new {@code TreeSet} that uses the specified comparator to order
+	 * its elements.
+	 * 
+	 * @param comparator
+	 *            the specified comparator
+	 * @return a new {@code TreeSet} that uses the specified comparator to order
+	 *         its elements
+	 * 
+	 */
+	public static <E> TreeSet<E> create(final Comparator<? super E> comparator) {
+		checkNotNull(comparator);
+		return new TreeSet<E>(comparator);
+	}
+
+	/**
+	 * Creates a new {@code TreeSet} containing the specified initial elements.
+	 * If {@code elements} is an instance of {@link SortedSet},
 	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
-	 * {@code SortedCollection} this queue will be ordered according to the same
-	 * ordering. Otherwise, this queue will be ordered according to the
-	 * <i>natural ordering</i> of its elements.
+	 * {@code SortedCollection}, this set will be ordered according to the same
+	 * ordering. Otherwise, this set will be ordered according to the <i>natural
+	 * ordering</i> of its elements.
 	 * 
 	 * @param elements
-	 *            the collection whose elements are to be placed into the list
-	 * @return a new {@code TreeQueue} containing the elements of the specified
-	 *         collection
+	 *            the initial elements to be placed into the set
+	 * @return a new {@code TreeSet} containing the specified initial elements
 	 * @throws ClassCastException
-	 *             if elements of the specified collection cannot be compared to
-	 *             one another according to this list's ordering
+	 *             if any of the initial elements cannot be compared to one
+	 *             another according to this set's ordering
 	 * @throws NullPointerException
-	 *             if any of the elements of the specified collection or the
-	 *             collection itself is {@code null}
+	 *             if any of the initial elements or {@code elements} itself is
+	 *             {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> TreeQueue<E> create(final Collection<? extends E> elements) {
+	public static <E> TreeSet<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -196,174 +175,28 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return orderedBy(comparator).create(elements);
+		final TreeSet<E> treeSet = TreeSet.create(comparator);
+		Iterables.addAll(treeSet, elements);
+		return treeSet;
 	}
 
 	/**
-	 * Creates and returns a new builder, configured to build {@code TreeQueue}
-	 * instances that use the specified comparator ordering.
+	 * Returns the comparator used to order the elements in this set. If one was
+	 * not explicitly provided a <i>natural order</i> comparator is returned.
 	 * 
-	 * @param comparator
-	 *            the specified comparator
-	 * @return a new building which builds {@code TreeQueue} instances that use
-	 *         the specified comparator for ordering
-	 */
-	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
-		checkNotNull(comparator);
-		return new Builder<B>(comparator);
-	}
-
-	/**
-	 * A builder for the creation of {@code TreeQueue} instances. Instances of
-	 * this builder are obtained calling {@link TreeQueue#orderedBy(Comparator)}.
-	 * 
-	 * @author Zhenya Leonov
-	 * @param <B>
-	 *            the upper bound of the type of queues this builder can produce
-	 *            (for example a {@code Builder<Number>} can produce a
-	 *            {@code TreeQueue<Float>} or a {@code TreeQueue<Integer>}
-	 */
-	public static final class Builder<B> {
-
-		private final Comparator<B> comparator;
-
-		private Builder(final Comparator<B> comparator) {
-			this.comparator = comparator;
-		}
-
-		/**
-		 * Builds an empty {@code TreeQueue} using the previously specified
-		 * comparator.
-		 * 
-		 * @return an empty {@code TreeQueue} using the previously specified
-		 *         comparator.
-		 */
-		public <T extends B> TreeQueue<T> create() {
-			return new TreeQueue<T>(comparator);
-		}
-
-		/**
-		 * Builds a new {@code TreeQueue} using the previously specified
-		 * comparator, and having the given initial elements.
-		 * 
-		 * @param elements
-		 *            the initial elements to be placed in this queue
-		 * @return a new {@code TreeQueue} using the previously specified
-		 *         comparator, and having the given initial elements
-		 */
-		public <T extends B> TreeQueue<T> create(
-				final Iterable<? extends T> elements) {
-			checkNotNull(elements);
-			final TreeQueue<T> list = new TreeQueue<T>(comparator);
-			Iterables.addAll(list, elements);
-			return list;
-		}
-	}
-
-	@Override
-	public void clear() {
-		modCount++;
-		root = nil;
-		min = nil;
-		max = nil;
-		size = 0;
-	}
-
-	/**
-	 * Returns the comparator used to order the elements in this deque. If one
-	 * was not explicitly provided a <i>natural order</i> comparator is
-	 * returned.
-	 * 
-	 * @return the comparator used to order this queue
+	 * @return the comparator used to order this set
 	 */
 	@Override
 	public Comparator<? super E> comparator() {
 		return comparator;
 	}
 
-	@Override
-	public boolean remove(Object o) {
-		checkNotNull(o);
-		@SuppressWarnings("unchecked")
-		final Node node = search((E) o);
-		if (node == null)
-			return false;
-		delete(node);
-		return true;
-	}
-
 	/**
-	 * Retrieves and removes the last element of this queue. This method differs
-	 * from {@link #pollLast pollLast()} only in that it throws an exception if
-	 * this queue is empty.
-	 * 
-	 * @return the last element of this queue
-	 * @throws NoSuchElementException
-	 *             if this queue is empty
+	 * Inserts the specified element into this set in sorted order.
 	 */
-	public E removeLast() {
-		final E e = pollLast();
-		if (e != null)
-			return e;
-		else
-			throw new NoSuchElementException();
-	}
-
-	/**
-	 * Retrieves and removes the last element of this queue, or returns
-	 * {@code null} if this queue is empty.
-	 * 
-	 * @return the last element of this queue, or {@code null} if this queue is
-	 *         empty
-	 */
-	public E pollLast() {
-		if (isEmpty())
-			return null;
-		final E e = max.element;
-		delete(max);
-		return e;
-	}
-
-	/**
-	 * Retrieves, but does not remove, the last element of this queue, or
-	 * returns {@code null} if this queue is empty.
-	 * 
-	 * @return the last element of this queue, or {@code null} if this queue is
-	 *         empty
-	 */
-	public E peekLast() {
-		if (isEmpty())
-			return null;
-		return max.element;
-	}
-
 	@Override
-	public boolean offer(E e) {
-		checkNotNull(e);
-		final Node newNode = new Node(e);
-		insert(newNode);
-		return true;
-	}
-
-	@Override
-	public E poll() {
-		if (isEmpty())
-			return null;
-		final E e = min.element;
-		delete(min);
-		return e;
-	}
-
-	@Override
-	public E peek() {
-		if (isEmpty())
-			return null;
-		return min.element;
-	}
-
-	@Override
-	public int size() {
-		return size;
+	public boolean add(E e) {
+		return insert(new Node(checkNotNull(e)));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -372,62 +205,10 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		return o != null && search((E) o) != null;
 	}
 
-	/**
-	 * Returns an iterator over the elements of this queue in priority order
-	 * from first (head) to last (tail).
-	 * 
-	 * @return an iterator over the elements of this queue in priority order
-	 */
 	@Override
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
 			private Node next = min;
-			private Node last = nil;
-			private int expectedModCount = modCount;
-
-			@Override
-			public boolean hasNext() {
-				return next != nil;
-			}
-
-			@Override
-			public void remove() {
-				checkForConcurrentModification();
-				if (last == nil)
-					throw new IllegalStateException();
-				if (last.left != nil && last.right != nil)
-					next = last;
-				delete(last);
-				expectedModCount = modCount;
-				last = nil;
-			}
-
-			@Override
-			public E next() {
-				checkForConcurrentModification();
-				if (next == nil)
-					throw new NoSuchElementException();
-				last = next;
-				next = successor(next);
-				return last.element;
-			}
-
-			private void checkForConcurrentModification() {
-				if (modCount != expectedModCount)
-					throw new ConcurrentModificationException();
-			}
-		};
-	}
-
-	/**
-	 * Returns an iterator over the elements of this queue in reverse order from
-	 * last (tail) to first (head).
-	 * 
-	 * @return an iterator over the elements of this queue in reverse order
-	 */
-	public Iterator<E> descendingIterator() {
-		return new Iterator<E>() {
-			private Node next = max;
 			private Node last = nil;
 			private int expectedModCount = modCount;
 
@@ -453,7 +234,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 				if (next == nil)
 					throw new NoSuchElementException();
 				last = next;
-				next = predecessor(next);
+				next = successor(next);
 				return last.element;
 			}
 
@@ -464,27 +245,45 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		};
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean remove(Object o) {
+		final Node node = search((E) checkNotNull(o));
+		if (node == null)
+			return false;
+		delete(node);
+		return true;
+	}
+
+	@Override
+	public int size() {
+		return size;
+	}
+
+	@Override
+	public void clear() {
+		modCount++;
+		root = min = nil;
+		size = 0;
+	}
+
 	/**
-	 * Returns a shallow copy of this {@code TreeQueue}. The elements themselves
+	 * Returns a shallow copy of this {@code TreeSet}. The elements themselves
 	 * are not cloned.
 	 * 
 	 * @return a shallow copy of this queue
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public TreeQueue<E> clone() {
-		TreeQueue<E> clone;
+	public TreeSet<E> clone() {
+		TreeSet<E> clone;
 		try {
-			clone = (TreeQueue<E>) super.clone();
+			clone = (TreeSet<E>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new InternalError();
 		}
-		clone.nil = new Node();
-		clone.modCount = 0;
-		clone.root = clone.nil;
-		clone.min = clone.nil;
-		clone.max = clone.nil;
-		clone.size = 0;
+		clone.modCount = clone.size = 0;
+		clone.root = clone.min = clone.min = clone.nil = new Node();
 		clone.addAll(this);
 		return clone;
 	}
@@ -501,19 +300,13 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		nil = new Node();
-		root = nil;
-		max = nil;
-		min = nil;
+		root = min = nil = new Node();
 		int size = ois.readInt();
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
 	}
 
-
-	/*
-	 * Red-Black Tree
-	 */
+	// Red-Black-Tree
 
 	static enum Color {
 		BLACK, RED;
@@ -521,21 +314,31 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 
 	private class Node {
 		private E element = null;
-		private Node parent;
-		private Node left;
-		private Node right;
+		private Node parent, left, right;
 		private Color color = BLACK;
 
 		private Node() {
-			this(null);
+			parent = right = left = this;
 		}
 
 		private Node(final E element) {
 			this.element = element;
-			parent = nil;
-			right = nil;
-			left = nil;
+			parent = right = left = nil;
 		}
+	}
+
+	private Node search(final E e) {
+		Node n = root;
+		while (n != nil) {
+			int cmp = comparator.compare(e, n.element);
+			if (cmp == 0)
+				return n;
+			if (cmp < 0)
+				n = n.left;
+			else
+				n = n.right;
+		}
+		return null;
 	}
 
 	/**
@@ -561,14 +364,17 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	private void insert(Node z) {
+	private boolean insert(Node z) {
 		size++;
 		modCount++;
 		Node x = root;
 		Node y = nil;
 		while (x != nil) {
 			y = x;
-			if (comparator.compare(z.element, x.element) < 0)
+			int cmp = comparator.compare(z.element, x.element);
+			if (cmp == 0)
+				return false;
+			else if (cmp < 0)
 				x = x.left;
 			else
 				x = x.right;
@@ -581,20 +387,41 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		else
 			y.right = z;
 		fixAfterInsertion(z);
-		if (max == nil || comparator.compare(z.element, max.element) >= 0)
-			max = z;
 		if (min == nil || comparator.compare(z.element, min.element) < 0)
 			min = z;
+		return true;
 	}
 
+	/**
+	 * Introduction to Algorithms (CLR) Second Edition
+	 * 
+	 * <pre>
+	 * RB-DELETE-FIXUP(T, z)
+	 * if left[z] = nil[T] or right[z] = nil[T]
+	 *    then y = z
+	 *    else y = TREE-SUCCESSOR(z)
+	 * if left[y] != nil[T]
+	 *    then x = left[y]
+	 *    else x = right[y]
+	 * p[x] = p[y]
+	 * if p[y] = nil[T]
+	 *    then root[T] = x
+	 *    else if y = left[p[y]]
+	 *            then left[p[y]] = x
+	 *            else right[p[y]] = x
+	 * if y != z
+	 *    then key[z] = key[y]
+	 *         copy y's satellite data into z
+	 * if color[y] = BLACK
+	 *    then RB-DELETE-FIXUP(T, x)
+	 * return y
+	 */
 	private void delete(Node z) {
 		size--;
 		modCount++;
 		Node x, y;
 		if (min == z)
 			min = successor(z);
-		if (max == z)
-			max = predecessor(z);
 		if (z.left == nil || z.right == nil)
 			y = z;
 		else
@@ -614,20 +441,6 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 			z.element = y.element;
 		if (y.color == Color.BLACK)
 			fixAfterDeletion(x);
-	}
-
-	private Node search(final E e) {
-		Node n = root;
-		while (n != nil) {
-			int cmp = comparator.compare(e, n.element);
-			if (cmp == 0)
-				return n;
-			if (cmp < 0)
-				n = n.left;
-			else
-				n = n.right;
-		}
-		return null;
 	}
 
 	/**
@@ -656,23 +469,6 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		while (y != nil && x == y.right) {
 			x = y;
 			y = y.parent;
-		}
-		return y;
-	}
-
-	private Node predecessor(Node x) {
-		if (x == nil)
-			return nil;
-		if (x.left != nil) {
-			Node y = x.left;
-			while (y.right != nil)
-				y = y.right;
-			return y;
-		}
-		Node y = x.parent;
-		while (y != nil && x == y.left) {
-			x = y;
-			y = y.left;
 		}
 		return y;
 	}

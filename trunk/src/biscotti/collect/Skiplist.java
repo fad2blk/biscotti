@@ -94,19 +94,19 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}</br>
- *       {@link #containsAll(Collection) containsAll(Collection)}</br>
- *       {@link #retainAll(Collection) retainAll(Collection)}</br>
+ *       {@link #addAll(Collection) addAll(Collection)}<br/>
+ *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
+ *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td style="text-align:center;" colspan="2"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #indexOf(Object)}</br>
- *       {@link #lastIndexOf(Object)}</br>
- *       {@link #get(int)}</br>
- *       {@link #remove(int)}</br>
+ *       {@link #indexOf(Object)}<br/>
+ *       {@link #lastIndexOf(Object)}<br/>
+ *       {@link #get(int)}<br/>
+ *       {@link #remove(int)}<br/>
  *       {@link #listIterator(int)}
  *     </td>
  *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
@@ -114,23 +114,23 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #add(Object) add(E)}</br>
- *       {@link #contains(Object)}</br>
+ *       {@link #add(Object) add(E)}<br/>
+ *       {@link #contains(Object)}<br/>
  *       {@link #remove(Object)}
  *     </td>
  *     <td style="text-align:center;" colspan="2"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #clear() clear()}</br>
- *       {@link #isEmpty() isEmpty()}</br>
- *       {@link #size()}</br>
+ *       {@link #clear() clear()}<br/>
+ *       {@link #isEmpty() isEmpty()}<br/>
+ *       {@link #size()}<br/>
  *     </td>
  *     <td style="text-align:center;" colspan="2"><i>O(1)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link Iterator#remove()}</br>
+ *       {@link Iterator#remove()}<br/>
  *       {@link ListIterator#remove()}
  *     </td>
  *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
@@ -156,10 +156,10 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	transient int size = 0;
 	private transient int level = 1;
 	private transient Random random = new Random();
-	private transient Node<E> head = new Node<E>(null, MAX_LEVEL);
+	private transient Node head = new Node(null, MAX_LEVEL);
 	private final Comparator<? super E> comparator;
 	@SuppressWarnings("unchecked")
-	private transient Node<E>[] update = new Node[MAX_LEVEL];
+	private transient Node[] update = (Node[]) new Object[MAX_LEVEL];
 	private transient int[] index = new int[MAX_LEVEL];
 	transient int modCount = 0;
 
@@ -300,8 +300,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	public boolean add(E e) {
 		checkNotNull(e);
 		final int newLevel = randomLevel();
-		Node<E> x = head;
-		Node<E> y = head;
+		Node x = head;
+		Node y = head;
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
@@ -321,7 +321,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			}
 			level = newLevel;
 		}
-		x = new Node<E>(e, newLevel);
+		x = new Node(e, newLevel);
 		for (i = 0; i < level; i++) {
 			if (i > newLevel - 1)
 				update[i].dist[i]++;
@@ -356,7 +356,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public int indexOf(Object o) {
 		if (o != null) {
-			Node<E> curr = head;
+			Node curr = head;
 			int idx = 0;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
@@ -376,7 +376,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o != null) {
-			Node<E> curr = head;
+			Node curr = head;
 			int idx = -1;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
@@ -412,7 +412,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	public boolean remove(Object o) {
 		checkNotNull(o);
 		final E element = (E) o;
-		Node<E> curr = head;
+		Node curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
@@ -429,7 +429,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	@Override
 	public E remove(int index) {
 		checkElementIndex(index, size);
-		Node<E> curr = head;
+		Node curr = head;
 		int idx = 0;
 		for (int i = level - 1; i >= 0; i--) {
 			while (idx + curr.dist[i] <= index) {
@@ -497,7 +497,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	 * Returns a shallow copy of this {@code Skiplist}. The elements themselves
 	 * are not cloned.
 	 * 
-	 * @return a shallow copy of this list
+	 * @return a shallow copy of this skip list
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -533,12 +533,12 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private void readObject(java.io.ObjectInputStream ois)
 			throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		head = new Node<E>(null, MAX_LEVEL);
+		head = new Node(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			head.next[i] = head;
 			head.dist[i] = 1;
 		}
-		update = new Node[MAX_LEVEL];
+		update = (Node[]) new Object[MAX_LEVEL];
 		index = new int[MAX_LEVEL];
 		head.prev = head;
 		random = new Random();
@@ -549,8 +549,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	private class ListIteratorImpl implements ListIterator<E> {
-		private Node<E> node;
-		private Node<E> last = null;
+		private Node node;
+		private Node last = null;
 		private final int offset;
 		private int index = 0;
 		private int expectedModCount = modCount;
@@ -628,20 +628,20 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 
 	// skip list
 
-	private static class Node<E> {
+	private class Node {
 		private E element;
-		private Node<E> prev;
-		private final Node<E>[] next;
+		private Node prev;
+		private final Node[] next;
 		private final int[] dist;
 
 		@SuppressWarnings("unchecked")
 		private Node(final E element, final int size) {
 			this.element = element;
-			next = new Node[size];
+			next = (Node[]) new Object[size];
 			dist = new int[size];
 		}
 
-		private Node<E> next() {
+		private Node next() {
 			return next[0];
 		}
 	}
@@ -653,8 +653,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return randomLevel;
 	}
 
-	private boolean remove(final Node<E> node) {
-		Node<E> curr = head;
+	private boolean remove(final Node node) {
+		Node curr = head;
 		for (int i = level - 1; i >= 0; i--) {
 			while (curr.next[i] != head && curr.next[i] != node)
 				curr = curr.next[i];
@@ -665,7 +665,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return true;
 	}
 
-	private void delete(final Node<E> node, final Node<E>[] update) {
+	private void delete(final Node node, final Node[] update) {
 		for (int i = 0; i < level; i++)
 			if (update[i].next[i] == node) {
 				update[i].next[i] = node.next[i];
@@ -679,8 +679,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		size--;
 	}
 
-	Node<E> search(final E element) {
-		Node<E> curr = head;
+	Node search(final E element) {
+		Node curr = head;
 		for (int i = level - 1; i >= 0; i--)
 			while (curr.next[i] != head
 					&& comparator.compare(curr.next[i].element, element) < 0)
@@ -691,8 +691,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return null;
 	}
 
-	private Node<E> search(final int index) {
-		Node<E> curr = head;
+	private Node search(final int index) {
+		Node curr = head;
 		int idx = -1;
 		for (int i = level - 1; i >= 0; i--)
 			while (idx + curr.dist[i] <= index) {
@@ -706,8 +706,8 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	private final class Sublist extends Skiplist<E> {
 		private final Skiplist<E> list;
 		private int offset;
-		private Node<E> from;
-		private Node<E> to;
+		private Node from;
+		private Node to;
 
 		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
@@ -958,7 +958,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		// }
 
 		@Override
-		Node<E> search(final E e) {
+		Node search(final E e) {
 			checkForConcurrentModification();
 			if (!inRange(e, from, to))
 				return null;
@@ -969,7 +969,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			return list.search(e);
 		}
 
-		private boolean inRange(final E e, final Node<E> from, final Node<E> to) {
+		private boolean inRange(final E e, final Node from, final Node to) {
 			return (comparator.compare(from.element, e) < 1 && comparator
 					.compare(e, to.element) < 1);
 		}
