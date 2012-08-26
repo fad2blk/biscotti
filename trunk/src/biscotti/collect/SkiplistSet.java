@@ -67,9 +67,9 @@ import com.google.common.collect.Ordering;
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
  * <p>
- * This implementation provides the following worst case running time (where
- * <i>n</i> is the size of this set and <i>m</i> is the size of the specified
- * collection which is iterable in linear time):
+ * The underlying array-based skip list provides the following worst case
+ * running time (where <i>n</i> is the size of this set and <i>m</i> is the size
+ * of the specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
