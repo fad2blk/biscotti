@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.SortedSet;
@@ -37,8 +38,8 @@ import com.google.common.collect.Ordering;
 
 /**
  * <b>Note: This class should only be used for testing. It provides no practical
- * benefit when compared to {@link java.util.TreeSet} and lacks navigation
- * methods defined in the {@link NavigableSet} interface.</b>
+ * benefit when compared to {@link java.util.TreeSet java.util.TreeSet} and
+ * lacks navigation methods defined in the {@link NavigableSet} interface.</b>
  * <p>
  * A {@code Set} implementation based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>.
