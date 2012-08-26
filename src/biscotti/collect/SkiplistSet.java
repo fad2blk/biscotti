@@ -16,7 +16,6 @@
 
 package biscotti.collect;
 
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -39,7 +38,7 @@ import com.google.common.collect.Ordering;
  * benefit when compared to {@link java.util.TreeSet} and lacks navigation
  * methods defined in the {@link NavigableSet} interface.</b>
  * <p>
- * A {@code Set} implementationimplementation based on a modified <a
+ * A {@code Set} implementation based on a modified <a
  * href="http://en.wikipedia.org/wiki/Skip_list">skip list</a>. Elements are
  * sorted from <i>least</i> to <i>greatest</i> according to their <i>natural
  * ordering</i>, or by an explicit {@link Comparator} provided at creation.
@@ -67,9 +66,9 @@ import com.google.common.collect.Ordering;
  * <i>expected</i> to be logarithmic with an extremely high degree of
  * probability as the list grows.
  * <p>
- * This implementation provides the following worst case running time
- * (where <i>n</i> is the size of this set and <i>m</i> is the size of the
- * specified collection which is iterable in linear time):
+ * This implementation provides the following worst case running time (where
+ * <i>n</i> is the size of this set and <i>m</i> is the size of the specified
+ * collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
  *   <tr>
@@ -232,7 +231,8 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 				update[i] = head;
 			level = newLevel;
 		}
-		if (x.next().element != null && comparator.compare(x.next().element, e) == 0)
+		if (x.next().element != null
+				&& comparator.compare(x.next().element, e) == 0)
 			return false;
 		x = new Node(e, newLevel);
 		for (i = 0; i < level; i++)
@@ -328,7 +328,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		head = new Node(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++)
 			head.next[i] = head;
-		update = (Node[])new Object[MAX_LEVEL];
+		update = (Node[]) new Object[MAX_LEVEL];
 		index = new int[MAX_LEVEL];
 		random = new Random();
 		level = 1;
