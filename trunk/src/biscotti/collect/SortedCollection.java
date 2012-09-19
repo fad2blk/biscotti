@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.Comparator;
 
 /**
- * A {@link Collection} that further provides a <i>total ordering</i> on its
- * elements. This interface is the root of all <i>sorted</i> collection
- * interfaces and implementations.
+ * A {@link Collection} which maintains its elements in <i>sorted</i> order.
+ * This interface is the root of all <i>sorted</i> collection interfaces and
+ * implementations.
  * <p>
  * Classes which implement this interface (directly or indirectly) are required
  * to implement the {@code comparator()} method which returns the comparator
