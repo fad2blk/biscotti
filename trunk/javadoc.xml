@@ -1,9 +1,8 @@
-<project name="palamida-libraries-javadoc" default="javadoc">
+<project name="biscotti" default="javadoc">
 	
-	<property name="common"			value="C:\Users\Administrator\WorkspaceEE64\common"/>
-	<property name="java.src"		value="C:\Program Files\Java\jdk1.7.0_01\src"/>
-	<property name="guava.src"		value="${common}\src\guava-10.0.1"/>
-	<property name="poi.src"		value="${common}\src\poi-3.7"/>
+	
+	<property name="java.src"		value="C:\Program Files\Java\jdk1.7.0_06\src"/>
+	<property name="guava.src"		value="${basedir}\lib\guava-13.0-sources"/>
 	
 	<property name="src.home"		value="${basedir}/src"/>
 	<property name="docs.home"		value="${basedir}/javadoc"/>
@@ -12,10 +11,12 @@
 	<property name="java.docs"		value="http://download.oracle.com/javase/7/docs/api/"/>
 	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
 	
-	<property name="base"			value="com.googlecode.biscotti.base"/>
-	<property name="collect"		value="com.googlecode.biscotti.collect"/>
+	<property name="base"			value="biscotti.base"/>
+	<property name="collect"		value="biscotti.collect"/>
+	<property name="io"				value="biscotti.io"/>
 	
 	<target name="javadoc">
+		<delete dir="${doc.home}" />
         <javadoc access="public"
         	   author="true"
         	   classpath=""
@@ -25,15 +26,14 @@
     	       noindex="false"
     	       nonavbar="false"
     	       notree="false"
-    	       packagenames="${base},${collect}"
-    	       source="1.7"
+    	       packagenames="${base},${collect},${io}"
+    	       source="1.6"
     	       sourcepath="${src.home};${java.src};${guava.src};"
     	       splitindex="true"
     	       use="true"
     	       version="true">
             <link href="${java.docs}"/>
             <link href="${guava.docs}"/>
-        	<link href="${poi.docs}"/>
         </javadoc>
     </target>
 </project>
