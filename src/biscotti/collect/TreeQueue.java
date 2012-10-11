@@ -85,16 +85,16 @@ import com.google.common.collect.Ordering;
  *   <tr>
  *     <td>
  *       {@link #addAll(Collection) addAll(Collection)}<br>
- *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
- *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
+ *       {@link #containsAll(Collection) containsAll(Collection)}</br>
+ *       {@link #retainAll(Collection) retainAll(Collection)}</br>
  *       {@link #removeAll(Collection) removeAll(Collection)}
  *     </td>
  *     <td colspan="2" style="text-align:center;"><i>O(m log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #add(Object) add(E)}<br/>
- *       {@link #offer(Object) offer(E)}<br/>
+ *       {@link #add(Object) add(E)}</br>
+ *       {@link #offer(Object) offer(E)}</br>
  *       {@link #remove(Object)}
  *     </td>
  *     <td colspan="2" style="text-align:center;"><i>O(log n)</i></td>
@@ -114,16 +114,16 @@ import com.google.common.collect.Ordering;
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #poll()}<br/>
- *       {@link #remove() remove()}<br/>
+ *       {@link #poll()}</br>
+ *       {@link #remove() remove()}</br>
  *     </td>
  *     <td bgcolor="FFCCCC" style="text-align:center;"><i>O(log n)</i></td>
  *   </tr>
  *   <tr>
  *     <td>
- *       {@link #element() element()}<br/>
- *       {@link #isEmpty() isEmpty()}<br/>
- *       {@link #peek()}<br/>
+ *       {@link #element() element()}</br>
+ *       {@link #isEmpty() isEmpty()}</br>
+ *       {@link #peek()}</br>
  *       {@link #size()}
  *     </td>
  *     <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
@@ -182,7 +182,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> TreeQueue<E> create(final Collection<? extends E> elements) {
+	public static <E> TreeQueue<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -200,13 +200,13 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
-	 * Creates and returns a new builder, configured to build {@code TreeQueue}
-	 * instances that use the specified comparator ordering.
+	 * Returns a new builder configured to build {@code TreeQueue} instances
+	 * that use the specified comparator for ordering.
 	 * 
 	 * @param comparator
 	 *            the specified comparator
-	 * @return a new building which builds {@code TreeQueue} instances that use
-	 *         the specified comparator for ordering
+	 * @return a new builder configured to build {@code TreeQueue} instances
+	 *         that use the specified comparator for ordering
 	 */
 	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
 		checkNotNull(comparator);
@@ -215,7 +215,8 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 
 	/**
 	 * A builder for the creation of {@code TreeQueue} instances. Instances of
-	 * this builder are obtained calling {@link TreeQueue#orderedBy(Comparator)}.
+	 * this builder are obtained calling {@link TreeQueue#orderedBy(Comparator)}
+	 * .
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
@@ -509,7 +510,6 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		for (int i = 0; i < size; i++)
 			add((E) ois.readObject());
 	}
-
 
 	/*
 	 * Red-Black Tree

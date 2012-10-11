@@ -84,56 +84,58 @@ import com.google.common.collect.Ordering;
  * size of the specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
- * <tr>
- * <th style="text-align:center;" rowspan="2">Method</th>
- * <th style="text-align:center;" colspan="2">Running Time</th>
- * </tr>
- * <tr>
- * <td style="text-align:center;"><b>Skiplist</b><br>
- * (<i>expected</i>)</td>
- * <td style="text-align:center;"><b>Treelist</b><br>
- * (<i>worst-case</i>)</td>
- * </tr>
- * <tr>
- * <td>
- * {@link #addAll(Collection) addAll(Collection)}<br/>
- * {@link #containsAll(Collection) containsAll(Collection)}<br/>
- * {@link #retainAll(Collection) retainAll(Collection)}<br/>
- * {@link #removeAll(Collection) removeAll(Collection)}</td>
- * <td style="text-align:center;" colspan="2"><i>O(m log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #indexOf(Object)}<br/>
- * {@link #lastIndexOf(Object)}<br/>
- * {@link #get(int)}<br/>
- * {@link #remove(int)}<br/>
- * {@link #listIterator(int)}</td>
- * <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
- * <td style="text-align:center;" bgcolor="FFCCCC"><i>O(n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #add(Object) add(E)}<br/>
- * {@link #contains(Object)}<br/>
- * {@link #remove(Object)}</td>
- * <td style="text-align:center;" colspan="2"><i>O(log n)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link #clear() clear()}<br/>
- * {@link #isEmpty() isEmpty()}<br/>
- * {@link #size()}<br/>
- * </td>
- * <td style="text-align:center;" colspan="2"><i>O(1)</i></td>
- * </tr>
- * <tr>
- * <td>
- * {@link Iterator#remove()}<br/>
- * {@link ListIterator#remove()}</td>
- * <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
- * <td style="text-align:center;" bgcolor="FFCCCC"><i>O(1)</i></td>
- * </tr>
+ *   <tr>
+ *     <th style="text-align:center;" rowspan="2">Method</th>
+ *     <th style="text-align:center;" colspan="2">Running Time</th>
+ *   </tr>
+ *   <tr>
+ *     <td style="text-align:center;"><b>Skiplist</b><br>(<i>expected</i>)</td>
+ *     <td style="text-align:center;"><b>Treelist</b><br>(<i>worst-case</i>)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #addAll(Collection) addAll(Collection)}<br/>
+ *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
+ *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
+ *       {@link #removeAll(Collection) removeAll(Collection)}
+ *     </td>
+ *     <td style="text-align:center;" colspan="2"><i>O(m log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #indexOf(Object)}<br/>
+ *       {@link #lastIndexOf(Object)}<br/>
+ *       {@link #get(int)}<br/>
+ *       {@link #remove(int)}<br/>
+ *       {@link #listIterator(int)}
+ *     </td>
+ *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCCCC"><i>O(n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #add(Object) add(E)}<br/>
+ *       {@link #contains(Object)}<br/>
+ *       {@link #remove(Object)}
+ *     </td>
+ *     <td style="text-align:center;" colspan="2"><i>O(log n)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #clear() clear()}<br/>
+ *       {@link #isEmpty() isEmpty()}<br/>
+ *       {@link #size()}<br/>
+ *     </td>
+ *     <td style="text-align:center;" colspan="2"><i>O(1)</i></td>
+ *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link Iterator#remove()}<br/>
+ *       {@link ListIterator#remove()}
+ *     </td>
+ *     <td style="text-align:center;" bgcolor="FFCC99"><i>O(log n)</i></td>
+ *     <td style="text-align:center;" bgcolor="FFCCCC"><i>O(1)</i></td>
+ *   </tr>
  * </table>
  * <p>
  * The sub-list views exhibit identical time complexity, with the exception of
@@ -201,7 +203,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> Skiplist<E> create(final Collection<? extends E> elements) {
+	public static <E> Skiplist<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
