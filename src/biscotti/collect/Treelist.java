@@ -70,47 +70,43 @@ import com.google.common.collect.Ordering;
  * the specified collection which is iterable in linear time):
  * <p>
  * <table border="1" cellpadding="3" cellspacing="1" style="width:400px;">
- *   <tr>
- *     <th style="text-align:center;">Method</th>
- *     <th style="text-align:center;">Running Time</th>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #addAll(Collection) addAll(Collection)}<br/>
- *       {@link #containsAll(Collection) containsAll(Collection)}<br/>
- *       {@link #retainAll(Collection) retainAll(Collection)}<br/>
- *       {@link #removeAll(Collection) removeAll(Collection)}
- *     </td>
- *     <td style="text-align:center;"><i>O(m log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #indexOf(Object)}<br/>
- *       {@link #lastIndexOf(Object)}<br/>
- *       {@link #get(int)}<br/>
- *       {@link #remove(int)}<br/>
- *       {@link #listIterator(int)}
- *     </td>
- *     <td style="text-align:center;"><i>O(n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #add(Object) add(E)}<br/>
- *       {@link #contains(Object)}<br/>
- *       {@link #remove(Object)}
- *     </td>
- *     <td style="text-align:center;"><i>O(log n)</i></td>
- *   </tr>
- *   <tr>
- *     <td>
- *       {@link #clear() clear()}<br/>
- *       {@link #isEmpty() isEmpty()}<br/>
- *       {@link #size()}<br/>
- *       {@link Iterator#remove()}<br/>
- *       {@link ListIterator#remove()}
- *     </td>
- *     <td style="text-align:center;"><i>O(1)</i></td>
- *   </tr>
+ * <tr>
+ * <th style="text-align:center;">Method</th>
+ * <th style="text-align:center;">Running Time</th>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #addAll(Collection) addAll(Collection)}<br/>
+ * {@link #containsAll(Collection) containsAll(Collection)}<br/>
+ * {@link #retainAll(Collection) retainAll(Collection)}<br/>
+ * {@link #removeAll(Collection) removeAll(Collection)}</td>
+ * <td style="text-align:center;"><i>O(m log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #indexOf(Object)}<br/>
+ * {@link #lastIndexOf(Object)}<br/>
+ * {@link #get(int)}<br/>
+ * {@link #remove(int)}<br/>
+ * {@link #listIterator(int)}</td>
+ * <td style="text-align:center;"><i>O(n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #add(Object) add(E)}<br/>
+ * {@link #contains(Object)}<br/>
+ * {@link #remove(Object)}</td>
+ * <td style="text-align:center;"><i>O(log n)</i></td>
+ * </tr>
+ * <tr>
+ * <td>
+ * {@link #clear() clear()}<br/>
+ * {@link #isEmpty() isEmpty()}<br/>
+ * {@link #size()}<br/>
+ * {@link Iterator#remove()}<br/>
+ * {@link ListIterator#remove()}</td>
+ * <td style="text-align:center;"><i>O(1)</i></td>
+ * </tr>
  * </table>
  * <p>
  * The sub-list views exhibit identical time complexity, with the exception of
@@ -187,13 +183,13 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	/**
-	 * Creates and returns a new builder, configured to build {@code Treelist}
-	 * instances that use the specified comparator ordering.
+	 * Returns a new builder configured to build {@code Treelist} instances that
+	 * use the specified comparator for ordering.
 	 * 
 	 * @param comparator
 	 *            the specified comparator
-	 * @return a new building which builds {@code Treelist} instances that use
-	 *         the specified comparator for ordering
+	 * @return a new builder configured to build {@code Treelist} instances that
+	 *         use the specified comparator for ordering
 	 */
 	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
 		checkNotNull(comparator);
