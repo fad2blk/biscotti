@@ -44,8 +44,7 @@ public interface BoundedQueue<E> extends Queue<E> {
 	 * Returns the total number of elements (the bound) which can be placed in
 	 * this queue.
 	 * 
-	 * @return the total number of elements (the bound) which can be placed in
-	 *         this queue
+	 * @return the capacity of this queue
 	 */
 	public int capacity();
 
