@@ -4,8 +4,7 @@
 	<property name="build.home"				value="${basedir}/build"							/>
 	<property name="dist.home"				value="${basedir}/dist"								/>
 	<property name="doc.home"				value="${basedir}/javadoc"							/>
-	<property name="common"					value="C:/Users/Administrator/WorkspaceEE64/common"	/>
-	<property name="lib.common"				value="${common}/lib"								/>
+	<property name="lib.common"				value="${basedir}/lib"								/>
 	<property name="doc.common"				value="${common}/doc"								/>
 	<property name="src.common"				value="${common}/src"								/>
 	<property name="src.home"				value="${basedir}/src"								/>
