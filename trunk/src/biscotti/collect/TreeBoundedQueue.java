@@ -154,14 +154,13 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * Creates and returns a new builder, configured to build
-	 * {@code TreeBoundedQueue} instances that use the specified comparator
-	 * ordering.
+	 * Returns a new builder configured to build {@code TreeBoundedQueue}
+	 * instances that use the specified comparator for ordering.
 	 * 
 	 * @param comparator
 	 *            the specified comparator
-	 * @return a new building which builds {@code TreeBoundedQueue} instances
-	 *         that use the specified comparator for ordering
+	 * @return a new builder configured to build {@code TreeBoundedQueue}
+	 *         instances that use the specified comparator for ordering
 	 */
 	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
 		checkNotNull(comparator);
@@ -192,7 +191,8 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 * Builds an empty {@code TreeBoundedQueue} using the previously
 		 * specified comparator and the given maximum size.
 		 * 
-		 * @param maximumSize the maximum size of this queue
+		 * @param maximumSize
+		 *            the maximum size of this queue
 		 * @return an empty {@code TreeBoundedQueue} using the previously
 		 *         specified comparator and the given maximum size
 		 * @throws IllegalArgumentException
@@ -207,11 +207,13 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 * Builds a new {@code TreeBoundedQueue} using the previously specified
 		 * comparator and maximum size, having the given initial elements.
 		 * 
-		 * @param maximumSize the maximum size of this queue
+		 * @param maximumSize
+		 *            the maximum size of this queue
 		 * @param elements
 		 *            the initial elements to be placed in this queue
 		 * @return a new {@code TreeBoundedQueue} using the previously specified
-		 *        comparator and maximum size, having the given initial elements
+		 *         comparator and maximum size, having the given initial
+		 *         elements
 		 * @throws IllegalStateException
 		 *             if the maximum size has not been specified
 		 */
@@ -243,7 +245,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	@Override
-	public int maximumSize() {
+	public int maximumCapacity() {
 		return maximumSize;
 	}
 

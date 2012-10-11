@@ -45,7 +45,7 @@ public interface BoundedQueue<E> extends Queue<E> {
 	 * 
 	 * @return the maximum size of this queue
 	 */
-	public int maximumSize();
+	public int maximumCapacity();
 
 	/**
 	 * Returns the number of elements which can be added to this queue before it
