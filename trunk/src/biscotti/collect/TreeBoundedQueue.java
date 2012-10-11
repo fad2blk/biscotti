@@ -245,7 +245,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	@Override
-	public int maximumCapacity() {
+	public int maxSize() {
 		return maximumSize;
 	}
 
