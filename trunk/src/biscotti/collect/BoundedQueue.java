@@ -41,11 +41,13 @@ import java.util.concurrent.BlockingQueue;
 public interface BoundedQueue<E> extends Queue<E> {
 
 	/**
-	 * Returns the maximum size (the bound) of this queue.
+	 * Returns the total number of elements (the bound) which can be placed in
+	 * this queue.
 	 * 
-	 * @return the maximum size of this queue
+	 * @return the total number of elements (the bound) which can be placed in
+	 *         this queue
 	 */
-	public int maxSize();
+	public int capacity();
 
 	/**
 	 * Returns the number of elements which can be added to this queue before it
