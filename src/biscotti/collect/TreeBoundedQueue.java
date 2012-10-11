@@ -55,12 +55,12 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	private static final long serialVersionUID = 1L;
 	private TreeQueue<E> delegate;
-	private final int maximumSize;
+	private final int capacity;
 
-	private TreeBoundedQueue(final int maximumSize,
+	private TreeBoundedQueue(final int capacity,
 			final Comparator<? super E> comparator) {
 		delegate = TreeQueue.orderedBy(comparator).create();
-		this.maximumSize = maximumSize;
+		this.capacity = capacity;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
@@ -69,7 +69,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		for (E e : elements)
 			offer(e);
 		checkArgument(size() > 0);
-		this.maximumSize = size();
+		this.capacity = size();
 	}
 
 	// /**
@@ -116,7 +116,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	/**
 	 * Creates a new {@code TreeBoundedQueue} containing the elements of, and
-	 * having the maximum size equal to the number of elements in the specified
+	 * having its capacity equal to the number of elements in the specified
 	 * collection. If the collection is an instance of {@link SortedSet},
 	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
 	 * {@code SortedCollection} this queue will be ordered according to the same
@@ -157,18 +157,18 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	/**
 	 * Returns a new builder configured to build {@code TreeBoundedQueue}
-	 * instances with the specified maximum size.
+	 * instances with the specified capacity.
 	 * 
-	 * @param maximumSize
-	 *            with the specified maximum size
+	 * @param capacity
+	 *            the total number of elements which can be placed in this queue
 	 * @return a new builder configured to build {@code TreeBoundedQueue}
 	 *         instances that use the specified comparator for ordering
 	 */
 	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> withCapacity(
-			final int maximumSize) {
-		checkState(maximumSize > 0, "maximum size < 1");
+			final int capacity) {
+		checkState(capacity > 0, "Capacity < 1");
 		final Comparator<E> c = Ordering.natural();
-		return new Builder<E>(c).capacity(maximumSize).create();
+		return new Builder<E>(c).capacity(capacity).create();
 	}
 
 	/**
@@ -201,7 +201,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	public static final class Builder<B> {
 
 		private final Comparator<B> comparator;
-		private int maximumSize = 0;
+		private int capacity = 0;
 
 		private Builder(final Comparator<B> comparator) {
 			this.comparator = comparator;
@@ -209,50 +209,50 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 		/**
 		 * Configures this builder to build {@code TreeBoundedQueue} instances
-		 * with the specified maximum size
+		 * with the specified capacity.
 		 * 
-		 * @param maximumSize
-		 *            the specified maximum size
+		 * @param capacity
+		 *            the total number of elements which can be placed in this queue
 		 * @return this builder
 		 */
-		public Builder<B> capacity(final int maximumSize) {
-			checkState(maximumSize > 0, "maximum size < 1");
-			this.maximumSize = maximumSize;
+		public Builder<B> capacity(final int capacity) {
+			checkState(capacity > 0, "Capacity < 1");
+			this.capacity = capacity;
 			return this;
 		}
 
 		/**
 		 * Builds an empty {@code TreeBoundedQueue} using the previously
-		 * specified comparator and the given maximum size.
+		 * specified comparator and capacity.
 		 * 
 		 * @return an empty {@code TreeBoundedQueue} using the previously
-		 *         specified comparator and the given maximum size
+		 *         specified comparator and capacity
 		 * @throws IllegalArgumentException
-		 *             if the maximum size has not been specified
+		 *             if the capacity has not been specified
 		 */
 		public <T extends B> TreeBoundedQueue<T> create() {
-			checkState(maximumSize > 0, "maximum size unspecified");
-			return new TreeBoundedQueue<T>(maximumSize, comparator);
+			checkState(capacity > 0, "Capacity unspecified");
+			return new TreeBoundedQueue<T>(capacity, comparator);
 		}
 
 		/**
 		 * Builds a new {@code TreeBoundedQueue} using the previously specified
-		 * comparator and maximum size, having the given initial elements.
+		 * comparator and capacity, having the given initial elements.
 		 * 
 		 * @param elements
 		 *            the initial elements to be placed in this queue
 		 * @return a new {@code TreeBoundedQueue} using the previously specified
-		 *         comparator and maximum size, having the given initial
+		 *         comparator and capacity, having the given initial
 		 *         elements
 		 * @throws IllegalStateException
-		 *             if the maximum size has not been specified
+		 *             if the capacity has not been specified
 		 */
 		public <T extends B> TreeBoundedQueue<T> create(
 				final Iterable<? extends T> elements) {
-			checkState(maximumSize > 0, "maximum size unspecified");
+			checkState(capacity > 0, "Capacity unspecified");
 			checkNotNull(elements);
 			final TreeBoundedQueue<T> list = new TreeBoundedQueue<T>(
-					maximumSize, comparator);
+					capacity, comparator);
 			Iterables.addAll(list, elements);
 			return list;
 		}
@@ -266,7 +266,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	@Override
 	public boolean offer(E e) {
-		if (size() == maximumSize)
+		if (size() == capacity)
 			if (comparator().compare(e, delegate().peekLast()) < 0)
 				delegate().pollLast();
 			else
@@ -276,12 +276,12 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	@Override
 	public int capacity() {
-		return maximumSize;
+		return capacity;
 	}
 
 	@Override
 	public int remainingCapacity() {
-		return maximumSize - size();
+		return capacity - size();
 	}
 
 	@Override
