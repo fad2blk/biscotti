@@ -31,7 +31,8 @@
     	       sourcepath="${src.home};${java.src};${guava.src};"
     	       splitindex="true"
     	       use="true"
-    	       version="true">
+    	       version="true"
+     	   	   linksource="yes">
             <link href="${java.docs}"/>
             <link href="${guava.docs}"/>
         </javadoc>
