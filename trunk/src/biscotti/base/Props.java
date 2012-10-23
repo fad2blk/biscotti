@@ -10,12 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
 import com.google.common.io.Closeables;
-import com.google.common.io.Files;
 
 /**
  * Static utility methods for working with {@link Properties}.
@@ -47,6 +45,7 @@ public final class Props {
 	 *         input stream
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @see Properties#loadFromXML(InputStream)
 	 */
 	public static Properties loadFromXML(final InputStream in)
 			throws IOException {
@@ -76,6 +75,7 @@ public final class Props {
 	 *         input stream
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @see Properties#loadFromXML(InputStream)
 	 */
 	public static Properties loadFromXML(final File path) throws IOException {
 		checkNotNull(path);
@@ -92,6 +92,7 @@ public final class Props {
 	 *         input stream
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @see Properties#load(InputStream)
 	 */
 	public static Properties load(final InputStream in) throws IOException {
 		checkNotNull(in);
@@ -111,6 +112,7 @@ public final class Props {
 	 *         file
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @see Properties#loadFromXML(InputStream)
 	 */
 	public static Properties load(final File path) throws IOException {
 		checkNotNull(path);
@@ -118,9 +120,7 @@ public final class Props {
 	}
 
 	/**
-	 * Writes the specified {@code Properties} to the given file using the
-	 * specified charset. Internally this method delegates to
-	 * {@link Properties#store(Writer, String)}.
+	 * Writes the specified {@code Properties} to the given file.
 	 * <p>
 	 * Properties from the defaults table of this Properties table (if any) are
 	 * not written out by this method.
@@ -132,20 +132,18 @@ public final class Props {
 	 *            comments are desired
 	 * @param path
 	 *            the given file
-	 * @param charset
-	 *            the specified charset
 	 * @return the given file
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
 	public static File save(final Properties properties, final String comments,
-			final File path, final Charset charset) throws IOException {
+			final File path) throws IOException {
 		checkNotNull(properties);
 		checkNotNull(path);
-		checkNotNull(charset);
-		final Writer writer = Files.newWriter(path, charset);
-		properties.store(writer, comments);
-		Closeables.closeQuietly(writer);
+		final OutputStream out = new BufferedOutputStream(new FileOutputStream(
+				path));
+		properties.store(out, comments);
+		Closeables.closeQuietly(out);
 		return path;
 	}
 
