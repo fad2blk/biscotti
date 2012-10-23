@@ -5,9 +5,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -92,6 +96,35 @@ final public class Files2 {
 		checkNotNull(path);
 		checkNotNull(charset);
 		return new PrintWriter(Files.newWriter(path, charset));
+	}
+
+	/**
+	 * Returns a new {@code PrintStream} which writes to the given file using
+	 * the specified charset.
+	 * 
+	 * @param path
+	 *            the specified file
+	 * @param charset
+	 *            the character set to use when writing to the file
+	 * @param autoFlush
+	 *            if {@code true}, the output buffer will be flushed whenever a
+	 *            byte array is written, one of the println methods is invoked,
+	 *            or a newline character or byte ('\n') is written
+	 * @return new {@code PrintStream} which writes to the given file
+	 * @throws FileNotFoundException
+	 *             if an attempt to open the specified file fails
+	 */
+	public static PrintStream newPrintStream(final File path,
+			final Charset charset, final boolean autoFlush)
+			throws FileNotFoundException {
+		checkNotNull(path);
+		checkNotNull(charset);
+		try {
+			return new PrintStream(new FileOutputStream(path), autoFlush,
+					charset.toString());
+		} catch (UnsupportedEncodingException e) {
+			throw new Error(); // cannot happen
+		}
 	}
 
 	/**
