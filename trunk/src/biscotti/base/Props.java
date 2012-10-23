@@ -4,21 +4,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 /**
  * Static utility methods for working with {@link Properties}.
@@ -31,13 +28,11 @@ public final class Props {
 	}
 
 	/**
-	 * Returns a new Java {@code Properties} object loaded from the specified
-	 * input stream. The input stream may contain an XML Document or a simple
-	 * line-oriented format as specified in {@link Properties#load(Reader)}. The
-	 * input stream is closed after this method returns.
+	 * Returns a new Java {@code Properties} object loaded from the XML document
+	 * in the specified input stream. The input stream is closed after this
+	 * method returns.
 	 * <p>
-	 * If the input stream contain an XML Document it must have the following
-	 * DOCTYPE declaration:
+	 * The XML document must have the following DOCTYPE declaration:
 	 * 
 	 * <pre>
 	 * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
@@ -45,12 +40,51 @@ public final class Props {
 	 * 
 	 * Furthermore, the document must satisfy the properties DTD described
 	 * above.
+	 * 
+	 * @param in
+	 *            the specified input stream
+	 * @return a new Java {@code Properties} object loaded from the specified
+	 *         input stream
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public static Properties loadFromXML(final InputStream in)
+			throws IOException {
+		checkNotNull(in);
+		final Properties props = new Properties();
+		props.loadFromXML(in);
+		Closeables.closeQuietly(in);
+		return props;
+	}
+
+	/**
+	 * Returns a new Java {@code Properties} object loaded from the specified
+	 * XML document.
 	 * <p>
-	 * Otherwise the input stream is assumed to use the ISO 8859-1 character
-	 * encoding; that is each byte is one Latin1 character. Characters not in
-	 * Latin1, and certain special characters, are represented in keys and
-	 * elements using Unicode escapes as defined in section 3.3 of <i>The Java™
-	 * Language Specification.</i>
+	 * The XML document must have the following DOCTYPE declaration:
+	 * 
+	 * <pre>
+	 * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+	 * </pre>
+	 * 
+	 * Furthermore, the document must satisfy the properties DTD described
+	 * above.
+	 * 
+	 * @param path
+	 *            the specified XML document
+	 * @return a new Java {@code Properties} object loaded from the specified
+	 *         input stream
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 */
+	public static Properties loadFromXML(final File path) throws IOException {
+		checkNotNull(path);
+		return loadFromXML(new BufferedInputStream(new FileInputStream(path)));
+	}
+
+	/**
+	 * Returns a new Java {@code Properties} object loaded from the specified
+	 * input stream. The input stream is closed after this method returns.
 	 * 
 	 * @param in
 	 *            the specified input stream
@@ -61,20 +95,9 @@ public final class Props {
 	 */
 	public static Properties load(final InputStream in) throws IOException {
 		checkNotNull(in);
-		Properties props = new Properties();
-		final InputStream bin = new ByteArrayInputStream(
-				ByteStreams.toByteArray(in));
-		Closeables.closeQuietly(in);
-
-		try {
-			props.loadFromXML(bin);
-		} catch (InvalidPropertiesFormatException e) {
-			props = new Properties();
-			bin.reset();
-		}
-
-		props = new Properties();
+		final Properties props = new Properties();
 		props.load(in);
+		Closeables.closeQuietly(in);
 		return props;
 	}
 
@@ -95,8 +118,9 @@ public final class Props {
 	}
 
 	/**
-	 * Writes the specified {@code Properties} to the given file. Internally
-	 * this method delegates to {@link Properties#store(Writer, String)}.
+	 * Writes the specified {@code Properties} to the given file using the
+	 * specified charset. Internally this method delegates to
+	 * {@link Properties#store(Writer, String)}.
 	 * <p>
 	 * Properties from the defaults table of this Properties table (if any) are
 	 * not written out by this method.
@@ -108,18 +132,20 @@ public final class Props {
 	 *            comments are desired
 	 * @param path
 	 *            the given file
+	 * @param charset
+	 *            the specified charset
 	 * @return the given file
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
 	public static File save(final Properties properties, final String comments,
-			final File path) throws IOException {
+			final File path, final Charset charset) throws IOException {
 		checkNotNull(properties);
 		checkNotNull(path);
-		final OutputStream out = new BufferedOutputStream(new FileOutputStream(
-				path));
-		properties.store(out, comments);
-		Closeables.closeQuietly(out);
+		checkNotNull(charset);
+		final Writer writer = Files.newWriter(path, charset);
+		properties.store(writer, comments);
+		Closeables.closeQuietly(writer);
 		return path;
 	}
 
