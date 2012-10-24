@@ -1,5 +1,7 @@
 import java.util.Comparator;
 
+import com.google.common.base.Charsets;
+
 import biscotti.collect.Skiplist;
 import biscotti.collect.Sortedlist;
 import biscotti.collect.Treelist;
@@ -46,55 +48,55 @@ public class Test {
 	}
 	public static void main(String[] args) {
 		
-		Treelist<Integer> tl = Treelist.create();
-		
-		tl.add(5);
-		tl.add(-3);
-		tl.add(17);
-		tl.add(-9);
-		tl.add(4);
-		tl.add(6);
-		tl.add(4);
-		
-		print(tl);
-		
-		
-		Treelist<Integer> sl = tl.subList(1, 6);
-		
-		print(sl);
-		
-		sl.add(6);
-		
-		print(sl);
-		
-		print(tl);
-		
-		System.out.println("\n\n");
-		
-		Skiplist<Integer> sl1 = Skiplist.create();
-		
-		sl1.add(5);
-		sl1.add(-3);
-		sl1.add(17);
-		sl1.add(-9);
-		sl1.add(4);
-		sl1.add(6);
-		sl1.add(4);
-		
-		print(sl1);
-		
-		
-		Skiplist<Integer> sl2 = sl1.subList(1, 6);
-		
-		print(sl2);
-		
-		sl2.add(6);
-		
-		print(sl2);
-		
-		print(sl1);		
-		
-		
+//		Treelist<Integer> tl = Treelist.create();
+//		
+//		tl.add(5);
+//		tl.add(-3);
+//		tl.add(17);
+//		tl.add(-9);
+//		tl.add(4);
+//		tl.add(6);
+//		tl.add(4);
+//		
+//		print(tl);
+//		
+//		
+//		Treelist<Integer> sl = tl.sublist(1, 6);
+//		
+//		print(sl);
+//		
+//		sl.add(6);
+//		
+//		print(sl);
+//		
+//		print(tl);
+//		
+//		System.out.println("\n\n");
+//		
+//		Skiplist<Integer> sl1 = Skiplist.create();
+//		
+//		sl1.add(5);
+//		sl1.add(-3);
+//		sl1.add(17);
+//		sl1.add(-9);
+//		sl1.add(4);
+//		sl1.add(6);
+//		sl1.add(4);
+//		
+//		print(sl1);
+//		
+//		
+//		Skiplist<Integer> sl2 = sl1.sublist(1, 6);
+//		
+//		print(sl2);
+//		
+//		sl2.add(6);
+//		
+//		print(sl2);
+//		
+//		print(sl1);		
+//		
+//		
 		
 		
 		
@@ -182,6 +184,14 @@ public class Test {
 ////		System.out.println("from: " + ((Skiplist.Sublist)sl2).from.element);
 ////		System.out.println("to: " + ((Skiplist.Sublist)sl2).to.element);
 ////		
+		
+		long[] longs = new long[]{1, 2, 3};
+		
+		for(long l : longs){
+			System.out.println(l);
+		}
+		
+		System.out.println(Charsets.US_ASCII);
 
 	}
 }

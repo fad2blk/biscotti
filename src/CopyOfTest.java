@@ -2,7 +2,6 @@ import java.util.Comparator;
 
 import biscotti.collect.Skiplist;
 import biscotti.collect.Sortedlist;
-import biscotti.collect.Treelist;
 
 public class CopyOfTest {
 
@@ -50,7 +49,7 @@ public class CopyOfTest {
 		
 		
 		
-		Skiplist<Double> sl = Skiplist.create(ComparatorImpl.INSTANCE);
+		Skiplist<Double> sl = Skiplist.orderedBy(ComparatorImpl.INSTANCE).create();
 		
 		sl.add(-1.1);
 		sl.add(-2.2);
@@ -74,7 +73,7 @@ public class CopyOfTest {
 //////		
 //////	
 		System.out.println("sublist");
-		Skiplist<Double> sl2 = sl.subList(2, 7);
+		Skiplist<Double> sl2 = sl.sublist(2, 7);
 		print(sl2);
 ////		
 ////		System.out.println(sl2 + " sub-size: " + sl2.size() + " size: " + sl.size());
