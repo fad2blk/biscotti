@@ -195,11 +195,11 @@ final public class Files2 {
 	// }
 
 	/**
-	 * Returns all the files and sub-directories in the given path.
+	 * Returns all the files and sub-directories in the specified path.
 	 * 
 	 * @param path
 	 *            the specified path
-	 * @return all the files and sub-directories in the given path
+	 * @return all the files and sub-directories in the specified path
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
@@ -211,15 +211,15 @@ final public class Files2 {
 	}
 
 	/**
-	 * Returns all the files and sub-directories in the given path which satisfy
-	 * the specified filter.
+	 * Returns all the files and sub-directories in the specified path which
+	 * satisfy the given filter.
 	 * 
 	 * @param path
 	 *            the specified path
 	 * @param filter
 	 *            a file filter
-	 * @return all the files and sub-directories in the given path which satisfy
-	 *         the specified filter
+	 * @return all the files and sub-directories in the specified path which
+	 *         satisfy the given filter
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
@@ -232,8 +232,8 @@ final public class Files2 {
 	}
 
 	/**
-	 * Processes and returns all the files and sub-directories in the given path
-	 * which satisfy the specified filter.
+	 * Processes and returns all the files and sub-directories in the specified
+	 * path which satisfy the given filter.
 	 * 
 	 * @param path
 	 *            the specified directory
@@ -241,8 +241,8 @@ final public class Files2 {
 	 *            a file filter
 	 * @param processor
 	 *            the {@code FileProcessor} instance used to process the files
-	 * @return all the files and sub-directories in the given path which satisfy
-	 *         the specified filter
+	 * @return all the files and sub-directories in specified given path which
+	 *         satisfy the given filter
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
@@ -259,14 +259,14 @@ final public class Files2 {
 	}
 
 	/**
-	 * Processes and returns all the files and sub-directories in the givenF
+	 * Processes and returns all the files and sub-directories in the specified
 	 * path.
 	 * 
 	 * @param path
 	 *            the specified path
 	 * @param processor
 	 *            the {@code FileProcessor} instance used to process the files
-	 * @return all the files and sub-directories in the given path
+	 * @return all the files and sub-directories in the specified path
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
