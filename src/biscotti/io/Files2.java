@@ -18,7 +18,6 @@ import java.util.List;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -87,15 +86,18 @@ final public class Files2 {
 	 * @param charset
 	 *            the character set to use when writing the file
 	 * @return a print writer to the given file
+	 * @param autoFlush
+	 *            if {@code true}, the {@code println}, {@code printf}, and
+	 *            {@code format} methods will flush the output buffer
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 * @see Charsets
 	 */
 	public static PrintWriter newPrintWriter(final File path,
-			final Charset charset) throws IOException {
+			final Charset charset, final boolean autoFlush) throws IOException {
 		checkNotNull(path);
 		checkNotNull(charset);
-		return new PrintWriter(Files.newWriter(path, charset));
+		return new PrintWriter(Files.newWriter(path, charset), autoFlush);
 	}
 
 	/**
@@ -227,8 +229,9 @@ final public class Files2 {
 			final FileFilter filter) throws IOException {
 		checkNotNull(path);
 		checkNotNull(filter);
-		checkArgument(path.isDirectory());
-		return walkFileTree(path, filter, FileProcessors.alwaysTrue());
+		final ImmutableSet.Builder<File> builder = ImmutableSet.builder();
+		walkFileTree(builder, path, filter);
+		return builder.build();
 	}
 
 	/**
@@ -241,21 +244,16 @@ final public class Files2 {
 	 *            a file filter
 	 * @param processor
 	 *            the {@code FileProcessor} instance used to process the files
-	 * @return all the files and sub-directories in specified given path which
-	 *         satisfy the given filter
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
-	public static Iterable<File> walkFileTree(final File path,
+	public static void walkFileTree(final File path,
 			final FileFilter filter, final FileProcessor<?> processor)
 			throws IOException {
 		checkNotNull(path);
 		checkNotNull(filter);
 		checkNotNull(processor);
-		checkArgument(path.exists());
-		final Builder<File> builder = new ImmutableSet.Builder<File>();
-		walkFileTree(builder, path, filter, processor);
-		return builder.build();
+		processFileTree(path, filter, processor);
 	}
 
 	/**
@@ -266,38 +264,47 @@ final public class Files2 {
 	 *            the specified path
 	 * @param processor
 	 *            the {@code FileProcessor} instance used to process the files
-	 * @return all the files and sub-directories in the specified path
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
-	public static Iterable<File> walkFileTree(final File path,
+	public static void walkFileTree(final File path,
 			final FileProcessor<?> processor) throws IOException {
 		checkNotNull(path);
 		checkNotNull(processor);
-		checkArgument(path.isDirectory());
-		return walkFileTree(path, FileFilters.TRUE, processor);
+		processFileTree(path, FileFilters.TRUE, processor);
 	}
 
 	private static void walkFileTree(final ImmutableSet.Builder<File> builder,
-			final File path, final FileFilter filter,
-			final FileProcessor<?> processor) throws IOException {
+			final File path, final FileFilter filter) throws IOException {
 		File[] files = path.listFiles(FileFilters.or(FileFilters.DIRECTORY,
 				filter));
 		if (files != null)
 			for (File file : files) {
-				if (filter.accept(file)) {
+				if (filter.accept(file))
 					builder.add(file);
+				if (file.isDirectory())
+					walkFileTree(builder, file, filter);
+			}
+		else if (filter.accept(path))
+			builder.add(path);
+	}
+
+	private static void processFileTree(final File path,
+			final FileFilter filter, final FileProcessor<?> processor)
+			throws IOException {
+		File[] files = path.listFiles(FileFilters.or(FileFilters.DIRECTORY,
+				filter));
+		if (files != null)
+			for (File file : files) {
+				if (filter.accept(file))
 					if (!processor.processFile(file))
 						return;
-				}
 				if (file.isDirectory())
-					walkFileTree(builder, file, filter, processor);
+					processFileTree(file, filter, processor);
 			}
-		else if (filter.accept(path)) {
-			builder.add(path);
+		else if (filter.accept(path))
 			if (!processor.processFile(path))
 				return;
-		}
 	}
 
 	/**
