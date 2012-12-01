@@ -16,9 +16,9 @@ import com.google.common.collect.Queues;
  * @author Zhenya Leonov
  * @see Queues
  */
-public class Queues2 {
+public class MoreQueues {
 
-	private Queues2() {
+	private MoreQueues() {
 	}
 
 	/**

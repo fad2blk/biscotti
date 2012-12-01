@@ -15,9 +15,9 @@ import com.google.common.collect.ObjectArrays;
  * @see Arrays
  * @see ObjectArrays
  */
-final public class ObjectArrays2 {
+final public class MoreArrays {
 
-	private ObjectArrays2() {
+	private MoreArrays() {
 	};
 
 	/**

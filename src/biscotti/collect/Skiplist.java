@@ -52,8 +52,8 @@ import com.google.common.collect.Ordering;
  * <p>
  * The iterators obtained from the {@link #iterator()} and
  * {@link #listIterator()} methods are <i>fail-fast</i>. Attempts to modify the
- * elements in this list at any time after an iterator is created, in any way
- * except through the iterator's own remove method, will result in a
+ * elements in this sorted-list at any time after an iterator is created, in any
+ * way except through the iterator's own remove method, will result in a
  * {@code ConcurrentModificationException}. Further, the list iterator does not
  * support the {@code add(E)} and {@code set(E)} operations.
  * <p>

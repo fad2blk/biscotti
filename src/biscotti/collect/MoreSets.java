@@ -16,9 +16,9 @@ import com.google.common.collect.Sets;
  * @author Zhenya Leonov
  * @see Sets
  */
-public class Sets2 {
+public class MoreSets {
 
-	private Sets2() {
+	private MoreSets() {
 	}
 
 	/**
