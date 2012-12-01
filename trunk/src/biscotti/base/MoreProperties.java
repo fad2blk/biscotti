@@ -20,9 +20,9 @@ import com.google.common.io.Closeables;
  * 
  * @author Zhenya Leonov
  */
-public final class Props {
+public final class MoreProperties {
 
-	private Props() {
+	private MoreProperties() {
 	}
 
 	/**

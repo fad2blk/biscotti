@@ -41,9 +41,9 @@ import com.google.common.collect.UnmodifiableIterator;
  * @author Zhenya Leonov
  * @see Iterators
  */
-public final class Iterators2 {
+public final class MoreIterators {
 
-	private Iterators2() {
+	private MoreIterators() {
 	}
 
 	private static final ListIterator<Object> EMPTY_LIST_ITERATOR = new EmptyListIterator<Object>();

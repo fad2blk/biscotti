@@ -7,6 +7,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -93,30 +94,52 @@ final public class Systems {
 	}
 
 	/**
-	 * Reassigns the "standard" output stream to the specified file.
+	 * Reassigns the "standard" output stream to the given file, using the
+	 * specified charset.
 	 * 
 	 * @param path
 	 *            the specified file
+	 * @param charset
+	 *            the character set to use when writing the lines
+	 * @param autoFlush
+	 *            if {@code true}, the output buffer will be flushed whenever a
+	 *            byte array is written, one of the println methods is invoked,
+	 *            or a newline character or byte ('\n') is written
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @return a {@code PrintStream} to the given file
 	 */
-	public static void setOut(final File path) throws IOException {
+	public static PrintStream setOut(final File path, final Charset charset,
+			final boolean autoFlush) throws IOException {
 		checkNotNull(path);
-		final PrintStream ps = new PrintStream(path);
+		checkNotNull(charset);
+		final PrintStream ps = MoreFiles.newPrintStream(path, charset, true);
 		System.setOut(ps);
+		return ps;
 	}
 
 	/**
-	 * Reassigns the "standard" error stream to the specified file.
+	 * Reassigns the "standard" error stream to the given file, using the
+	 * specified charset.
 	 * 
 	 * @param path
 	 *            the specified file
+	 * @param charset
+	 *            the character set to use when writing the lines
+	 * @param autoFlush
+	 *            if {@code true}, the output buffer will be flushed whenever a
+	 *            byte array is written, one of the println methods is invoked,
+	 *            or a newline character or byte ('\n') is written
 	 * @throws IOException
 	 *             if an I/O error occurs
+	 * @return a {@code PrintStream} to the given file
 	 */
-	public static void setErr(final File path) throws IOException {
+	public static PrintStream setErr(final File path, final Charset charset,
+			final boolean autoFlush) throws IOException {
 		checkNotNull(path);
-		final PrintStream ps = new PrintStream(path);
+		checkNotNull(charset);
+		final PrintStream ps = MoreFiles.newPrintStream(path, charset, true);
 		System.setErr(ps);
+		return ps;
 	}
 }

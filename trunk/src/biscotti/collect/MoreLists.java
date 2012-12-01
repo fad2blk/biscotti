@@ -16,9 +16,9 @@ import com.google.common.collect.Lists;
  * @author Zhenya Leonov
  * @see Lists
  */
-public class Lists2 {
+public class MoreLists {
 
-	private Lists2() {
+	private MoreLists() {
 	}
 
 	/**

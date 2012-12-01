@@ -14,9 +14,9 @@ import com.google.common.collect.Maps;
  * @author Zhenya Leonov
  * @see Maps
  */
-public class Maps2 {
+public class MoreMaps {
 
-	private Maps2() {
+	private MoreMaps() {
 	}
 
 	/**

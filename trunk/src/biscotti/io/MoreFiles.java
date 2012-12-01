@@ -35,12 +35,12 @@ import com.google.common.io.OutputSupplier;
  * @see Files#touch(File)
  * @author Zhenya Leonov
  */
-final public class Files2 {
+final public class MoreFiles {
 
 	private static Joiner JOINER = Joiner.on(System
 			.getProperty("line.separator"));
 
-	private Files2() {
+	private MoreFiles() {
 	}
 
 	/**
