@@ -4,7 +4,7 @@ import java.util.ListIterator;
 
 /**
  * A {@link SortedCollection} which may contain duplicate elements and allows
- * users to access and remove elements by their integer index.
+ * users to access or remove elements by their integer index.
  * <p>
  * This is the <i>list</i> analog to sorted set.
  * 
