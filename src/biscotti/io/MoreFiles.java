@@ -1,6 +1,5 @@
 package biscotti.io;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
@@ -37,7 +36,7 @@ import com.google.common.io.OutputSupplier;
  */
 final public class MoreFiles {
 
-	private static Joiner JOINER = Joiner.on(System
+	private static Joiner LINE_SEPARATOR = Joiner.on(System
 			.getProperty("line.separator"));
 
 	private MoreFiles() {
@@ -149,8 +148,7 @@ final public class MoreFiles {
 		checkNotNull(path);
 		checkNotNull(charset);
 		checkNotNull(lines);
-		final PrintWriter writer = new PrintWriter(Files
-				.newOutputStreamSupplier(path).getOutput());
+		final PrintWriter writer = MoreFiles.newPrintWriter(path, charset, false);
 		for (String line : lines)
 			writer.println(line);
 		Closeables.closeQuietly(writer);
@@ -208,7 +206,6 @@ final public class MoreFiles {
 	public static Iterable<File> walkFileTree(final File path)
 			throws IOException {
 		checkNotNull(path);
-		checkArgument(path.isDirectory());
 		return walkFileTree(path, FileFilters.TRUE);
 	}
 
@@ -326,7 +323,7 @@ final public class MoreFiles {
 		checkNotNull(lines);
 		checkNotNull(to);
 		checkNotNull(charset);
-		Files.append(JOINER.join(lines), to, charset);
+		Files.append(LINE_SEPARATOR.join(lines), to, charset);
 		return to;
 	}
 
