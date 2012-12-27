@@ -268,7 +268,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		 * comparator, and having the given initial elements.
 		 * 
 		 * @param elements
-		 *            the initial elements to be placed in this queue
+		 *            the initial elements to be placed in this {@code Skiplist}
 		 * @return a new {@code Skiplist} using the previously specified
 		 *         comparator, and having the given initial elements
 		 */
