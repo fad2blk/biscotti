@@ -17,7 +17,6 @@ import java.util.List;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
@@ -151,7 +150,7 @@ final public class MoreFiles {
 		final PrintWriter writer = MoreFiles.newPrintWriter(path, charset, false);
 		for (String line : lines)
 			writer.println(line);
-		Closeables.closeQuietly(writer);
+		writer.close();
 		return path;
 	}
 
