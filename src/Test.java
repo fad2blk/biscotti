@@ -1,12 +1,13 @@
 import java.util.Comparator;
+import java.util.List;
+
+import biscotti.collect.Sortedlist;
 
 import com.google.common.base.Charsets;
 
-import biscotti.collect.Skiplist;
-import biscotti.collect.Sortedlist;
-import biscotti.collect.Treelist;
-
 public class Test {
+	
+	static List<Void> boo;
 
 	static class ComparatorImpl implements Comparator<Double> {
 

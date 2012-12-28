@@ -52,7 +52,7 @@ public final class MoreProperties {
 		checkNotNull(in);
 		final Properties props = new Properties();
 		props.loadFromXML(in);
-		Closeables.closeQuietly(in);
+		Closeables.close(in, false);
 		return props;
 	}
 
@@ -98,7 +98,7 @@ public final class MoreProperties {
 		checkNotNull(in);
 		final Properties props = new Properties();
 		props.load(in);
-		Closeables.closeQuietly(in);
+		Closeables.close(in, false);
 		return props;
 	}
 
@@ -143,7 +143,7 @@ public final class MoreProperties {
 		final OutputStream out = new BufferedOutputStream(new FileOutputStream(
 				path));
 		properties.store(out, comments);
-		Closeables.closeQuietly(out);
+		Closeables.close(out, false);
 		return path;
 	}
 
@@ -180,7 +180,7 @@ public final class MoreProperties {
 		final OutputStream out = new BufferedOutputStream(new FileOutputStream(
 				path));
 		properties.storeToXML(out, comment, charset.toString());
-		Closeables.closeQuietly(out);
+		Closeables.close(out, false);
 		return path;
 	}
 
