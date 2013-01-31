@@ -123,7 +123,7 @@ final public class MoreFiles {
 			return new PrintStream(new FileOutputStream(path), autoFlush,
 					charset.toString());
 		} catch (UnsupportedEncodingException e) {
-			throw new Error(); // cannot happen
+			throw new AssertionError(); // cannot happen
 		}
 	}
 
