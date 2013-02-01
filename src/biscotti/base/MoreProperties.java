@@ -20,7 +20,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Zhenya Leonov
  */
-public final class MoreProperties {
+final class MoreProperties {
 
 	private MoreProperties() {
 	}
