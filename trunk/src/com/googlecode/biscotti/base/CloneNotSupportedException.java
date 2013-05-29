@@ -21,8 +21,8 @@ package com.googlecode.biscotti.base;
  * object could not or should not be cloned.
  * <p>
  * Unlike the checked {@link java.lang.CloneNotSupportedException
- * java.lang.CloneNotSupportedException}, this exception can be thrown by sub
- * classes whose parent classes do not throw a
+ * java.lang.CloneNotSupportedException}, this exception can be thrown by
+ * sub-classes whose parent classes do not throw a
  * {@code java.lang.CloneNotSupportedException}.
  */
 public class CloneNotSupportedException extends RuntimeException {

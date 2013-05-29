@@ -1,3 +1,5 @@
+add iterables method concat (object o, iterable)
+
 no need to create new node in treelist in iterators (also check other iterators)
 
 treelist lastIndexOf (instead start from last node goto first)???;
