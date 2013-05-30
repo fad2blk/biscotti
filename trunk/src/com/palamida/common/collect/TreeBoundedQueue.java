@@ -55,12 +55,12 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	private static final long serialVersionUID = 1L;
 	private TreeQueue<E> delegate;
-	private final int capacity;
+	private final int maxSize;
 
 	private TreeBoundedQueue(final int capacity,
 			final Comparator<? super E> comparator) {
 		delegate = TreeQueue.orderedBy(comparator).create();
-		this.capacity = capacity;
+		this.maxSize = capacity;
 	}
 
 	private TreeBoundedQueue(final Comparator<? super E> comparator,
@@ -69,7 +69,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		for (E e : elements)
 			offer(e);
 		checkArgument(size() > 0);
-		this.capacity = size();
+		this.maxSize = size();
 	}
 
 	// /**
@@ -266,7 +266,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 
 	@Override
 	public boolean offer(E e) {
-		if (size() == capacity)
+		if (size() == maxSize)
 			if (comparator().compare(e, delegate().peekLast()) < 0)
 				delegate().pollLast();
 			else
@@ -275,13 +275,18 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	@Override
-	public int capacity() {
-		return capacity;
+	public int maxSize() {
+		return maxSize;
 	}
 
 	@Override
 	public int remainingCapacity() {
-		return capacity - size();
+		return maxSize - size();
+	}
+	
+	@Override
+	public boolean isFull() {
+		return maxSize == size();
 	}
 
 	@Override

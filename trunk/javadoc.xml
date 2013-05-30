@@ -11,9 +11,10 @@
 	<property name="java.docs"		value="http://download.oracle.com/javase/7/docs/api/"/>
 	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
 	
-	<property name="base"			value="biscotti.base"/>
-	<property name="collect"		value="biscotti.collect"/>
-	<property name="io"				value="biscotti.io"/>
+	<property name="base"			value="com.palamida.common.base"/>
+	<property name="collect"		value="com.palamida.common.collect"/>
+	<property name="io"				value="com.palamida.common.io"/>
+	<property name="swing"			value="com.palamida.common.swing"/>
 	
 	<target name="javadoc">
 		<delete dir="${doc.home}" />
@@ -26,7 +27,7 @@
     	       noindex="false"
     	       nonavbar="false"
     	       notree="false"
-    	       packagenames="${base},${collect},${io}"
+    	       packagenames="${base},${collect},${io}, ${swing}"
     	       source="1.6"
     	       sourcepath="${src.home};${java.src};${guava.src};"
     	       splitindex="true"
