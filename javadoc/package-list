@@ -1,3 +1,4 @@
-biscotti.base
-biscotti.collect
-biscotti.io
+com.palamida.common.base
+com.palamida.common.collect
+com.palamida.common.io
+com.palamida.common.swing
