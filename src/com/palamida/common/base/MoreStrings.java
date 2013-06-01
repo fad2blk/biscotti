@@ -92,6 +92,7 @@ final public class MoreStrings {
 	 *             if an I/O exception occurs
 	 */
 	public static Iterable<String> readLines(final String string) throws IOException {
+		checkNotNull(string);
 		return CharStreams.readLines(new StringReader(string));
 	}
 

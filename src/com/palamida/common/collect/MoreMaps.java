@@ -20,54 +20,56 @@ public class MoreMaps {
 	}
 
 	/**
-	 * Creates an empty {@code LinkedHashMap} which orders its keys according to
-	 * their <i>access-order</i>.
+	 * Creates an empty {@code LinkedHashMap} with the specified ordering mode.
 	 * 
-	 * @return an empty {@code LinkedHashMap} which orders its keys according to
-	 *         their <i>access-order</i>
+	 * @param accessOrder
+	 *            the ordering mode - {@code true} for access-order,
+	 *            {@code false} for insertion-order
+	 * @return an empty {@code LinkedHashMap} with the specified ordering mode
 	 * @see LinkedHashMap
 	 */
-	public static <K, V> Map<K, V> newAccessOrderMap() {
-		return new LinkedHashMap<K, V>(16, .75F, true);
+	public static <K, V> Map<K, V> newLinkedHashMap(final boolean accessOrder) {
+		return new LinkedHashMap<K, V>(16, .75F, accessOrder);
 	}
 
 	/**
-	 * Creates a {@code LinkedHashMap} which orders its keys according to their
-	 * <i>access-order</i>, containing the same mappings as the specified map.
+	 * Creates a {@code LinkedHashMap} with the specified ordering mode,
+	 * containing the same mappings as the specified map.
 	 * 
+	 * @param accessOrder
+	 *            the ordering mode - {@code true} for access-order,
+	 *            {@code false} for insertion-order
 	 * @param m
 	 *            the map whose mappings this map should contain
-	 * @return a {@code LinkedHashMap} which orders its keys according to their
-	 *         <i>access-order</i>, containing the same mappings as the
-	 *         specified map
-	 * @see LinkedHashMap
+	 * @return a {@code LinkedHashMap} with the specified ordering mode,
+	 *         containing the same mappings as the specified map
+	 * @see LinkedHashMasp
 	 */
-	public static <K, V> Map<K, V> newAccessOrderMap(
-			final Map<? extends K, ? extends V> m) {
+	public static <K, V> Map<K, V> newLinkedHashMap(final boolean accessOrder, final Map<? extends K, ? extends V> m) {
 		checkNotNull(m);
-		final Map<K, V> map = new LinkedHashMap<K, V>(Math.max(
-				(int) (m.size() / .75F) + 1, 16), .75F, true);
+		final Map<K, V> map = new LinkedHashMap<K, V>(Math.max((int) (m.size() / .75F) + 1, 16), .75F, accessOrder);
 		map.putAll(m);
 		return map;
 	}
 
 	/**
-	 * Creates an empty {@code LinkedHashMap} which orders its keys according to
-	 * their <i>access-order</i>, with enough capacity to hold the specified
-	 * number of entries without rehashing.
+	 * Creates an empty {@code LinkedHashMap} with the specified ordering mode
+	 * and enough capacity to hold the specified number of entries without
+	 * rehashing.
 	 * 
 	 * @param expectedSize
 	 *            the expected size
-	 * @return an empty {@code LinkedHashMap} which orders its keys according to
-	 *         their <i>access-order</i>, with enough capacity to hold the
-	 *         specified number of entries without rehashing
+	 * @param accessOrder
+	 *            the ordering mode - {@code true} for access-order,
+	 *            {@code false} for insertion-order
+	 * @return an empty {@code LinkedHashMap} with the specified ordering mode
+	 *         and enough capacity to hold the specified number of entries
+	 *         without rehashing
 	 * @see LinkedHashMap
 	 */
-	public static <K, V> Map<K, V> newAccessOrderMapWithExpectedSize(
-			final int expectedSize) {
+	public static <K, V> Map<K, V> newLinkedHashMapExpectedSize(final int expectedSize, final boolean accessOrder) {
 		checkArgument(expectedSize >= 0);
-		return new LinkedHashMap<K, V>(Math.max(expectedSize * 2, 16), .75F,
-				true);
+		return new LinkedHashMap<K, V>(Math.max(expectedSize * 2, 16), .75F, accessOrder);
 	}
 
 }

@@ -8,7 +8,7 @@ package com.palamida.common.collect;
  * @param <E>
  *            the type of elements held in this sorted-list
  */
-public interface Navigablelist<E> extends Sortedlist<E> {
+interface Navigablelist<E> extends Sortedlist<E> {
 
 	/**
 	 * Returns a reverse order view of the elements contained in this
