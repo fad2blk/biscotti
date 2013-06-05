@@ -107,7 +107,7 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
- * @see Skiplist
+ * @see IndexableSkiplist
  */
 final public class SkiplistSet<E> extends AbstractSet<E> implements
 		SortedCollection<E>, Serializable, Cloneable {

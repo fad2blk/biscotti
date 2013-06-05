@@ -1,8 +1,8 @@
 <project name="biscotti" default="javadoc">
 	
-	
-	<property name="java.src"		value="C:\Program Files\Java\jdk1.7.0_06\src"/>
+	<property name="java.src"		value="C:/Program Files/Java/jdk1.7.0_17/src-jdk"/>
 	<property name="guava.src"		value="${basedir}\lib\guava-13.0-sources"/>
+	<property name="jsr305.src"		value="${basedir}\lib\jsr305"/>
 	
 	<property name="src.home"		value="${basedir}/src"/>
 	<property name="docs.home"		value="${basedir}/javadoc"/>
@@ -11,10 +11,10 @@
 	<property name="java.docs"		value="http://download.oracle.com/javase/7/docs/api/"/>
 	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
 	
-	<property name="base"			value="com.palamida.common.base"/>
-	<property name="collect"		value="com.palamida.common.collect"/>
-	<property name="io"				value="com.palamida.common.io"/>
-	<property name="swing"			value="com.palamida.common.swing"/>
+	<property name="base"			value="com.palamida.util.base"/>
+	<property name="collect"		value="com.palamida.util.collect"/>
+	<property name="io"				value="com.palamida.util.io"/>
+	<property name="swing"			value="com.palamida.util.swing"/>
 	
 	<target name="javadoc">
 		<delete dir="${doc.home}" />
@@ -27,9 +27,9 @@
     	       noindex="false"
     	       nonavbar="false"
     	       notree="false"
-    	       packagenames="${base},${collect},${io}, ${swing}"
-    	       source="1.6"
-    	       sourcepath="${src.home};${java.src};${guava.src};"
+    	       packagenames="${base},${collect},${io},${swing}"
+    	       source="1.7"
+    	       sourcepath="${src.home};${java.src};${guava.src};${jsr305.src};"
     	       splitindex="true"
     	       use="true"
     	       version="true"
