@@ -120,7 +120,7 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements maintained by this list
- * @see IndexableSkiplist
+ * @see Skiplist
  */
 public class Treelist<E> extends AbstractCollection<E> implements
 		Sortedlist<E>, Cloneable, Serializable {

@@ -46,11 +46,11 @@ final public class Sortedlists {
 	 * @return a {@code Skiplist} containing the specified initial elements
 	 *         sorted according to their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> IndexableSkiplist<E> newSkiplist(
+	public static <E extends Comparable<? super E>> Skiplist<E> newSkiplist(
 			final E first, final E... rest) {
 		checkNotNull(first);
 		checkNotNull(rest);
-		final IndexableSkiplist<E> sl = IndexableSkiplist.create();
+		final Skiplist<E> sl = Skiplist.create();
 		sl.add(first);
 		Collections.addAll(sl, rest);
 		return sl;
