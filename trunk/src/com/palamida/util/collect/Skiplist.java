@@ -147,7 +147,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see Treelist
  */
-public class IndexableSkiplist<E> extends AbstractCollection<E> implements
+public class Skiplist<E> extends AbstractCollection<E> implements
 		Sortedlist<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
@@ -163,7 +163,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	private transient int[] index = new int[MAX_LEVEL];
 	transient int modCount = 0;
 
-	private IndexableSkiplist(final Comparator<? super E> comparator) {
+	private Skiplist(final Comparator<? super E> comparator) {
 		this.comparator = comparator;
 		for (int i = 0; i < MAX_LEVEL; i++) {
 			head.next[i] = head;
@@ -179,8 +179,8 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	 * @return a new {@code Skiplist} that orders its elements according to
 	 *         their <i>natural ordering</i>
 	 */
-	public static <E extends Comparable<? super E>> IndexableSkiplist<E> create() {
-		return new IndexableSkiplist<E>(Ordering.natural());
+	public static <E extends Comparable<? super E>> Skiplist<E> create() {
+		return new Skiplist<E>(Ordering.natural());
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> IndexableSkiplist<E> from(final Collection<? extends E> elements) {
+	public static <E> Skiplist<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -236,7 +236,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 
 	/**
 	 * A builder for the creation of {@code Skiplist} instances. Instances of
-	 * this builder are obtained calling {@link IndexableSkiplist#orderedBy(Comparator)}.
+	 * this builder are obtained calling {@link Skiplist#orderedBy(Comparator)}.
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
@@ -259,8 +259,8 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 		 * @return an empty {@code Skiplist} using the previously specified
 		 *         comparator.
 		 */
-		public <T extends B> IndexableSkiplist<T> create() {
-			return new IndexableSkiplist<T>(comparator);
+		public <T extends B> Skiplist<T> create() {
+			return new Skiplist<T>(comparator);
 		}
 
 		/**
@@ -272,10 +272,10 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 		 * @return a new {@code Skiplist} using the previously specified
 		 *         comparator, and having the given initial elements
 		 */
-		public <T extends B> IndexableSkiplist<T> create(
+		public <T extends B> Skiplist<T> create(
 				final Iterable<? extends T> elements) {
 			checkNotNull(elements);
-			final IndexableSkiplist<T> list = new IndexableSkiplist<T>(comparator);
+			final Skiplist<T> list = new Skiplist<T>(comparator);
 			Iterables.addAll(list, elements);
 			return list;
 		}
@@ -488,7 +488,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	}
 
 	@Override
-	public IndexableSkiplist<E> sublist(int fromIndex, int toIndex) {
+	public Skiplist<E> sublist(int fromIndex, int toIndex) {
 		checkPositionIndexes(fromIndex, toIndex, size);
 		return new Sublist(this, fromIndex, toIndex);
 	}
@@ -501,10 +501,10 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IndexableSkiplist<E> clone() throws CloneNotSupportedException {
-		IndexableSkiplist<E> clone;
+	public Skiplist<E> clone() throws CloneNotSupportedException {
+		Skiplist<E> clone;
 		try {
-			clone = (IndexableSkiplist<E>) super.clone();
+			clone = (Skiplist<E>) super.clone();
 		} catch (java.lang.CloneNotSupportedException e) {
 			throw new InternalError();
 		}
@@ -610,7 +610,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 		public void remove() {
 			checkForConcurrentModification();
 			checkState(last != null);
-			IndexableSkiplist.this.remove(--index + offset);
+			Skiplist.this.remove(--index + offset);
 			expectedModCount = modCount;
 			last = null;
 		}
@@ -703,13 +703,13 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 	}
 
 	@SuppressWarnings("serial")
-	private final class Sublist extends IndexableSkiplist<E> {
-		private final IndexableSkiplist<E> list;
+	private final class Sublist extends Skiplist<E> {
+		private final Skiplist<E> list;
 		private int offset;
 		private Node<E> from;
 		private Node<E> to;
 
-		public Sublist(final IndexableSkiplist<E> list, final int fromIndex,
+		public Sublist(final Skiplist<E> list, final int fromIndex,
 				final int toIndex) {
 			super(list.comparator);
 			this.list = list;
@@ -721,7 +721,7 @@ public class IndexableSkiplist<E> extends AbstractCollection<E> implements
 		}
 
 		@Override
-		public IndexableSkiplist<E> clone() throws CloneNotSupportedException {
+		public Skiplist<E> clone() throws CloneNotSupportedException {
 			throw new CloneNotSupportedException();
 		}
 
