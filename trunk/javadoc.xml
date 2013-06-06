@@ -1,13 +1,11 @@
 <project name="biscotti" default="javadoc">
 	
+	<property name="src.home"		value="${basedir}/src"/>
 	<property name="java.src"		value="C:/Program Files/Java/jdk1.7.0_17/src-jdk"/>
 	<property name="guava.src"		value="${basedir}\lib\guava-13.0-sources"/>
 	<property name="jsr305.src"		value="${basedir}\lib\jsr305"/>
 	
-	<property name="src.home"		value="${basedir}/src"/>
 	<property name="docs.home"		value="${basedir}/javadoc"/>
-	
-	<property name="poi.docs"		value="http://poi.apache.org/apidocs/"/>
 	<property name="java.docs"		value="http://download.oracle.com/javase/7/docs/api/"/>
 	<property name="guava.docs"		value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
 	
@@ -16,20 +14,22 @@
 	<property name="io"				value="com.palamida.util.io"/>
 	<property name="swing"			value="com.palamida.util.swing"/>
 	
+	<property name="packages"       value="${base},${collect},${io},${swing}"/>
+	<property name="sources"        value="${src.home};${java.src};${guava.src};${jsr305.src}"/>
+	
 	<target name="javadoc">
 		<delete dir="${doc.home}" />
         <javadoc access="public"
         	   author="true"
-        	   classpath=""
         	   destdir="${docs.home}"
     	       nodeprecated="false"
     	       nodeprecatedlist="false"
     	       noindex="false"
     	       nonavbar="false"
     	       notree="false"
-    	       packagenames="${base},${collect},${io},${swing}"
+    	       packagenames="${packages}"
     	       source="1.7"
-    	       sourcepath="${src.home};${java.src};${guava.src};${jsr305.src};"
+    	       sourcepath="${sources}"
     	       splitindex="true"
     	       use="true"
     	       version="true"

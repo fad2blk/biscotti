@@ -7,7 +7,7 @@ import java.nio.charset.CodingErrorAction;
 public class EncodingTest {
 
 	public EncodingTest() {
-		// TODO Auto-generated constructor stub
+		// TODO Auto-generated constructor stub Collections2
 	}
 
 	/**

@@ -1,19 +1,17 @@
 <project default="all" name="biscotti" basedir=".">
 
-	<property name="app.name"				value="biscotti"									/>
-	<property name="build.home"				value="${basedir}/build"							/>
-	<property name="dist.home"				value="${basedir}/dist"								/>
-	<property name="doc.home"				value="${basedir}/javadoc"							/>
-	<property name="lib.common"				value="${basedir}/lib"								/>
-	<property name="doc.common"				value="${common}/doc"								/>
-	<property name="src.common"				value="${common}/src"								/>
-	<property name="src.home"				value="${basedir}/src"								/>
-	<property name="compile.debug"			value="true"										/>
-	<property name="compile.deprecation"	value="false"										/>
-	<property name="compile.optimize"		value="true"										/>
-	<property name="compile.source.ver"		value="1.7"											/>
-	<property name="compile.target.ver"		value="1.7"											/>
-		
+	<property name="app.name" value="biscotti" />
+	<property name="build.home" value="${basedir}/build" />
+	<property name="dist.home" value="${basedir}/dist" />
+	<property name="doc.home" value="${basedir}/javadoc" />
+	<property name="lib.common" value="${basedir}/lib" />
+	<property name="src.home" value="${basedir}/src" />
+	<property name="compile.debug" value="true" />
+	<property name="compile.deprecation" value="false" />
+	<property name="compile.optimize" value="true" />
+	<property name="compile.source.ver" value="1.6" />
+	<property name="compile.target.ver" value="1.6" />
+
 	<!-- Compilation Classpath  -->
 
 	<path id="compile.classpath">
@@ -24,31 +22,24 @@
 
 	<!-- All Target -->
 
-	<target name="all" depends="javadoc, dist" description="Clean, Compile, Javadoc, Dist">
+	<target name="all" depends="javadoc, dist" description="Javadoc, Clean, Compile, Dist">
 	</target>
 
 	<!-- Clean Target -->
 
 	<target name="clean" description="Delete old build and dist directories">
-		<delete dir="${build.home}"	/>
-		<delete dir="${dist.home}"	/>
+		<delete dir="${build.home}" />
+		<delete dir="${dist.home}" />
 	</target>
 
 	<!-- Compile Target -->
 
 	<target name="compile" depends="clean" description="Compile source files">
 		<mkdir dir="${build.home}" />
-		
-		<javac
-			srcdir="${src.home}"
-			destdir="${build.home}"
-			debug="${compile.debug}"
-			deprecation="${compile.deprecation}"
-			optimize="${compile.optimize}"
-			includeantruntime="false"
-			source="${compile.source.ver}"
-			target="${compile.target.ver}">
+
+		<javac bootclasspath="C:\Program Files\Java\jdk1.6.0_43\jre\lib\rt.jar" srcdir="${src.home}" destdir="${build.home}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" includeantruntime="false" source="${compile.source.ver}" target="${compile.target.ver}">
 			<classpath refid="compile.classpath" />
+
 		</javac>
 	</target>
 
@@ -56,20 +47,20 @@
 
 	<target name="dist" depends="compile, timestamp" description="Create binary distribution">
 		<mkdir dir="${dist.home}" />
-		
-		<jar jarfile="${dist.home}/${app.name}-${timestamp}.jar"			basedir="${build.home}"	/>
-		<jar jarfile="${dist.home}/${app.name}-${timestamp}-sources.jar"	basedir="${src.home}"	/>
-		<jar jarfile="${dist.home}/${app.name}-${timestamp}-javadoc.jar"	basedir="${doc.home}"	/>
+
+		<jar jarfile="${dist.home}/${app.name}-${timestamp}.jar" basedir="${build.home}" />
+		<jar jarfile="${dist.home}/${app.name}-${timestamp}-sources.jar" basedir="${src.home}" />
+		<jar jarfile="${dist.home}/${app.name}-${timestamp}-javadoc.jar" basedir="${doc.home}" />
 	</target>
 
 	<!-- Javadoc Target -->
 
 	<target name="javadoc" description="Generate documentation">
-		<subant target="javadoc" buildpath="${basedir}"	antfile="javadoc.xml" />
+		<subant target="javadoc" buildpath="${basedir}" antfile="javadoc.xml" />
 	</target>
-	
+
 	<!-- Timestamp Target -->
-	
+
 	<target name="timestamp" description="Generate timestamp property">
 		<tstamp>
 			<format property="timestamp" pattern="yyyyMMdd.HHmmss" />
