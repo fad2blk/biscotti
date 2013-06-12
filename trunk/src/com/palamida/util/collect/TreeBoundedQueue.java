@@ -164,11 +164,11 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * @return a new builder configured to build {@code TreeBoundedQueue}
 	 *         instances that use the specified comparator for ordering
 	 */
-	public static <E extends Comparable<? super E>> TreeBoundedQueue<E> withCapacity(
+	public static <E extends Comparable<? super E>> Builder<E> withMaxSize(
 			final int capacity) {
 		checkState(capacity > 0, "Capacity < 1");
 		final Comparator<E> c = Ordering.natural();
-		return new Builder<E>(c).capacity(capacity).create();
+		return new Builder<E>(c).capacity(capacity);
 	}
 
 	/**
@@ -189,7 +189,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 * A builder for the creation of {@code TreeBoundedQueue} instances.
 	 * Instances of this builder are obtained calling
 	 * {@link TreeBoundedQueue#orderedBy(Comparator)} and
-	 * {@link TreeBoundedQueue#withCapacity(int)}.
+	 * {@link TreeBoundedQueue#withMaxSize(int)}.
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
