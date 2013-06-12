@@ -345,6 +345,7 @@ public final class MoreIterators {
 	 * @return an iterator over the specified collection in reverse sequential
 	 *         order
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <E> Iterator<E> reverseOrder(final Collection<? extends E> c) {
 		checkNotNull(c);
 		if (c instanceof Deque<?>)
@@ -431,6 +432,7 @@ public final class MoreIterators {
 				throw new UnsupportedOperationException();
 			}
 
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			// ok since type T is only used in next, previous, add, and set
 			protected ListIterator delegate() {

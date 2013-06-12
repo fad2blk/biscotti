@@ -172,11 +172,11 @@
 <span class="sourceLineNo">164</span>         * @return a new builder configured to build {@code TreeBoundedQueue}<a name="line.164"></a>
 <span class="sourceLineNo">165</span>         *         instances that use the specified comparator for ordering<a name="line.165"></a>
 <span class="sourceLineNo">166</span>         */<a name="line.166"></a>
-<span class="sourceLineNo">167</span>        public static &lt;E extends Comparable&lt;? super E&gt;&gt; TreeBoundedQueue&lt;E&gt; withCapacity(<a name="line.167"></a>
+<span class="sourceLineNo">167</span>        public static &lt;E extends Comparable&lt;? super E&gt;&gt; Builder&lt;E&gt; withMaxSize(<a name="line.167"></a>
 <span class="sourceLineNo">168</span>                        final int capacity) {<a name="line.168"></a>
 <span class="sourceLineNo">169</span>                checkState(capacity &gt; 0, "Capacity &lt; 1");<a name="line.169"></a>
 <span class="sourceLineNo">170</span>                final Comparator&lt;E&gt; c = Ordering.natural();<a name="line.170"></a>
-<span class="sourceLineNo">171</span>                return new Builder&lt;E&gt;(c).capacity(capacity).create();<a name="line.171"></a>
+<span class="sourceLineNo">171</span>                return new Builder&lt;E&gt;(c).capacity(capacity);<a name="line.171"></a>
 <span class="sourceLineNo">172</span>        }<a name="line.172"></a>
 <span class="sourceLineNo">173</span><a name="line.173"></a>
 <span class="sourceLineNo">174</span>        /**<a name="line.174"></a>
@@ -197,7 +197,7 @@
 <span class="sourceLineNo">189</span>         * A builder for the creation of {@code TreeBoundedQueue} instances.<a name="line.189"></a>
 <span class="sourceLineNo">190</span>         * Instances of this builder are obtained calling<a name="line.190"></a>
 <span class="sourceLineNo">191</span>         * {@link TreeBoundedQueue#orderedBy(Comparator)} and<a name="line.191"></a>
-<span class="sourceLineNo">192</span>         * {@link TreeBoundedQueue#withCapacity(int)}.<a name="line.192"></a>
+<span class="sourceLineNo">192</span>         * {@link TreeBoundedQueue#withMaxSize(int)}.<a name="line.192"></a>
 <span class="sourceLineNo">193</span>         * <a name="line.193"></a>
 <span class="sourceLineNo">194</span>         * @author Zhenya Leonov<a name="line.194"></a>
 <span class="sourceLineNo">195</span>         * @param &lt;B&gt;<a name="line.195"></a>
