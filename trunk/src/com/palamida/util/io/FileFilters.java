@@ -108,24 +108,27 @@ final public class FileFilters {
 	 * Returns a file filter that evaluates to {@code true} if any of the
 	 * specified file filters evaluate to {@code true}.
 	 * 
-	 * @param filters
-	 *            the specified file filters
-	 * @return a file filter that evaluates to {@code true} if any of the
+	 * @param first
+	 *            the first filter
+	 * @param second
+	 *            the second filter
+	 * @param rest
+	 *            the rest specified file filters
+	 * @return a file filter that evaluates to {@code true} if all of the
 	 *         specified file filters evaluate to {@code true}
-	 * @throws IllegalArgumentException
-	 *             if no filters are given
 	 */
-	public static FileFilter or(final FileFilter... filters) {
-		checkNotNull(filters);
-		checkArgument(filters.length > 0);
-		if (filters.length == 1)
-			return filters[0];
+	public static FileFilter or(final FileFilter first, final FileFilter second, final FileFilter... rest) {
+		checkNotNull(first);
+		checkNotNull(second);
+		checkNotNull(rest);
 		return new FileFilter() {
 			@Override
 			public boolean accept(final File path) {
 				checkNotNull(path);
-				for (final FileFilter filter : filters) {
-					if (filter.accept(path))
+				if (first.accept(path) || second.accept(path))
+					return true;
+				for (final FileFilter filter : rest) {
+					if (!filter.accept(path))
 						return true;
 				}
 				return false;
@@ -137,23 +140,26 @@ final public class FileFilters {
 	 * Returns a file filter that evaluates to {@code true} if all of the
 	 * specified file filters evaluate to {@code true}.
 	 * 
-	 * @param filters
-	 *            the specified file filters
+	 * @param first
+	 *            the first filter
+	 * @param second
+	 *            the second filter
+	 * @param rest
+	 *            the rest specified file filters
 	 * @return a file filter that evaluates to {@code true} if all of the
 	 *         specified file filters evaluate to {@code true}
-	 * @throws IllegalArgumentException
-	 *             if no filters are given
 	 */
-	public static FileFilter and(final FileFilter... filters) {
-		checkNotNull(filters);
-		checkArgument(filters.length > 0);
-		if (filters.length == 1)
-			return filters[0];
+	public static FileFilter and(final FileFilter first, final FileFilter second, final FileFilter... rest) {
+		checkNotNull(first);
+		checkNotNull(second);
+		checkNotNull(rest);
 		return new FileFilter() {
 			@Override
 			public boolean accept(final File path) {
 				checkNotNull(path);
-				for (final FileFilter filter : filters) {
+				if (!first.accept(path) || !second.accept(path))
+					return false;
+				for (final FileFilter filter : rest) {
 					if (!filter.accept(path))
 						return false;
 				}
