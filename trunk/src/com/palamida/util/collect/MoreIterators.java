@@ -167,13 +167,13 @@ public final class MoreIterators {
 		checkNotNull(unfiltered);
 		checkNotNull(predicate);
 		return new UnmodifiableListIterator<E>() {
-			public E nextElement;
-			public E prevElement;
-			public int index = 0;
-			public boolean hasNext;
-			public boolean hasPrev;
-			public boolean next = false;
-			public boolean prev = false;
+			private E nextElement;
+			private E prevElement;
+			private int index = 0;
+			private boolean hasNext;
+			private boolean hasPrev;
+			private boolean next = false;
+			private boolean prev = false;
 
 			@Override
 			public boolean hasNext() {
