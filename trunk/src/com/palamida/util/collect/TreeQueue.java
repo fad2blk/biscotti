@@ -351,6 +351,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		if (isEmpty())
 			return null;
 		final E e = min.element;
+		System.out.println(min);
 		delete(min);
 		return e;
 	}
@@ -561,7 +562,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	 * color[z] = RED
 	 * RB-INSERT-FIXUP(T, z)
 	 */
-	private void insert(Node z) {
+	private void insert(final Node z) {
 		size++;
 		modCount++;
 		Node x = root;

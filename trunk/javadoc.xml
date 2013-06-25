@@ -2,7 +2,7 @@
 	
 	<property name="src.home"		value="${basedir}/src"/>
 	<property name="java.src"		value="C:/Program Files/Java/jdk1.7.0_17/src-jdk"/>
-	<property name="guava.src"		value="${basedir}\lib\guava-13.0-sources"/>
+	<property name="guava.src"		value="${basedir}\lib\guava-14.0.1-sources"/>
 	<property name="jsr305.src"		value="${basedir}\lib\jsr305"/>
 	
 	<property name="docs.home"		value="${basedir}/javadoc"/>
