@@ -86,11 +86,11 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	// * @throws IllegalArgumentException
 	// * if {@code maximumSize} is less than 1
 	// */
-	// public static <E extends Comparable<? super E>> TreeBoundedQueue<E>
+	// public static <E extends Comparable<? super E>> BoundedPriorityQueue<E>
 	// create(
 	// final int maximumSize) {
 	// checkArgument(maximumSize > 0);
-	// return new TreeBoundedQueue<E>(maximumSize, Ordering.natural());
+	// return new BoundedPriorityQueue<E>(maximumSize, Ordering.natural());
 	// }
 
 	// /**
@@ -107,15 +107,15 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	// * @throws IllegalArgumentException
 	// * if {@code maximumSize} is less than 1
 	// */
-	// public static <E> TreeBoundedQueue<E> create(final int maximumSize,
+	// public static <E> BoundedPriorityQueue<E> create(final int maximumSize,
 	// final Comparator<? super E> comparator) {
 	// checkArgument(maximumSize > 0);
 	// checkNotNull(comparator);
-	// return new TreeBoundedQueue<E>(maximumSize, comparator);
+	// return new BoundedPriorityQueue<E>(maximumSize, comparator);
 	// }
 
 	/**
-	 * Creates a new {@code TreeBoundedQueue} containing the elements of, and
+	 * Creates a new {@code BoundedPriorityQueue} containing the elements of, and
 	 * having its capacity equal to the number of elements in the specified
 	 * collection. If the collection is an instance of {@link SortedSet},
 	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
@@ -125,7 +125,7 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	 * 
 	 * @param elements
 	 *            the collection whose elements are to be placed into the queue
-	 * @return a new {@code TreeBoundedQueue} containing the elements of the
+	 * @return a new {@code BoundedPriorityQueue} containing the elements of the
 	 *         specified collection
 	 * @throws ClassCastException
 	 *             if elements of the specified collection cannot be compared to
@@ -156,28 +156,28 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * Returns a new builder configured to build {@code TreeBoundedQueue}
-	 * instances with the specified capacity.
+	 * Returns a new builder configured to build {@code BoundedPriorityQueue}
+	 * instances that are limited to the maximum number of elements.
 	 * 
-	 * @param capacity
-	 *            the total number of elements which can be placed in this queue
-	 * @return a new builder configured to build {@code TreeBoundedQueue}
-	 *         instances that use the specified comparator for ordering
+	 * @param maxElements
+	 *            the maximum number of elements which can be placed in this queue
+	 * @return a new builder configured to build {@code BoundedPriorityQueue}
+	 *         instances that are limited to the maximum number of elements
 	 */
-	public static <E extends Comparable<? super E>> Builder<E> withMaxSize(
-			final int capacity) {
-		checkState(capacity > 0, "Capacity < 1");
+	public static <E extends Comparable<? super E>> Builder<E> maxElements(
+			final int maxElements) {
+		checkState(maxElements > 0, "Capacity < 1");
 		final Comparator<E> c = Ordering.natural();
-		return new Builder<E>(c).capacity(capacity);
+		return new Builder<E>(c).capacity(maxElements);
 	}
 
 	/**
-	 * Returns a new builder configured to build {@code TreeBoundedQueue}
+	 * Returns a new builder configured to build {@code BoundedPriorityQueue}
 	 * instances that use the specified comparator for ordering.
 	 * 
 	 * @param comparator
 	 *            the specified comparator
-	 * @return a new builder configured to build {@code TreeBoundedQueue}
+	 * @return a new builder configured to build {@code BoundedPriorityQueue}
 	 *         instances that use the specified comparator for ordering
 	 */
 	public static <B> Builder<B> orderedBy(final Comparator<B> comparator) {
@@ -186,17 +186,17 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * A builder for the creation of {@code TreeBoundedQueue} instances.
+	 * A builder for the creation of {@code BoundedPriorityQueue} instances.
 	 * Instances of this builder are obtained calling
 	 * {@link BoundedPriorityQueue#orderedBy(Comparator)} and
-	 * {@link BoundedPriorityQueue#withMaxSize(int)}.
+	 * {@link BoundedPriorityQueue#maxElements(int)}.
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
 	 *            the upper bound of the type of queues this builder can produce
 	 *            (for example a {@code Builder<Number>} can produce a
-	 *            {@code TreeBoundedQueue<Float>} or a
-	 *            {@code TreeBoundedQueue<Integer>}
+	 *            {@code BoundedPriorityQueue<Float>} or a
+	 *            {@code BoundedPriorityQueue<Integer>}
 	 */
 	public static final class Builder<B> {
 
@@ -208,7 +208,7 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 		}
 
 		/**
-		 * Configures this builder to build {@code TreeBoundedQueue} instances
+		 * Configures this builder to build {@code BoundedPriorityQueue} instances
 		 * with the specified capacity.
 		 * 
 		 * @param capacity
@@ -222,10 +222,10 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 		}
 
 		/**
-		 * Builds an empty {@code TreeBoundedQueue} using the previously
+		 * Builds an empty {@code BoundedPriorityQueue} using the previously
 		 * specified comparator and capacity.
 		 * 
-		 * @return an empty {@code TreeBoundedQueue} using the previously
+		 * @return an empty {@code BoundedPriorityQueue} using the previously
 		 *         specified comparator and capacity
 		 * @throws IllegalArgumentException
 		 *             if the capacity has not been specified
@@ -236,12 +236,12 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 		}
 
 		/**
-		 * Builds a new {@code TreeBoundedQueue} using the previously specified
+		 * Builds a new {@code BoundedPriorityQueue} using the previously specified
 		 * comparator and capacity, having the given initial elements.
 		 * 
 		 * @param elements
 		 *            the initial elements to be placed in this queue
-		 * @return a new {@code TreeBoundedQueue} using the previously specified
+		 * @return a new {@code BoundedPriorityQueue} using the previously specified
 		 *         comparator and capacity, having the given initial
 		 *         elements
 		 * @throws IllegalStateException
@@ -300,7 +300,7 @@ final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 	}
 
 	/**
-	 * Returns a shallow copy of this {@code TreeBoundedQueue}. The elements
+	 * Returns a shallow copy of this {@code BoundedPriorityQueue}. The elements
 	 * themselves are not cloned.
 	 * 
 	 * @return a shallow copy of this queue
