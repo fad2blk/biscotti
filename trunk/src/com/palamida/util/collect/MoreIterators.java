@@ -431,12 +431,12 @@ public final class MoreIterators {
 			public void set(T e) {
 				throw new UnsupportedOperationException();
 			}
-
-			@SuppressWarnings({ "unchecked", "rawtypes" })
+		
+			@SuppressWarnings("unchecked")
 			@Override
 			// ok since type T is only used in next, previous, add, and set
-			protected ListIterator delegate() {
-				return fromIterator;
+			protected ListIterator<T> delegate() {
+				return (ListIterator<T>) fromIterator;
 			}
 		};
 	}

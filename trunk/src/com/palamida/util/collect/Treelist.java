@@ -1084,7 +1084,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 					}
 					w.color = x.parent.color;
 					x.parent.color = BLACK;
-					x.right.color = BLACK;
+					w.right.color = BLACK;
 					leftRotate(x.parent);
 					x = root;
 				}
@@ -1093,10 +1093,10 @@ public class Treelist<E> extends AbstractCollection<E> implements
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
-					rightRotate(x.parent);
+					rightRotate(w.parent);
 					w = x.parent.left;
 				}
-				if (w.left.color == BLACK && w.right.color == BLACK) {
+				if (w.right.color == BLACK && w.left.color == BLACK) {
 					w.color = RED;
 					x = x.parent;
 				} else {
@@ -1107,7 +1107,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 						w = x.parent.left;
 					}
 					w.color = x.parent.color;
-					x.parent.color = BLACK;
+					w.parent.color = BLACK;
 					w.left.color = BLACK;
 					rightRotate(x.parent);
 					x = root;
