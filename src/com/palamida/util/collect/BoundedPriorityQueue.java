@@ -50,20 +50,20 @@ import com.google.common.collect.Ordering;
  * @param <E>
  *            the type of elements held in this queue
  */
-final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
+final public class BoundedPriorityQueue<E> extends ForwardingQueue<E> implements
 		BoundedQueue<E>, SortedCollection<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private TreeQueue<E> delegate;
 	private final int maxSize;
 
-	private TreeBoundedQueue(final int capacity,
+	private BoundedPriorityQueue(final int capacity,
 			final Comparator<? super E> comparator) {
 		delegate = TreeQueue.orderedBy(comparator).create();
 		this.maxSize = capacity;
 	}
 
-	private TreeBoundedQueue(final Comparator<? super E> comparator,
+	private BoundedPriorityQueue(final Comparator<? super E> comparator,
 			final Iterable<? extends E> elements) {
 		delegate = TreeQueue.orderedBy(comparator).create();
 		for (E e : elements)
@@ -137,7 +137,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 *             if the specified collection is empty
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> TreeBoundedQueue<E> from(
+	public static <E> BoundedPriorityQueue<E> from(
 			final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
@@ -152,7 +152,7 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 					.comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
-		return new TreeBoundedQueue<E>(comparator, elements);
+		return new BoundedPriorityQueue<E>(comparator, elements);
 	}
 
 	/**
@@ -188,8 +188,8 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	/**
 	 * A builder for the creation of {@code TreeBoundedQueue} instances.
 	 * Instances of this builder are obtained calling
-	 * {@link TreeBoundedQueue#orderedBy(Comparator)} and
-	 * {@link TreeBoundedQueue#withMaxSize(int)}.
+	 * {@link BoundedPriorityQueue#orderedBy(Comparator)} and
+	 * {@link BoundedPriorityQueue#withMaxSize(int)}.
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
@@ -230,9 +230,9 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 * @throws IllegalArgumentException
 		 *             if the capacity has not been specified
 		 */
-		public <T extends B> TreeBoundedQueue<T> create() {
+		public <T extends B> BoundedPriorityQueue<T> create() {
 			checkState(capacity > 0, "Capacity unspecified");
-			return new TreeBoundedQueue<T>(capacity, comparator);
+			return new BoundedPriorityQueue<T>(capacity, comparator);
 		}
 
 		/**
@@ -247,11 +247,11 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 		 * @throws IllegalStateException
 		 *             if the capacity has not been specified
 		 */
-		public <T extends B> TreeBoundedQueue<T> create(
+		public <T extends B> BoundedPriorityQueue<T> create(
 				final Iterable<? extends T> elements) {
 			checkState(capacity > 0, "Capacity unspecified");
 			checkNotNull(elements);
-			final TreeBoundedQueue<T> list = new TreeBoundedQueue<T>(
+			final BoundedPriorityQueue<T> list = new BoundedPriorityQueue<T>(
 					capacity, comparator);
 			Iterables.addAll(list, elements);
 			return list;
@@ -307,8 +307,8 @@ final public class TreeBoundedQueue<E> extends ForwardingQueue<E> implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public TreeBoundedQueue<E> clone() throws CloneNotSupportedException {
-		TreeBoundedQueue<E> clone = (TreeBoundedQueue<E>) super.clone();
+	public BoundedPriorityQueue<E> clone() throws CloneNotSupportedException {
+		BoundedPriorityQueue<E> clone = (BoundedPriorityQueue<E>) super.clone();
 		clone.delegate = (TreeQueue<E>) delegate.clone();
 		return clone;
 	}

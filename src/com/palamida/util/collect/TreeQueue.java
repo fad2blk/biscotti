@@ -36,6 +36,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
 
+
 /**
  * An unbounded priority {@link Queue} based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
@@ -133,7 +134,7 @@ import com.google.common.collect.Ordering;
  * @author Zhenya Leonov
  * @param <E>
  *            the type of elements held in this queue
- * @see TreeBoundedQueue
+ * @see BoundedPriorityQueue
  */
 final public class TreeQueue<E> extends AbstractQueue<E> implements
 		SortedCollection<E>, Cloneable, Serializable {
@@ -351,7 +352,6 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		if (isEmpty())
 			return null;
 		final E e = min.element;
-		System.out.println(min);
 		delete(min);
 		return e;
 	}
@@ -522,13 +522,13 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 
 	private class Node {
 		private E element = null;
-		private Node parent;
-		private Node left;
-		private Node right;
+		private Node parent, left, right;
 		private Color color = BLACK;
 
 		private Node() {
-			this(null);
+			parent = this;
+			right = this;
+			left = this;
 		}
 
 		private Node(final E element) {
@@ -538,7 +538,6 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 			left = nil;
 		}
 	}
-
 	/**
 	 * Introduction to Algorithms (CLR) Second Edition
 	 * 
@@ -846,7 +845,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 					}
 					w.color = x.parent.color;
 					x.parent.color = BLACK;
-					x.right.color = BLACK;
+					w.right.color = BLACK;
 					leftRotate(x.parent);
 					x = root;
 				}
@@ -855,10 +854,10 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 				if (w.color == RED) {
 					w.color = BLACK;
 					x.parent.color = RED;
-					rightRotate(x.parent);
+					rightRotate(w.parent);
 					w = x.parent.left;
 				}
-				if (w.left.color == BLACK && w.right.color == BLACK) {
+				if (w.right.color == BLACK && w.left.color == BLACK) {
 					w.color = RED;
 					x = x.parent;
 				} else {
@@ -869,7 +868,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 						w = x.parent.left;
 					}
 					w.color = x.parent.color;
-					x.parent.color = BLACK;
+					w.parent.color = BLACK;
 					w.left.color = BLACK;
 					rightRotate(x.parent);
 					x = root;
