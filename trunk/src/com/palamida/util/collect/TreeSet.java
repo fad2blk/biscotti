@@ -104,8 +104,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see SkiplistSet
  */
-final public class TreeSet<E> extends AbstractSet<E> implements
-		SortedCollection<E>, Cloneable, Serializable {
+final public class TreeSet<E> extends AbstractSet<E> implements SortedCollection<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private transient int size = 0, modCount = 0;
@@ -162,7 +161,7 @@ final public class TreeSet<E> extends AbstractSet<E> implements
 	 *             {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> TreeSet<E> create(final Iterable<? extends E> elements) {
+	public static <E extends Comparable<? super E>> TreeSet<E> create(final Iterable<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -172,8 +171,7 @@ final public class TreeSet<E> extends AbstractSet<E> implements
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else if (elements instanceof MinMaxPriorityQueue<?>)
-			comparator = ((MinMaxPriorityQueue<? super E>) elements)
-					.comparator();
+			comparator = ((MinMaxPriorityQueue<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		final TreeSet<E> treeSet = TreeSet.create(comparator);
@@ -289,8 +287,7 @@ final public class TreeSet<E> extends AbstractSet<E> implements
 		return clone;
 	}
 
-	private void writeObject(java.io.ObjectOutputStream oos)
-			throws java.io.IOException {
+	private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
 		oos.defaultWriteObject();
 		oos.writeInt(size);
 		for (E e : this)
@@ -298,8 +295,7 @@ final public class TreeSet<E> extends AbstractSet<E> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
+	private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		root = min = nil = new Node();
 		int size = ois.readInt();

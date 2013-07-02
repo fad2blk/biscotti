@@ -122,8 +122,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see Skiplist
  */
-public class Treelist<E> extends AbstractCollection<E> implements
-		Sortedlist<E>, Cloneable, Serializable {
+public class Treelist<E> extends AbstractCollection<E> implements Sortedlist<E>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	transient int size = 0;
@@ -169,7 +168,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> Treelist<E> from(final Collection<? extends E> elements) {
+	public static <E extends Comparable<? super E>> Treelist<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -179,8 +178,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else if (elements instanceof MinMaxPriorityQueue<?>)
-			comparator = ((MinMaxPriorityQueue<? super E>) elements)
-					.comparator();
+			comparator = ((MinMaxPriorityQueue<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return orderedBy(comparator).create(elements);
@@ -238,8 +236,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		 * @return a new {@code Treelist} using the previously specified
 		 *         comparator, and having the given initial elements
 		 */
-		public <T extends B> Treelist<T> create(
-				final Iterable<? extends T> elements) {
+		public <T extends B> Treelist<T> create(final Iterable<? extends T> elements) {
 			checkNotNull(elements);
 			final Treelist<T> list = new Treelist<T>(comparator);
 			Iterables.addAll(list, elements);
@@ -306,8 +303,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			ListIterator<E> itor = listIterator();
 			while (itor.hasNext())
 				if (comparator.compare(itor.next(), e) == 0) {
-					while (itor.hasNext()
-							&& comparator.compare(itor.next(), e) == 0)
+					while (itor.hasNext() && comparator.compare(itor.next(), e) == 0)
 						;
 					return itor.previousIndex();
 				}
@@ -507,8 +503,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		return clone;
 	}
 
-	private void writeObject(java.io.ObjectOutputStream oos)
-			throws java.io.IOException {
+	private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
 		oos.defaultWriteObject();
 		oos.writeInt(size);
 		for (E e : this)
@@ -516,8 +511,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
+	private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		nil = new Node();
 		root = nil;
@@ -558,8 +552,7 @@ public class Treelist<E> extends AbstractCollection<E> implements
 		@Override
 		public boolean add(E e) {
 			checkForConcurrentModification();
-			if (comparator.compare(e, from.element) < 0
-					|| comparator.compare(e, to.element) > 0)
+			if (comparator.compare(e, from.element) < 0 || comparator.compare(e, to.element) > 0)
 				throw new IllegalArgumentException("element out of range");
 			list.add(e);
 			this.modCount = list.modCount;
@@ -701,13 +694,11 @@ public class Treelist<E> extends AbstractCollection<E> implements
 			throw new CloneNotSupportedException();
 		}
 
-		private void writeObject(java.io.ObjectOutputStream oos)
-				throws NotSerializableException {
+		private void writeObject(java.io.ObjectOutputStream oos) throws NotSerializableException {
 			throw new NotSerializableException();
 		}
 
-		private void readObject(java.io.ObjectInputStream ois)
-				throws NotSerializableException {
+		private void readObject(java.io.ObjectInputStream ois) throws NotSerializableException {
 			throw new NotSerializableException();
 		}
 

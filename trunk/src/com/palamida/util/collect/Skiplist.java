@@ -147,8 +147,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see Treelist
  */
-public class Skiplist<E> extends AbstractCollection<E> implements
-		Sortedlist<E>, Serializable, Cloneable {
+public class Skiplist<E> extends AbstractCollection<E> implements Sortedlist<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
@@ -203,7 +202,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> Skiplist<E> from(final Collection<? extends E> elements) {
+	public static <E extends Comparable<? super E>> Skiplist<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -213,8 +212,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else if (elements instanceof MinMaxPriorityQueue<?>)
-			comparator = ((MinMaxPriorityQueue<? super E>) elements)
-					.comparator();
+			comparator = ((MinMaxPriorityQueue<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return orderedBy(comparator).create(elements);
@@ -272,8 +270,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		 * @return a new {@code Skiplist} using the previously specified
 		 *         comparator, and having the given initial elements
 		 */
-		public <T extends B> Skiplist<T> create(
-				final Iterable<? extends T> elements) {
+		public <T extends B> Skiplist<T> create(final Iterable<? extends T> elements) {
 			checkNotNull(elements);
 			final Skiplist<T> list = new Skiplist<T>(comparator);
 			Iterables.addAll(list, elements);
@@ -305,8 +302,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
-			while (x.next[i] != y
-					&& comparator.compare(x.next[i].element, e) < 0) {
+			while (x.next[i] != y && comparator.compare(x.next[i].element, e) < 0) {
 				idx += x.dist[i];
 				x = x.next[i];
 			}
@@ -360,8 +356,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			int idx = 0;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
-				while (curr.next[i] != head
-						&& comparator.compare(curr.next[i].element, element) < 0) {
+				while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) < 0) {
 					idx += curr.dist[i];
 					curr = curr.next[i];
 				}
@@ -380,8 +375,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 			int idx = -1;
 			final E element = (E) o;
 			for (int i = level - 1; i >= 0; i--)
-				while (curr.next[i] != head
-						&& comparator.compare(curr.next[i].element, element) <= 0) {
+				while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) <= 0) {
 					idx += curr.dist[i];
 					curr = curr.next[i];
 				}
@@ -414,8 +408,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		final E element = (E) o;
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
-			while (curr.next[i] != head
-					&& comparator.compare(curr.next[i].element, element) < 0)
+			while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) < 0)
 				curr = curr.next[i];
 			update[i] = curr;
 		}
@@ -521,8 +514,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		return clone;
 	}
 
-	private void writeObject(java.io.ObjectOutputStream oos)
-			throws java.io.IOException {
+	private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
 		oos.defaultWriteObject();
 		oos.writeInt(size);
 		for (E e : this)
@@ -530,8 +522,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
+	private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		head = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++) {
@@ -682,8 +673,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 	Node<E> search(final E element) {
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--)
-			while (curr.next[i] != head
-					&& comparator.compare(curr.next[i].element, element) < 0)
+			while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) < 0)
 				curr = curr.next[i];
 		curr = curr.next();
 		if (curr != head && comparator.compare(curr.element, element) == 0)
@@ -709,8 +699,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		private Node<E> from;
 		private Node<E> to;
 
-		public Sublist(final Skiplist<E> list, final int fromIndex,
-				final int toIndex) {
+		public Sublist(final Skiplist<E> list, final int fromIndex, final int toIndex) {
 			super(list.comparator);
 			this.list = list;
 			this.modCount = list.modCount;
@@ -726,14 +715,12 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		}
 
 		// do we need this?
-		private void writeObject(java.io.ObjectOutputStream out)
-				throws IOException {
+		private void writeObject(java.io.ObjectOutputStream out) throws IOException {
 			throw new NotSerializableException();
 		}
 
 		// do we need this?
-		private void readObject(java.io.ObjectInputStream in)
-				throws IOException, ClassNotFoundException {
+		private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 			throw new NotSerializableException();
 		}
 
@@ -970,8 +957,7 @@ public class Skiplist<E> extends AbstractCollection<E> implements
 		}
 
 		private boolean inRange(final E e, final Node<E> from, final Node<E> to) {
-			return (comparator.compare(from.element, e) < 1 && comparator
-					.compare(e, to.element) < 1);
+			return (comparator.compare(from.element, e) < 1 && comparator.compare(e, to.element) < 1);
 		}
 
 	}
