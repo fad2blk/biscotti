@@ -32,13 +32,11 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SortedSet;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.collect.Ordering;
 
-
 /**
- * An unbounded priority {@link Queue} based on a modified <a
+ * An optionally bounded priority {@link Queue} based on a modified <a
  * href="http://en.wikipedia.org/wiki/Red-black_tree">Red-Black Tree</a>. The
  * elements of this queue are sorted according to their <i>natural ordering</i>,
  * or by an explicit {@link Comparator} provided at creation. Attempting to
@@ -58,6 +56,23 @@ import com.google.common.collect.Ordering;
  * interface, this implementation provides additional {@link #peekLast()
  * peekLast()}, {@link #pollLast() pollLast()}, {@link #removeLast()
  * removeLast()} methods to examine the elements at the tail of the queue.
+ * <p>
+ * If this queue is bounded and becomes full the {@code offer(E)} method behaves
+ * according to the following policy: if the element to be added has higher
+ * priority than the lowest priority element currently in the queue, the new
+ * element is added and the lowest priority element is removed; else the new
+ * element is rejected.
+ * <p>
+ * The {@code add(E)} and {@code addAll(Collection)} operations will throw an
+ * {@code IllegalStateException} when the queue is full and a new element is
+ * rejected; as required by the contract of {@link Queue#add Queue.add(E)}.
+ * <p>
+ * If the maximum number of elements which can be placed in this queue is
+ * unspecified, this queue will be automatically bounded to
+ * {@link Integer#MAX_VALUE} elements.
+ * <p>
+ * Bounded priority queues are useful when implementing <i>n-best</i> algorithms
+ * (e.g. finding the <i>best</i> <i>n</i> elements in an arbitrary collection).
  * <p>
  * The {@link #iterator() iterator()} and {@link #descendingIterator()} methods
  * return <i>fail-fast</i> iterators which are guaranteed to traverse the
@@ -129,15 +144,23 @@ import com.google.common.collect.Ordering;
  *     </td>
  *     <td colspan="2" style="text-align:center;"><i>O(1)</i></td>
  *   </tr>
+ *   <tr>
+ *     <td>
+ *       {@link #peekLast() peekLast()}</br>
+ *       {@link #pollLast() pollLast()}</br>
+ *       {@link #removeLast() removeLast()}
+ *      </td>
+ *      <td style="text-align:center;"><i>O(1)</i></td>
+ *      <td style="text-align:center;">&nbsp</td>
+ *   </tr>
  * </table>
  * 
  * @author Zhenya Leonov
  * @param <E>
- *            the type of elements held in this queue
- * @see BoundedPriorityQueue
+ * the type of elements held in this queue
  */
-final public class TreeQueue<E> extends AbstractQueue<E> implements
-		SortedCollection<E>, Cloneable, Serializable {
+final public class TreeQueue<E> extends AbstractQueue<E> implements SortedCollection<E>, BoundedQueue<E>, Cloneable,
+		Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private transient int size = 0;
@@ -147,34 +170,36 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	private transient Node root = nil;
 	private transient int modCount = 0;
 	private final Comparator<? super E> comparator;
+	private final int maxSize;
 
-	private TreeQueue(final Comparator<? super E> comparator) {
+	private TreeQueue(final int maxSize, final Comparator<? super E> comparator) {
+		this.maxSize = maxSize;
 		this.comparator = comparator;
 	}
 
 	/**
-	 * Creates a new {@code TreeQueue} that orders its elements according to
-	 * their <i>natural ordering</i>.
+	 * Creates a new unbounded {@code TreeQueue} that orders its elements
+	 * according to their <i>natural ordering</i>.
 	 * 
-	 * @return a new {@code TreeQueue} that orders its elements according to
-	 *         their <i>natural ordering</i>
+	 * @return a new unbounded {@code TreeQueue} that orders its elements
+	 *         according to their <i>natural ordering</i>
 	 */
 	public static <E extends Comparable<? super E>> TreeQueue<E> create() {
 		return orderedBy(Ordering.natural()).create();
 	}
 
 	/**
-	 * Creates a new {@code TreeQueue} containing the specified initial
-	 * elements. If {@code elements} is an instance of {@link SortedSet} ,
-	 * {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
+	 * Creates a new unbounded {@code TreeQueue} containing the specified
+	 * initial elements. If {@code elements} is an instance of {@link SortedSet}
+	 * , {@link PriorityQueue}, {@link MinMaxPriorityQueue}, or
 	 * {@code SortedCollection} this queue will be ordered according to the same
 	 * ordering. Otherwise, this queue will be ordered according to the
 	 * <i>natural ordering</i> of its elements.
 	 * 
 	 * @param elements
 	 *            the collection whose elements are to be placed into the list
-	 * @return a new {@code TreeQueue} containing the elements of the specified
-	 *         collection
+	 * @return a new unbounded {@code TreeQueue} containing the elements of the
+	 *         specified collection
 	 * @throws ClassCastException
 	 *             if elements of the specified collection cannot be compared to
 	 *             one another according to this list's ordering
@@ -183,7 +208,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> TreeQueue<E> from(final Collection<? extends E> elements) {
+	public static <E extends Comparable<? super E>> TreeQueue<E> from(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -193,8 +218,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else if (elements instanceof MinMaxPriorityQueue<?>)
-			comparator = ((MinMaxPriorityQueue<? super E>) elements)
-					.comparator();
+			comparator = ((MinMaxPriorityQueue<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		return orderedBy(comparator).create(elements);
@@ -215,9 +239,25 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	/**
+	 * Returns a new builder configured to build {@code TreeQueue} instances
+	 * that are limited to the specified maximum number of elements.
+	 * 
+	 * @param maxElements
+	 *            the maximum number of elements which can be placed in this
+	 *            queue
+	 * @return a new builder configured to build {@code TreeQueue} instances
+	 *         that are limited to the specified maximum number of elements
+	 */
+	@SuppressWarnings("rawtypes")
+	public static Builder<Comparable> maxElements(final int maxElements) {
+		checkState(maxElements > 0, "maxElements < 1");
+		return new Builder<Comparable>(Ordering.natural()).maxElements(maxElements);
+	}
+
+	/**
 	 * A builder for the creation of {@code TreeQueue} instances. Instances of
 	 * this builder are obtained calling {@link TreeQueue#orderedBy(Comparator)}
-	 * .
+	 * and {@link TreeQueue#maxElements(int)}.
 	 * 
 	 * @author Zhenya Leonov
 	 * @param <B>
@@ -228,40 +268,60 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	public static final class Builder<B> {
 
 		private final Comparator<B> comparator;
+		private int maxElements = Integer.MAX_VALUE;
 
 		private Builder(final Comparator<B> comparator) {
 			this.comparator = comparator;
 		}
 
 		/**
+		 * Configures this builder to build {@code TreeQueue} instances that are
+		 * limited to the specified maximum number of elements.
+		 * 
+		 * @param maxElements
+		 *            the total number of elements which can be placed in this
+		 *            queue
+		 * @return this builder
+		 */
+		public Builder<B> maxElements(final int maxElements) {
+			checkState(maxElements > 0, "maxElements < 1");
+			this.maxElements = maxElements;
+			return this;
+		}
+
+		/**
 		 * Builds an empty {@code TreeQueue} using the previously specified
-		 * comparator.
+		 * options.
 		 * 
 		 * @return an empty {@code TreeQueue} using the previously specified
-		 *         comparator.
+		 *         options.
 		 */
 		public <T extends B> TreeQueue<T> create() {
-			return new TreeQueue<T>(comparator);
+			return new TreeQueue<T>(maxElements, comparator);
 		}
 
 		/**
 		 * Builds a new {@code TreeQueue} using the previously specified
-		 * comparator, and having the given initial elements.
+		 * options, and having the given initial elements.
 		 * 
 		 * @param elements
 		 *            the initial elements to be placed in this queue
 		 * @return a new {@code TreeQueue} using the previously specified
-		 *         comparator, and having the given initial elements
+		 *         options, and having the given initial elements
 		 */
-		public <T extends B> TreeQueue<T> create(
-				final Iterable<? extends T> elements) {
+		public <T extends B> TreeQueue<T> create(final Iterable<? extends T> elements) {
 			checkNotNull(elements);
-			final TreeQueue<T> list = new TreeQueue<T>(comparator);
-			Iterables.addAll(list, elements);
-			return list;
+			final TreeQueue<T> queue = new TreeQueue<T>(maxElements, comparator);
+			for (final T element : elements)
+				queue.offer(element);
+			return queue;
 		}
 	}
 
+	/**
+	 * Removes all of the elements from this queue. The queue will be empty
+	 * after this call returns.
+	 */
 	@Override
 	public void clear() {
 		modCount++;
@@ -339,9 +399,18 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		return max.element;
 	}
 
+	// @Override add(E e){
+	// super.add(e);
+	// }
+
 	@Override
 	public boolean offer(E e) {
 		checkNotNull(e);
+		if (size() == maxSize())
+			if (comparator().compare(e, peekLast()) < 0)
+				pollLast();
+			else
+				return false;
 		final Node newNode = new Node(e);
 		insert(newNode);
 		return true;
@@ -363,6 +432,11 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		return min.element;
 	}
 
+	/**
+	 * Returns the number of elements in this queue.
+	 * 
+	 * @return the number of elements in this queue
+	 */
 	@Override
 	public int size() {
 		return size;
@@ -491,8 +565,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 		return clone;
 	}
 
-	private void writeObject(java.io.ObjectOutputStream oos)
-			throws java.io.IOException {
+	private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
 		oos.defaultWriteObject();
 		oos.writeInt(size);
 		for (E e : this)
@@ -500,8 +573,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
+	private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		nil = new Node();
 		root = nil;
@@ -538,6 +610,7 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 			left = nil;
 		}
 	}
+
 	/**
 	 * Introduction to Algorithms (CLR) Second Edition
 	 * 
@@ -876,6 +949,25 @@ final public class TreeQueue<E> extends AbstractQueue<E> implements
 			}
 		}
 		x.color = BLACK;
+	}
+
+	/**
+	 * Returns the maximum size of this queue. If the queue is unbounded returns
+	 * {@link Integer#MAX_VALUE}.
+	 */
+	@Override
+	public int maxSize() {
+		return maxSize;
+	}
+
+	@Override
+	public int remainingCapacity() {
+		return maxSize() - size();
+	}
+
+	@Override
+	public boolean isFull() {
+		return maxSize() == size();
 	}
 
 }

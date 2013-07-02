@@ -109,8 +109,7 @@ import com.google.common.collect.Ordering;
  *            the type of elements maintained by this list
  * @see Skiplist
  */
-final public class SkiplistSet<E> extends AbstractSet<E> implements
-		SortedCollection<E>, Serializable, Cloneable {
+final public class SkiplistSet<E> extends AbstractSet<E> implements SortedCollection<E>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	private static final double P = .5;
@@ -152,8 +151,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	 *         order its elements
 	 * 
 	 */
-	public static <E> SkiplistSet<E> create(
-			final Comparator<? super E> comparator) {
+	public static <E> SkiplistSet<E> create(final Comparator<? super E> comparator) {
 		return new SkiplistSet<E>(comparator);
 	}
 
@@ -177,8 +175,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	 *             collection itself is {@code null}
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static <E> SkiplistSet<E> create(
-			final Collection<? extends E> elements) {
+	public static <E extends Comparable<? super E>> SkiplistSet<E> create(final Collection<? extends E> elements) {
 		checkNotNull(elements);
 		final Comparator<? super E> comparator;
 		if (elements instanceof SortedSet<?>)
@@ -188,8 +185,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		else if (elements instanceof SortedCollection<?>)
 			comparator = ((SortedCollection<? super E>) elements).comparator();
 		else if (elements instanceof MinMaxPriorityQueue<?>)
-			comparator = ((MinMaxPriorityQueue<? super E>) elements)
-					.comparator();
+			comparator = ((MinMaxPriorityQueue<? super E>) elements).comparator();
 		else
 			comparator = (Comparator<? super E>) Ordering.natural();
 		final SkiplistSet<E> set = SkiplistSet.create(comparator);
@@ -220,8 +216,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		int i;
 		int idx = 0;
 		for (i = level - 1; i >= 0; i--) {
-			while (x.next[i] != y
-					&& comparator.compare(x.next[i].element, e) < 0)
+			while (x.next[i] != y && comparator.compare(x.next[i].element, e) < 0)
 				x = x.next[i];
 			y = x.next[i];
 			update[i] = x;
@@ -232,8 +227,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 				update[i] = head;
 			level = newLevel;
 		}
-		if (x.next().element != null
-				&& comparator.compare(x.next().element, e) == 0)
+		if (x.next().element != null && comparator.compare(x.next().element, e) == 0)
 			return false;
 		x = new Node<E>(e, newLevel);
 		for (i = 0; i < level; i++)
@@ -264,8 +258,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		final E element = (E) o;
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--) {
-			while (curr.next[i] != head
-					&& comparator.compare(curr.next[i].element, element) < 0)
+			while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) < 0)
 				curr = curr.next[i];
 			update[i] = curr;
 		}
@@ -314,8 +307,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 		return clone;
 	}
 
-	private void writeObject(java.io.ObjectOutputStream oos)
-			throws java.io.IOException {
+	private void writeObject(java.io.ObjectOutputStream oos) throws java.io.IOException {
 		oos.defaultWriteObject();
 		oos.writeInt(size);
 		for (E e : this)
@@ -323,8 +315,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private void readObject(java.io.ObjectInputStream ois)
-			throws java.io.IOException, ClassNotFoundException {
+	private void readObject(java.io.ObjectInputStream ois) throws java.io.IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		head = new Node<E>(null, MAX_LEVEL);
 		for (int i = 0; i < MAX_LEVEL; i++)
@@ -413,8 +404,7 @@ final public class SkiplistSet<E> extends AbstractSet<E> implements
 	private Node<E> search(final E element) {
 		Node<E> curr = head;
 		for (int i = level - 1; i >= 0; i--)
-			while (curr.next[i] != head
-					&& comparator.compare(curr.next[i].element, element) < 0)
+			while (curr.next[i] != head && comparator.compare(curr.next[i].element, element) < 0)
 				curr = curr.next[i];
 		curr = curr.next();
 		if (curr != head && comparator.compare(curr.element, element) == 0)

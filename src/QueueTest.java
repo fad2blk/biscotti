@@ -1,11 +1,13 @@
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.palamida.util.collect.TreeQueue;
-import com.palamida.util.collect.Treelist;
 
 public class QueueTest {
 
@@ -17,49 +19,41 @@ public class QueueTest {
 		MinMaxPriorityQueue<Integer> guavaQueue = MinMaxPriorityQueue.create();
 		PriorityQueue<Integer> javaQueue = new PriorityQueue<Integer>();
 		TreeQueue<Integer> treeQueue = TreeQueue.create();
-		Treelist<Integer> treeList = Treelist.create();
+		
+		int num = 10000000;
 
-//		Random random = new Random();
-//
-//		Stopwatch watch = new Stopwatch().start();
-//
-//		for (int i = 0; i < 5000000; i++)
-//			javaQueue.add(random.nextInt());
-//
-//		System.out.println(javaQueue.size());
-//
-//		while (!javaQueue.isEmpty())
-//			javaQueue.remove();
-//
-//		watch.stop();
-//		System.out.println("java.util.PriorityQueue finished in: " + watch.elapsed(TimeUnit.SECONDS) + " seconds.");
-//		
-//		watch.reset().start();
-//		
-//		for (int i = 0; i < 5000000; i++)
-//			treeList.add(random.nextInt());
-//
-//		System.out.println(treeList.size());
-//
-//		while (!treeQueue.isEmpty())
-//			treeList.remove(0);
-//
-//		watch.stop();
-//		System.out.println("java.util.TreeQueue finished in: " + watch.elapsed(TimeUnit.SECONDS) + " seconds.");
 		
-		
-		TreeQueue q = TreeQueue.create();
-		
-		q.add(1);
-		q.add(3);
-		q.add(6);
-		q.add(4);
-		//q.remove();
-		//q.remove();
-		
-		while (!q.isEmpty())
-		q.remove();
+		BenchmarkQueue(javaQueue, num);
+		BenchmarkQueue(guavaQueue, num);
+		BenchmarkQueue(treeQueue, num);
 
+		
+		
+
+	}
+
+	static void BenchmarkQueue(Queue<Integer> queue, int num) {
+		System.gc();
+		final Random random = new Random();
+		final Stopwatch watch = new Stopwatch();
+		
+		System.out.println("Benchmarking " + queue.getClass().getSimpleName());
+
+		watch.start();
+		System.out.println("  queue.add * " + num);
+
+		for (int i = 0; i < num; i++)
+			queue.add(random.nextInt());
+		
+		System.out.println("  queue.size: " + queue.size());
+		System.out.println("  queue.remove till empty");
+
+		while (!queue.isEmpty())
+			queue.remove();
+
+		watch.stop();
+
+		System.out.println(queue.getClass().getSimpleName() + ": " + watch.elapsed(TimeUnit.SECONDS) + " seconds.\n");
 	}
 
 }
