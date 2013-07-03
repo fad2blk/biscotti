@@ -67,9 +67,8 @@ import com.google.common.collect.Ordering;
  * {@code IllegalStateException} when the queue is full and a new element is
  * rejected; as required by the contract of {@link Queue#add Queue.add(E)}.
  * <p>
- * If the maximum number of elements which can be placed in this queue is
- * unspecified, this queue will be automatically bounded to
- * {@link Integer#MAX_VALUE} elements.
+ * If the maximum size of this queue is not specified it will remain unbounded
+ * until it reaches {@link Integer#MAX_VALUE} elements.
  * <p>
  * Bounded priority queues are useful when implementing <i>n-best</i> algorithms
  * (e.g. finding the <i>best</i> <i>n</i> elements in an arbitrary collection).
